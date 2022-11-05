@@ -1,16 +1,16 @@
-var express = require("express");
-const cors = require("cors");
-var app = express();
+const express = require('express')
+const cors = require('cors')
+const app = express()
 
-app.use(cors());
-app.use(express.json());
+app.use(cors())
+app.use(express.json())
 
-const registrationRoute = require("./routes/registrationRoute");
-app.use("/registration", registrationRoute);
+const registrationRoute = require('./routes/registrationRoute')
+app.use('/registration', registrationRoute)
 
-const userRoute = require("./routes/userRoute");
-app.use("/user", userRoute);
+const userRoute = require('./routes/userRoute')
+app.use('/user', userRoute)
 
 app.listen(3000, function () {
-  console.log("Example app listening on port 3000!");
-});
+  console.log('Example app listening on port 3000!')
+})
