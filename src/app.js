@@ -1,9 +1,15 @@
 var express = require("express");
+const cors = require("cors");
 var app = express();
 
-app.get("/", function (req, res) {
-  res.send("Hello World!");
-});
+app.use(cors());
+app.use(express.json());
+
+const registrationRoute = require("./routes/registrationRoute");
+app.use("/registration", registrationRoute);
+
+const userRoute = require("./routes/userRoute");
+app.use("/user", userRoute);
 
 app.listen(3000, function () {
   console.log("Example app listening on port 3000!");
