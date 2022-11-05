@@ -5,89 +5,44 @@ const database = require('../database')
 const helper = require('../helper')
 
 router.post('/register', async (req, res) => {
-  console.log(req.body.email)
-  database.getConnection((_err, con) => {
-    if (
-      !req.body.email ||
-      !req.body.username ||
-      !req.body.password1 ||
-      !req.body.password2
-    ) {
-      con.release()
-      return res.json({ header: 'Error', message: 'Empty fields!' })
-    } else if (!helper.testPasswordStrength(req.body.password1)) {
-      con.release()
-      return res.json({
-        header: 'Error',
-        message:
-          'The password must be at least 6 characters long. There must be at least one letter and one number.'
-      })
-    } else if (req.body.password1 !== req.body.password2) {
-      con.release()
-      return res.json({
-        header: 'Error',
-        message: 'Passwords are not the same!'
-      })
-    }
+  if (
+    !req.body.email ||
+    !req.body.firstname ||
+    !req.body.lastname ||
+    !req.body.password
+  ) {
+    database.resSend(res, { header: 'Error', message: 'Empty fields!' })
+    return
+  } else if (!helper.testPasswordStrength(req.body.password)) {
+    database.resSend(res, database.resStatuses.error, { message: 'The password must be at least 6 characters long. There must be at least one letter and one number.' })
+    return
+  }
 
-    con.query(
-      `SELECT * FROM user WHERE email = ${con.escape(
-        req.body.email
-      )} OR username = ${con.escape(req.body.username)}`,
-      (err, user) => {
-        if (err) {
-          con.release()
-          return res.status(401).json({ err })
-        } else if (user[0]) {
-          con.release()
-          if (user[0].email === req.body.email) {
-            return res.json({
-              header: 'Error',
-              message: 'This email is already used!'
-            })
-          } else {
-            return res.json({
-              header: 'Error',
-              message: 'This username already used!'
-            })
-          }
-        }
+  const user = await database.dbGetSingleRow('SELECT * FROM user WHERE email = ?', [req.body.email])
+  if (user) {
+    database.resSend(res, { message: 'This email is already used!' })
+    return
+  }
 
-        const code = helper.generateRandomString()
+  const code = helper.generateRandomString()
 
-        bcrypt.genSalt(512, (_err, salt) => {
-          bcrypt.hash(req.body.password1, salt, (_err, enc) => {
-            con.query(
-              `
-                INSERT INTO user (email, username, password, verificationcode) 
-                VALUES (${con.escape(req.body.email)}, ${con.escape(
-                req.body.username
-              )}, ${con.escape(enc)}, ${con.escape(code)})
-                `,
-              (err, _result) => {
-                con.release()
-                if (err) {
-                  return res.status(500).json({ err })
-                }
-
-                helper.sendMail(
-                  req.body.email,
-                  'Email verification',
-                  'Open this link to enable your account: https://ideaoverflow.xyz/verify/' +
-                    code
-                )
-                return res.json({
-                  status: 1,
-                  header: 'Congrats!',
-                  message:
-                    'The user has been created. Please confirm your e-mail, it may have ended up in the spam folder. After that you can log in.'
-                })
-              }
-            )
-          })
-        })
-      }
-    )
+  bcrypt.genSalt(512, (_err, salt) => {
+    bcrypt.hash(req.body.password, salt, async (_err, enc) => {
+      const userId = await database.dbInsert('INSERT INTO user (email, firstname, lastname, password, verificationcode) VALUES (?, ?, ?, ?, ?)', [req.body.email, req.body.firstname, req.body.lastname, enc, code])
+      helper.sendMail(
+        req.body.email,
+        'Email verification',
+        'Open this link to enable your account: https://ideaoverflow.xyz/verify/' +
+        code
+      )
+      console.log(userId)
+      const usertoken = helper.createJWT(
+        userId,
+        req.body.email,
+        req.body.firstname
+      )
+      database.resSend(res, { status: 1, header: 'Congrats!', token: usertoken })
+    })
   })
 })
 
@@ -95,112 +50,65 @@ router.post('/login', async (req, res) => {
   if (!req.body.email || !req.body.password) {
     return res.json({ message: 'Empty fields!' })
   } else {
-    database.getConnection((_err, con) => {
-      con.query(
-        `SELECT * FROM user WHERE email = ${con.escape(req.body.email)}`,
-        (err, users) => {
-          if (err) {
-            con.release()
-            return res.status(404).json({ err })
-          }
-
-          if (users.length === 0) {
-            con.release()
-            return res.json({ message: 'This user does not exist!' })
-          }
-
-          if (users[0].verified === 1 || users[0].verified === 2) {
-            bcrypt.compare(
-              req.body.password,
-              users[0].password,
-              (err, isMatch) => {
-                if (err) {
-                  con.release()
-                  return res.status(500).json({ err })
-                }
-                if (!isMatch) {
-                  con.release()
-                  return res.json({
-                    message: 'Wrong password!',
-                    wrongpw: true
-                  })
-                } else {
-                  if (users[0].verified === 2) {
-                    con.query(
-                      `UPDATE user SET verified = 1, verificationcode = "" WHERE id = ${con.escape(
-                        users[0].id
-                      )}`,
-                      () => {
-                        con.release()
-                      }
-                    )
-                  }
-
-                  const usertoken = helper.createJWT(
-                    users[0].id,
-                    users[0].email,
-                    users[0].username
-                  )
-
-                  const answer = { token: usertoken }
-                  return res.json(answer)
-                }
-              }
-            )
-          } else {
-            return res.json({ notverified: true })
-          }
+    const user = await database.dbGetSingleRow('SELECT * FROM user WHERE email = ?', req.body.email)
+    if (!user) {
+      return res.json({ message: 'This user does not exist!' })
+    }
+    bcrypt.compare(
+      req.body.password,
+      user.password,
+      async (err, isMatch) => {
+        if (err) {
+          return database.resSend(res, null, database.resStatuses.error, 'Bcrypt compare error')
         }
-      )
-    })
+        if (!isMatch) {
+          database.resSend(res, {
+            message: 'Wrong password!',
+            wrongpw: true
+          })
+        } else {
+          if (user.verified === 2) {
+            await database.dbQuery('UPDATE user SET verified = 1, verificationcode = "" WHERE id = ?', user.id)
+          }
+
+          const usertoken = helper.createJWT(
+            user.id,
+            user.email,
+            user.username
+          )
+
+          const answer = { token: usertoken }
+          database.resSend(res, answer)
+        }
+      }
+    )
   }
 })
 
-router.get('/verify/:code', (req, res) => {
-  database.dbGetSingleValue(
+router.get('/verify/:code', async (req, res) => {
+  const verified = await database.dbGetSingleValue(
     'SELECT verified as val FROM user WHERE verificationcode = ?',
     [req.params.code],
-    -1,
-    (result, err) => {
-      if (err) {
-        return database.resSend(
-          res,
-          null,
-          database.resStatuses.error,
-          'SQL Error'
-        )
-      } else if (result === 1) {
-        return database.resSend(res, {
-          verified: true,
-          message: 'User was already Verified'
-        })
-      } else if (result === -1) {
-        return database.resSend(res, {
-          verified: false,
-          message: 'Code doesnt exist'
-        })
-      } else {
-        database.dbQuery(
-          "UPDATE user SET verified = 1, verificationcode = '' WHERE verificationcode = ?",
-          [req.params.code],
-          (result, err) => {
-            if (err) {
-              return database.resSend(
-                res,
-                null,
-                database.resStatuses.error,
-                'SQL Error'
-              )
-            }
-            return database.resSend(res, {
-              verified: true,
-              message: 'Verified successfully'
-            })
-          }
-        )
-      }
-    }
-  )
+    -1)
+  if (verified === 1) {
+    return database.resSend(res, {
+      verified: true,
+      message: 'User was already Verified'
+    })
+  } else if (verified === -1) {
+    return database.resSend(res, {
+      verified: false,
+      message: 'Code doesnt exist'
+    })
+  } else {
+    await database.dbQuery(
+      "UPDATE user SET verified = 1, verificationcode = '' WHERE verificationcode = ?",
+      [req.params.code])
+    return database.resSend(res, {
+      verified: true,
+      message: 'Verified successfully'
+    })
+  }
 })
 
 router.post('/sendverificationmailagain', async (req, res) => {
@@ -225,7 +133,7 @@ router.post('/sendverificationmailagain', async (req, res) => {
           req.body.email,
           'Email verification',
           'Open this link to enable your account: https://ideaoverflow.xyz/verify/' +
-            result[0].verificationcode
+          result[0].verificationcode
         )
         return res
           .status(200)
@@ -259,7 +167,7 @@ router.post('/resetpassword', async (req, res) => {
           req.body.email,
           'Reset password',
           'Open the following link to reset your password: https://ideaoverflow.xyz/resetpassword/' +
-            code
+          code
         )
         return res.status(200).json({
           header: 'Nice!',

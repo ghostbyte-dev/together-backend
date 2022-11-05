@@ -1,4 +1,4 @@
-const mariadb = require('mariadb/callback')
+const mariadb = require('mariadb')
 
 const pool = mariadb.createPool({
   host: '127.0.0.1',
@@ -12,55 +12,38 @@ const pool = mariadb.createPool({
 })
 
 module.exports = {
-  getConnection: async function (callback) {
-    pool.getConnection(function (err, con) {
-      if (err) {
-        return callback(err)
-      }
-      callback(err, con)
-    })
+  getConnection: async function () {
+    const con = await pool.getConnection()
+    return con
   },
 
-  dbQuery: function (query, param, callback) {
-    pool.query(query, param, (err, rows) => {
-      if (err) {
-        callback(undefined, err)
-      } else {
-        callback(rows, undefined)
-      }
+  dbQuery: async function (query, param) {
+    pool.on('error', function (err) {
+      console.log('Oh shit.')
+      throw err
     })
+    const data = await pool.query(query, param).catch((err) => {
+      console.log(err)
+    })
+    return data
   },
 
-  dbGetSingleRow: function (query, param, callback) {
-    this.dbQuery(query, param, (rows, err) => {
-      if (err) {
-        callback(undefined, err)
-      } else {
-        callback(rows[0], undefined)
-      }
-    })
+  dbGetSingleRow: async function (query, param) {
+    const data = await this.dbQuery(query, param)
+    if (!data) return {}
+    return data[0]
   },
 
-  dbGetSingleValue: function (query, param, defaultValue, callback) {
-    this.dbGetSingleRow(query, param, (row, err) => {
-      if (err) {
-        callback(undefined, err)
-      } else {
-        let data = row ?? {}
-        data = data.val ?? defaultValue
-        callback(data, undefined)
-      }
-    })
+  dbGetSingleValue: async function (query, param, defaultValue) {
+    let data = await this.dbGetSingleRow(query, param)
+    data = data ?? {}
+    data = data.val ?? defaultValue
+    return data
   },
 
-  dbInsert: function (query, param, callback) {
-    this.dbQuery(query, param, (data, err) => {
-      if (err) {
-        callback(undefined, err)
-      } else {
-        callback(data.insertId, undefined)
-      }
-    })
+  dbInsert: async function (query, param) {
+    const data = await this.dbQuery(query, param)
+    return data.insertId
   },
 
   resSend (res, data, status, errors) {

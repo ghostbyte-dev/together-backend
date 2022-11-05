@@ -86,14 +86,15 @@ CREATE TABLE `user` (
   `email` varchar(100) NOT NULL,
   `verificationcode` varchar(13) DEFAULT NULL,
   `verified` tinyint(1) NOT NULL,
-  `username` varchar(40) DEFAULT NULL,
   `password` varchar(100) NOT NULL,
   `creationdate` date NOT NULL DEFAULT curdate(),
   `profile_image` varchar(200) DEFAULT NULL,
+  `firstname` varchar(100) NOT NULL,
+  `lastname` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_FK` (`fk_community_id`),
   CONSTRAINT `user_FK` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +103,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,'emanuel.hiebeler@gmail.com','',1,'hiebeler05','$2b$04$HE68FrJYMRKtTE.klTu6deqTA4MCe1F75eY/1EjCOG6bRy1n3SoWu','2022-11-04',NULL),(2,NULL,'emanuel.hiebleleeer@gmail.com','',1,'hiebeler','$2b$04$8GKFqdXs/2z0zGB.Bg670u9WefA7neOkS6xueS79Yc/U7Jjg8JH5S','2022-11-04',NULL);
+INSERT INTO `user` VALUES (9,NULL,'emanuel.hiebeler@student.htldornbirn.at','5BfpJ1EaEDAj6',0,'$2b$04$8hB6s0eNrPaiO7XxCOWGLeL4yx1Xu7Ka5hWU3nZ8wUbohqXlO1Oie','2022-11-05',NULL,'Emanuel','Hiebeler');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,4 +120,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-05 12:24:07
+-- Dump completed on 2022-11-05 16:28:09
