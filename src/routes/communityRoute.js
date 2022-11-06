@@ -28,6 +28,14 @@ router.get('/getByInviteCode/:code', async (req, res) => {
   helper.resSend(res, community)
 })
 
+router.get('/requests/:communityId', async (req, res) => {
+  const communityId = parseInt(req.params.communityId)
+  const requests = await prisma.request.findMany({
+    where: { fk_community_id: communityId }
+  })
+  helper.resSend(res, requests)
+})
+
 router.post('/create', async (req, res) => {
   if (!req.body.name) {
     helper.resSend(res, null, helper.resStatuses.error, 'missing Name')

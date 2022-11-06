@@ -26,8 +26,26 @@ router.get('/getAll', async (req, res) => {
   helper.resSend(res, user)
 })
 
-router.put('/sendRequest/:inviteCode', async (req, res) => {
-  return res.send('hallo')
+router.post('/sendRequest/:inviteCode', async (req, res) => {
+  const inviteCode = req.params.inviteCode
+  if (!inviteCode) {
+    helper.resSend(res, null, helper.resStatuses.error, 'Missing Invite Code')
+    return
+  }
+  const community = await prisma.community.findUnique({
+    where: { code: inviteCode }
+  })
+  if (!community) {
+    helper.resSend(res, null, helper.resStatuses.error, 'No Community exists with this invite code')
+    return
+  }
+  await prisma.request.create({
+    data: {
+      fk_user_id: 10,
+      fk_community_id: community.id
+    }
+  })
+  helper.resSend(res, { message: 'created Request' })
 })
 
 module.exports = router

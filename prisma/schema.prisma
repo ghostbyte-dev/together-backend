@@ -8,11 +8,12 @@ datasource db {
 }
 
 model community {
-  id                               Int     @id @default(autoincrement())
-  name                             String  @db.VarChar(100)
-  code                             String  @unique(map: "community_un") @db.VarChar(100)
+  id                               Int       @id @default(autoincrement())
+  name                             String    @db.VarChar(100)
+  code                             String    @unique(map: "community_un") @db.VarChar(100)
   fk_admin_id                      Int
-  user_community_fk_admin_idTouser user    @relation("community_fk_admin_idTouser", fields: [fk_admin_id], references: [id], onUpdate: Restrict, map: "community_FK")
+  user_community_fk_admin_idTouser user      @relation("community_fk_admin_idTouser", fields: [fk_admin_id], references: [id], onUpdate: Restrict, map: "community_FK")
+  request                          request[]
   tasks                            tasks[]
   user                             user[]
 
@@ -50,8 +51,21 @@ model user {
   lastname                              String      @db.VarChar(100)
   community                             community?  @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
   community_community_fk_admin_idTouser community[] @relation("community_fk_admin_idTouser")
+  request                               request[]
   tasks_tasks_fk_creator_idTouser       tasks[]     @relation("tasks_fk_creator_idTouser")
   tasks_tasks_fk_assigned_idTouser      tasks[]     @relation("tasks_fk_assigned_idTouser")
 
   @@index([fk_community_id], map: "user_FK")
+}
+
+model request {
+  date            DateTime  @default(dbgenerated("(curdate())")) @db.DateTime(0)
+  fk_user_id      Int
+  fk_community_id Int
+  id              Int       @id @default(autoincrement())
+  user            user      @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "requests_FK")
+  community       community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "requests_FK_1")
+
+  @@index([fk_user_id], map: "requests_FK")
+  @@index([fk_community_id], map: "requests_FK_1")
 }
