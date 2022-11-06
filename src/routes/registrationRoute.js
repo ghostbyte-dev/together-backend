@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const helper = require('../helper')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+
 router.post('/register', async (req, res) => {
   if (
     !req.body.email ||
