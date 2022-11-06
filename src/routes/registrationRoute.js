@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
           verificationcode: code
         }
       })
-      const userId = prisma.user.findUnique({
+      const user = await prisma.user.findUnique({
         where: { email: req.body.email },
         select: { id: true }
       })
@@ -50,8 +50,9 @@ router.post('/register', async (req, res) => {
       //   'Open this link to enable your account: https://ideaoverflow.xyz/verify/' +
       //   code
       // )
+      console.log(user)
       const usertoken = helper.createJWT(
-        userId,
+        user.id,
         req.body.email,
         req.body.firstname
       )
