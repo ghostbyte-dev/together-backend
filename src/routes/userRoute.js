@@ -26,4 +26,8 @@ router.get('/getAll', async (req, res) => {
   helper.resSend(res, user)
 })
 
+router.put('/sendRequest/:inviteCode', async (req, res) => {
+  return res.send('hallo')
+})
+
 module.exports = router

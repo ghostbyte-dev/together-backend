@@ -19,6 +19,10 @@ module.exports = {
     return Str.random(90)
   },
 
+  generateCommunityInviteCode: function () {
+    return Str.random(10)
+  },
+
   sendMail: function (to, subject, text) {
     const transporter = mailer.createTransport({
       host: 'smtp.gmail.com',

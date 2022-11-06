@@ -8,10 +8,15 @@ datasource db {
 }
 
 model community {
-  id    Int     @id @default(autoincrement())
-  name  String  @db.VarChar(100)
-  tasks tasks[]
-  user  user[]
+  id                               Int     @id @default(autoincrement())
+  name                             String  @db.VarChar(100)
+  code                             String  @unique(map: "community_un") @db.VarChar(100)
+  fk_admin_id                      Int
+  user_community_fk_admin_idTouser user    @relation("community_fk_admin_idTouser", fields: [fk_admin_id], references: [id], onUpdate: Restrict, map: "community_FK")
+  tasks                            tasks[]
+  user                             user[]
+
+  @@index([fk_admin_id], map: "community_FK")
 }
 
 model tasks {
@@ -33,19 +38,20 @@ model tasks {
 }
 
 model user {
-  id                               Int        @id @default(autoincrement())
-  fk_community_id                  Int?
-  email                            String     @unique(map: "user_email_un") @db.VarChar(100)
-  verificationcode                 String?    @unique(map: "user_un") @db.VarChar(90)
-  verified                         Boolean    @default(false)
-  password                         String     @db.VarChar(100)
-  creationdate                     DateTime   @default(dbgenerated("(curdate())")) @db.Date
-  profile_image                    String?    @db.VarChar(200)
-  firstname                        String     @db.VarChar(100)
-  lastname                         String     @db.VarChar(100)
-  community                        community? @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
-  tasks_tasks_fk_creator_idTouser  tasks[]    @relation("tasks_fk_creator_idTouser")
-  tasks_tasks_fk_assigned_idTouser tasks[]    @relation("tasks_fk_assigned_idTouser")
+  id                                    Int         @id @default(autoincrement())
+  fk_community_id                       Int?
+  email                                 String      @unique(map: "user_email_un") @db.VarChar(100)
+  verificationcode                      String?     @unique(map: "user_un") @db.VarChar(90)
+  verified                              Boolean     @default(false)
+  password                              String      @db.VarChar(100)
+  creationdate                          DateTime    @default(dbgenerated("(curdate())")) @db.Date
+  profile_image                         String?     @db.VarChar(200)
+  firstname                             String      @db.VarChar(100)
+  lastname                              String      @db.VarChar(100)
+  community                             community?  @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
+  community_community_fk_admin_idTouser community[] @relation("community_fk_admin_idTouser")
+  tasks_tasks_fk_creator_idTouser       tasks[]     @relation("tasks_fk_creator_idTouser")
+  tasks_tasks_fk_assigned_idTouser      tasks[]     @relation("tasks_fk_assigned_idTouser")
 
   @@index([fk_community_id], map: "user_FK")
 }

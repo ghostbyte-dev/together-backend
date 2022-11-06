@@ -11,6 +11,9 @@ app.use('/registration', registrationRoute)
 const userRoute = require('./routes/userRoute')
 app.use('/user', userRoute)
 
+const communityRoute = require('./routes/communityRoute')
+app.use('/community', communityRoute)
+
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
