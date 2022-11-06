@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model community {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(100)
+  tasks tasks[]
+  user  user[]
+}
+
+model tasks {
+  id                              Int       @id @default(autoincrement())
+  name                            String    @db.VarChar(100)
+  description                     String?   @db.Text
+  date                            DateTime  @db.DateTime(0)
+  done                            Boolean   @default(false)
+  fk_creator_id                   Int
+  fk_assigned_id                  Int?
+  fk_community_id                 Int
+  user_tasks_fk_creator_idTouser  user      @relation("tasks_fk_creator_idTouser", fields: [fk_creator_id], references: [id], onUpdate: Restrict, map: "tasks_FK")
+  user_tasks_fk_assigned_idTouser user?     @relation("tasks_fk_assigned_idTouser", fields: [fk_assigned_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "tasks_FK_1")
+  community                       community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "tasks_FK_2")
+
+  @@index([fk_creator_id], map: "tasks_FK")
+  @@index([fk_assigned_id], map: "tasks_FK_1")
+  @@index([fk_community_id], map: "tasks_FK_2")
+}
+
+model user {
+  id                               Int        @id @default(autoincrement())
+  fk_community_id                  Int?
+  email                            String     @unique(map: "user_email_un") @db.VarChar(100)
+  verificationcode                 String?    @unique(map: "user_un") @db.VarChar(90)
+  verified                         Boolean    @default(false)
+  password                         String     @db.VarChar(100)
+  creationdate                     DateTime   @default(dbgenerated("(curdate())")) @db.Date
+  profile_image                    String?    @db.VarChar(200)
+  firstname                        String     @db.VarChar(100)
+  lastname                         String     @db.VarChar(100)
+  community                        community? @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
+  tasks_tasks_fk_creator_idTouser  tasks[]    @relation("tasks_fk_creator_idTouser")
+  tasks_tasks_fk_assigned_idTouser tasks[]    @relation("tasks_fk_assigned_idTouser")
+
+  @@index([fk_community_id], map: "user_FK")
+}

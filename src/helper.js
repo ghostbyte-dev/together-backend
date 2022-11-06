@@ -44,5 +44,21 @@ module.exports = {
         console.log(info)
       }
     })
-  }
+  },
+
+  resSend(res, data, status, errors) {
+    data = data ?? {}
+    status = status?.toString() ?? this.resStatuses.ok
+    errors = errors ?? []
+    if (!Array.isArray(errors)) errors = [errors]
+
+    const rspJson = {}
+    rspJson.status = status
+    rspJson.errors = errors
+    rspJson.data = data
+
+    res.send(JSON.stringify(rspJson))
+  },
+
+  resStatuses: Object.freeze({ ok: 'OK', error: 'Error' })
 }
