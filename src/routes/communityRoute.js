@@ -1,10 +1,11 @@
 const express = require('express')
 const helper = require('../helper')
 const router = express.Router()
+const passport = require('passport')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-router.get('/getById/:id', async (req, res) => {
+router.get('/getById/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const communityId = parseInt(req.params.id)
   const community = await prisma.community.findUnique({
     where: { id: communityId }
@@ -16,7 +17,7 @@ router.get('/getById/:id', async (req, res) => {
   helper.resSend(res, community)
 })
 
-router.get('/getByInviteCode/:code', async (req, res) => {
+router.get('/getByInviteCode/:code', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const code = req.params.code
   const community = await prisma.community.findUnique({
     where: { code }
@@ -28,7 +29,7 @@ router.get('/getByInviteCode/:code', async (req, res) => {
   helper.resSend(res, community)
 })
 
-router.get('/requests/:communityId', async (req, res) => {
+router.get('/requests/:communityId', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const communityId = parseInt(req.params.communityId)
   const requests = await prisma.request.findMany({
     where: { fk_community_id: communityId }
@@ -36,7 +37,7 @@ router.get('/requests/:communityId', async (req, res) => {
   helper.resSend(res, requests)
 })
 
-router.post('/create', async (req, res) => {
+router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   if (!req.body.name) {
     helper.resSend(res, null, helper.resStatuses.error, 'missing Name')
     return
@@ -46,7 +47,7 @@ router.post('/create', async (req, res) => {
     data: {
       name: req.body.name,
       code: inviteCode,
-      fk_admin_id: 10 // use id from jwt Token
+      fk_admin_id: req.user.id // use id from jwt Token
     }
   })
   helper.resSend(res, { code: inviteCode })

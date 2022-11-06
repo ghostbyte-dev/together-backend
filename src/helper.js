@@ -10,7 +10,7 @@ module.exports = {
   },
 
   createJWT: function (id, email, username) {
-    return jwt.sign({ id, email, username }, 'ideaoverflow420', {
+    return jwt.sign({ id, email, username }, 'community1251', {
       expiresIn: '1y'
     })
   },
