@@ -11,16 +11,16 @@ router.post('/register', async (req, res) => {
     !req.body.lastname ||
     !req.body.password
   ) {
-    database.resSend(res, { header: 'Error', message: 'Empty fields!' })
+    database.resSend(res, null, database.resStatuses.error, 'Empty fields!')
     return
   } else if (!helper.testPasswordStrength(req.body.password)) {
-    database.resSend(res, database.resStatuses.error, { message: 'The password must be at least 6 characters long. There must be at least one letter and one number.' })
+    database.resSend(res, null, database.resStatuses.error, 'The password must be at least 6 characters long. There must be at least one letter and one number.')
     return
   }
 
   const user = await database.dbGetSingleRow('SELECT * FROM user WHERE email = ?', [req.body.email])
   if (user) {
-    database.resSend(res, { message: 'This email is already used!' })
+    database.resSend(res, null, database.resStatuses.error, 'This email is already used!')
     return
   }
 
@@ -29,19 +29,18 @@ router.post('/register', async (req, res) => {
   bcrypt.genSalt(512, (_err, salt) => {
     bcrypt.hash(req.body.password, salt, async (_err, enc) => {
       const userId = await database.dbInsert('INSERT INTO user (email, firstname, lastname, password, verificationcode) VALUES (?, ?, ?, ?, ?)', [req.body.email, req.body.firstname, req.body.lastname, enc, code])
-      helper.sendMail(
-        req.body.email,
-        'Email verification',
-        'Open this link to enable your account: https://ideaoverflow.xyz/verify/' +
-        code
-      )
-      console.log(userId)
+      // helper.sendMail(
+      //   req.body.email,
+      //   'Email verification',
+      //   'Open this link to enable your account: https://ideaoverflow.xyz/verify/' +
+      //   code
+      // )
       const usertoken = helper.createJWT(
         userId,
         req.body.email,
         req.body.firstname
       )
-      database.resSend(res, { status: 1, header: 'Congrats!', token: usertoken })
+      database.resSend(res, { token: usertoken })
     })
   })
 })
@@ -52,7 +51,8 @@ router.post('/login', async (req, res) => {
   } else {
     const user = await database.dbGetSingleRow('SELECT * FROM user WHERE email = ?', req.body.email)
     if (!user) {
-      return res.json({ message: 'This user does not exist!' })
+      database.resSend(res, null, database.resStatuses.error, 'This user does not exist!')
+      return
     }
     bcrypt.compare(
       req.body.password,
@@ -62,10 +62,7 @@ router.post('/login', async (req, res) => {
           return database.resSend(res, null, database.resStatuses.error, 'Bcrypt compare error')
         }
         if (!isMatch) {
-          database.resSend(res, {
-            message: 'Wrong password!',
-            wrongpw: true
-          })
+          database.resSend(res, null, database.resStatuses.error, 'Wrong password!')
         } else {
           if (user.verified === 2) {
             await database.dbQuery('UPDATE user SET verified = 1, verificationcode = "" WHERE id = ?', user.id)
@@ -91,15 +88,9 @@ router.get('/verify/:code', async (req, res) => {
     [req.params.code],
     -1)
   if (verified === 1) {
-    return database.resSend(res, {
-      verified: true,
-      message: 'User was already Verified'
-    })
+    return database.resSend(res, null, database.resStatuses.error, 'User was already Verified')
   } else if (verified === -1) {
-    return database.resSend(res, {
-      verified: false,
-      message: 'Code doesnt exist'
-    })
+    return database.resSend(res, null, database.resStatuses.error, 'Code doesnt exist')
   } else {
     await database.dbQuery(
       "UPDATE user SET verified = 1, verificationcode = '' WHERE verificationcode = ?",
