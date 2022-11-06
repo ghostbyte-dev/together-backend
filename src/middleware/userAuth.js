@@ -8,12 +8,10 @@ const opts = {
   secretOrKey: 'community1251'
 }
 
-module.exports = new JwtStrategy(opts, async function async(jwtPayload, done) {
-  console.log(jwtPayload)
+module.exports = new JwtStrategy(opts, async function async (jwtPayload, done) {
   const user = await prisma.user.findUnique({
     where: { id: jwtPayload.id }
   })
-  console.log(user)
   if (user) {
     return done(null, user)
   } else {

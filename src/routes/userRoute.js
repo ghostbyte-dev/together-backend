@@ -36,8 +36,9 @@ router.get('/getAll', passport.authenticate('userAuth', { session: false }), asy
   helper.resSend(res, user)
 })
 
-router.post('/sendRequest/:inviteCode', passport.authenticate('userAuth', { session: false }), async (req, res) => {
-  const inviteCode = req.params.inviteCode
+router.post('/sendrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  const inviteCode = req.body.code
+  console.log(req.body.code)
   if (!inviteCode) {
     helper.resSend(res, null, helper.resStatuses.error, 'Missing Invite Code')
     return
@@ -47,6 +48,13 @@ router.post('/sendRequest/:inviteCode', passport.authenticate('userAuth', { sess
   })
   if (!community) {
     helper.resSend(res, null, helper.resStatuses.error, 'No Community exists with this invite code')
+    return
+  }
+  const userBeforeAdded = await prisma.request.findFirst({
+    where: { fk_user_id: req.user.id }
+  })
+  if (userBeforeAdded) {
+    helper.resSend(res, null, helper.resStatuses.error, 'User already sent an Request')
     return
   }
   await prisma.request.create({
