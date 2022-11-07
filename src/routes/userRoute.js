@@ -37,7 +37,7 @@ router.get('/getAll', passport.authenticate('userAuth', { session: false }), asy
 })
 
 router.post('/sendrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
-  const inviteCode = req.body.code
+  const inviteCode = parseInt(req.body.code)
   console.log(req.body.code)
   if (!inviteCode) {
     helper.resSend(res, null, helper.resStatuses.error, 'Missing Invite Code')
