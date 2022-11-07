@@ -90,7 +90,7 @@ CREATE TABLE `task` (
   PRIMARY KEY (`id`),
   KEY `tasks_FK_2` (`fk_community_id`),
   CONSTRAINT `tasks_FK_2` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,6 +99,7 @@ CREATE TABLE `task` (
 
 LOCK TABLES `task` WRITE;
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
+INSERT INTO `task` VALUES (2,'Kochen','schnitzel kochen','2022-11-07',0,4),(3,'Release','speeed app fertig machen','2022-11-11',0,4);
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -179,4 +180,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-07 19:13:12
+-- Dump completed on 2022-11-07 20:00:34
