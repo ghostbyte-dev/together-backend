@@ -5,6 +5,43 @@ const passport = require('passport')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
+const deleteOrAcceptRequest = async function (req, res, accept) {
+  const requestId = req.body.id
+  const community = await prisma.community.findFirst({
+    where: { fk_admin_id: req.user.id },
+    select: {
+      id: true,
+      request: {
+        where: {
+          id: requestId
+        }
+      }
+    }
+  })
+  if (!community) {
+    helper.resSend(res, null, helper.resStatuses.error, 'No Admin of a Community')
+    return
+  }
+  if (community.request.length === 0) {
+    helper.resSend(res, null, helper.resStatuses.error, 'No request from this user')
+    return
+  }
+  if (accept) {
+    await prisma.user.update({
+      where: { id: community.request[0].fk_user_id },
+      data: {
+        fk_community_id: community.id
+      }
+    })
+  }
+  await prisma.request.delete({
+    where: {
+      id: community.request[0].id
+    }
+  })
+  helper.resSend(res, { message: 'worked' })
+}
+
 router.get('/getbyid/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const communityId = parseInt(req.params.id)
   const community = await prisma.community.findUnique({
@@ -35,14 +72,25 @@ router.get('/requests', passport.authenticate('userAuth', { session: false }), a
   const community = await prisma.community.findFirst({
     where: { fk_admin_id: req.user.id },
     include: {
-      request: true
+      request: {
+        select: {
+          id: true,
+          user: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true
+            }
+          }
+        }
+      }
     }
   })
   if (!community) {
     helper.resSend(res, null, helper.resStatuses.error, 'No Admin of a Community')
     return
   }
-  console.log(community)
+  console.log(community.request)
   helper.resSend(res, community.request)
 })
 
@@ -54,39 +102,12 @@ router.get('/requests/:communityid', passport.authenticate('userAuth', { session
   helper.resSend(res, requests)
 })
 
-router.post('/acceptrequest/', passport.authenticate('userAuth', { session: false }), async (req, res) => {
-  const userId = req.body.userId
-  const community = await prisma.community.findFirst({
-    where: { fk_admin_id: req.user.id },
-    select: {
-      id: true,
-      request: {
-        where: {
-          fk_user_id: userId
-        }
-      }
-    }
-  })
-  if (!community) {
-    helper.resSend(res, null, helper.resStatuses.error, 'No Admin of a Community')
-    return
-  }
-  if (community.request.length === 0) {
-    helper.resSend(res, null, helper.resStatuses.error, 'No request from this user')
-    return
-  }
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      fk_community_id: community.id
-    }
-  })
-  await prisma.request.delete({
-    where: {
-      id: community.request[0].id
-    }
-  })
-  helper.resSend(res, { message: 'worked' })
+router.post('/acceptrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  deleteOrAcceptRequest(req, res, true)
+})
+
+router.post('/denierequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  deleteOrAcceptRequest(req, res, false)
 })
 
 router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
