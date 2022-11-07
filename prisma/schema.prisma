@@ -14,28 +14,10 @@ model community {
   fk_admin_id                      Int
   user_community_fk_admin_idTouser user      @relation("community_fk_admin_idTouser", fields: [fk_admin_id], references: [id], onUpdate: Restrict, map: "community_FK")
   request                          request[]
-  tasks                            tasks[]
+  task                             task[]
   user                             user[]
 
   @@index([fk_admin_id], map: "community_FK")
-}
-
-model tasks {
-  id                              Int       @id @default(autoincrement())
-  name                            String    @db.VarChar(100)
-  description                     String?   @db.Text
-  date                            DateTime  @db.DateTime(0)
-  done                            Boolean   @default(false)
-  fk_creator_id                   Int
-  fk_assigned_id                  Int?
-  fk_community_id                 Int
-  user_tasks_fk_creator_idTouser  user      @relation("tasks_fk_creator_idTouser", fields: [fk_creator_id], references: [id], onUpdate: Restrict, map: "tasks_FK")
-  user_tasks_fk_assigned_idTouser user?     @relation("tasks_fk_assigned_idTouser", fields: [fk_assigned_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "tasks_FK_1")
-  community                       community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "tasks_FK_2")
-
-  @@index([fk_creator_id], map: "tasks_FK")
-  @@index([fk_assigned_id], map: "tasks_FK_1")
-  @@index([fk_community_id], map: "tasks_FK_2")
 }
 
 model user {
@@ -52,8 +34,7 @@ model user {
   community                             community?  @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
   community_community_fk_admin_idTouser community[] @relation("community_fk_admin_idTouser")
   request                               request[]
-  tasks_tasks_fk_creator_idTouser       tasks[]     @relation("tasks_fk_creator_idTouser")
-  tasks_tasks_fk_assigned_idTouser      tasks[]     @relation("tasks_fk_assigned_idTouser")
+  task_user                             task_user[]
 
   @@index([fk_community_id], map: "user_FK")
 }
@@ -68,4 +49,28 @@ model request {
 
   @@index([fk_user_id], map: "requests_FK")
   @@index([fk_community_id], map: "requests_FK_1")
+}
+
+model task {
+  id              Int         @id @default(autoincrement())
+  name            String      @db.VarChar(100)
+  notes           String?     @db.Text
+  date            DateTime    @db.Date
+  done            Boolean     @default(false)
+  fk_community_id Int
+  community       community   @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "tasks_FK_2")
+  task_user       task_user[]
+
+  @@index([fk_community_id], map: "tasks_FK_2")
+}
+
+model task_user {
+  id         Int  @id @default(autoincrement())
+  fk_user_id Int
+  fk_taks_id Int
+  task       task @relation(fields: [fk_taks_id], references: [id], onUpdate: Restrict, map: "task_user_FK")
+  user       user @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "task_user_FK_1")
+
+  @@index([fk_taks_id], map: "task_user_FK")
+  @@index([fk_user_id], map: "task_user_FK_1")
 }

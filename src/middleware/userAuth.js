@@ -9,7 +9,6 @@ const opts = {
 }
 
 module.exports = new JwtStrategy(opts, async function async (jwtPayload, done) {
-  console.log(jwtPayload.id)
   const user = await prisma.user.findUnique({
     where: { id: jwtPayload.id }
   })

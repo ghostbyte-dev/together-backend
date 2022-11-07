@@ -18,6 +18,9 @@ app.use('/user', userRoute)
 const communityRoute = require('./routes/communityRoute')
 app.use('/community', communityRoute)
 
+const taskRoute = require('./routes/taskRoute')
+app.use('/task', taskRoute)
+
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
