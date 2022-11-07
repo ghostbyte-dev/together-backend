@@ -23,7 +23,7 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
   helper.resSend(res, task)
 })
 
-router.get('/getall', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/gettasksininterval', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   if (!req.body.startDate || !req.body.endDate) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
@@ -42,6 +42,7 @@ router.get('/getall', passport.authenticate('userAuth', { session: false }), asy
       }
     ]
   })
+
   helper.resSend(res, tasks)
 })
 
