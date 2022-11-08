@@ -23,6 +23,20 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
   helper.resSend(res, task)
 })
 
+router.put('/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  const taskId = req.body.id
+  const task = await prisma.task.update({
+    where: { id: taskId },
+    data: {
+      name: req.body.name ?? undefined,
+      notes: req.body.notes ?? undefined,
+      date: req.body.date ? new Date(req.body.date) : undefined,
+      done: req.body.done ?? undefined
+    }
+  })
+  helper.resSend(res, task)
+})
+
 router.post('/gettasksininterval', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   if (!req.body.startDate || !req.body.endDate) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
@@ -42,7 +56,6 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
       }
     ]
   })
-  console.log(tasks)
   const routines = await prisma.routine.findMany({
     where: {
       fk_community_id: req.user.fk_community_id
