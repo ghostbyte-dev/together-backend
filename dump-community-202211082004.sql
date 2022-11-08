@@ -74,6 +74,35 @@ LOCK TABLES `request` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `routine`
+--
+
+DROP TABLE IF EXISTS `routine`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `routine` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `startDate` date NOT NULL,
+  `interval` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `fk_community_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `routine_FK` (`fk_community_id`),
+  CONSTRAINT `routine_FK` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `routine`
+--
+
+LOCK TABLES `routine` WRITE;
+/*!40000 ALTER TABLE `routine` DISABLE KEYS */;
+INSERT INTO `routine` VALUES (2,'2022-11-08',2,'Abwaschen',4),(3,'2022-11-07',3,'fooof',4);
+/*!40000 ALTER TABLE `routine` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `task`
 --
 
@@ -87,8 +116,11 @@ CREATE TABLE `task` (
   `date` date NOT NULL,
   `done` tinyint(1) NOT NULL DEFAULT 0,
   `fk_community_id` int(11) NOT NULL,
+  `fk_routine_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `tasks_FK_2` (`fk_community_id`),
+  KEY `task_FK` (`fk_routine_id`),
+  CONSTRAINT `task_FK` FOREIGN KEY (`fk_routine_id`) REFERENCES `routine` (`id`),
   CONSTRAINT `tasks_FK_2` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -99,7 +131,7 @@ CREATE TABLE `task` (
 
 LOCK TABLES `task` WRITE;
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
-INSERT INTO `task` VALUES (2,'Kochen','schnitzel kochen','2022-11-07',0,4),(3,'Release','speeed app fertig machen','2022-11-11',0,4);
+INSERT INTO `task` VALUES (2,'Kochen','schnitzel kochen','2022-11-07',0,4,NULL),(3,'Release','speeed app fertig machen','2022-11-11',0,4,NULL);
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -180,4 +212,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-07 21:44:06
+-- Dump completed on 2022-11-08 20:04:00
