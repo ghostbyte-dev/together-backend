@@ -42,7 +42,25 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
       }
     ]
   })
+  console.log(tasks)
+  const routines = await prisma.routine.findMany({
+    where: {
+      fk_community_id: req.user.fk_community_id
+    }
+  })
+  console.log(routines)
+  routines.forEach(routine => {
+    const date = routine.startDate
 
+    while (date <= new Date(req.body.endDate)) {
+      console.log(date)
+      if (date >= new Date(req.body.startDate)) {
+        tasks.push({ name: routine.name, date: date.toISOString() })
+      }
+      date.setDate(date.getDate() + routine.interval)
+      console.log(date)
+    }
+  })
   helper.resSend(res, tasks)
 })
 
@@ -55,7 +73,8 @@ router.post('/routine/create', passport.authenticate('userAuth', { session: fals
     data: {
       name: req.body.name,
       startDate: new Date(req.body.startDate),
-      interval: req.body.interval
+      interval: req.body.interval,
+      fk_community_id: req.user.fk_community_id
     }
   })
   helper.resSend(res, routine)

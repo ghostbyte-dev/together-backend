@@ -14,6 +14,7 @@ model community {
   fk_admin_id                      Int
   user_community_fk_admin_idTouser user      @relation("community_fk_admin_idTouser", fields: [fk_admin_id], references: [id], onUpdate: Restrict, map: "community_FK")
   request                          request[]
+  routine                          routine[]
   task                             task[]
   user                             user[]
 
@@ -79,9 +80,13 @@ model task_user {
 }
 
 model routine {
-  id        Int      @id @default(autoincrement())
-  startDate DateTime @db.Date
-  interval  Int
-  name      String   @db.VarChar(100)
-  task      task[]
+  id              Int       @id @default(autoincrement())
+  startDate       DateTime  @db.Date
+  interval        Int
+  name            String    @db.VarChar(100)
+  fk_community_id Int
+  community       community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "routine_FK")
+  task            task[]
+
+  @@index([fk_community_id], map: "routine_FK")
 }
