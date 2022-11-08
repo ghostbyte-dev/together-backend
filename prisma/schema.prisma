@@ -58,10 +58,13 @@ model task {
   date            DateTime    @db.Date
   done            Boolean     @default(false)
   fk_community_id Int
+  fk_routine_id   Int?
+  routine         routine?    @relation(fields: [fk_routine_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "task_FK")
   community       community   @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "tasks_FK_2")
   task_user       task_user[]
 
   @@index([fk_community_id], map: "tasks_FK_2")
+  @@index([fk_routine_id], map: "task_FK")
 }
 
 model task_user {
@@ -73,4 +76,12 @@ model task_user {
 
   @@index([fk_taks_id], map: "task_user_FK")
   @@index([fk_user_id], map: "task_user_FK_1")
+}
+
+model routine {
+  id        Int      @id @default(autoincrement())
+  startDate DateTime @db.Date
+  interval  Int
+  name      String   @db.VarChar(100)
+  task      task[]
 }

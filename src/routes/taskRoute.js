@@ -45,4 +45,19 @@ router.get('/getall', passport.authenticate('userAuth', { session: false }), asy
   helper.resSend(res, tasks)
 })
 
+router.post('/routine/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  if (!req.body.name || !req.body.startDate || !req.body.interval) {
+    helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
+    return
+  }
+  const routine = await prisma.routine.create({
+    data: {
+      name: req.body.name,
+      startDate: new Date(req.body.startDate),
+      interval: req.body.interval
+    }
+  })
+  helper.resSend(res, routine)
+})
+
 module.exports = router
