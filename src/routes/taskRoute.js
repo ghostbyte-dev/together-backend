@@ -25,6 +25,10 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
 
 router.put('/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const taskId = req.body.id
+  if (!taskId) {
+    helper.resSend(res, null, helper.resStatuses.error, 'Missing Field ID')
+    return
+  }
   const task = await prisma.task.update({
     where: { id: taskId },
     data: {
@@ -62,18 +66,23 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
     }
   })
   console.log(routines)
-  routines.forEach(routine => {
-    const date = routine.startDate
-
+  for (const routine in routines) {
+    const date = routines[routine].startDate
+    console.log(routines[routine])
     while (date <= new Date(req.body.endDate)) {
-      console.log(date)
       if (date >= new Date(req.body.startDate)) {
-        tasks.push({ name: routine.name, date: date.toISOString() })
+        const task = await prisma.task.findFirst({
+          where: {
+            fk_routine_id: routines[routine].id,
+            date
+          }
+        })
+        console.log(task)
+        tasks.push({ name: routines[routine].name, notes: task ? task.notes : '', date: date.toISOString(), done: task ? task.done : false, fk_community_id: req.user.fk_community_id, fk_routine_id: routines[routine].id })
       }
-      date.setDate(date.getDate() + routine.interval)
-      console.log(date)
+      date.setDate(date.getDate() + routines[routine].interval)
     }
-  })
+  }
   helper.resSend(res, tasks)
 })
 
