@@ -36,6 +36,22 @@ router.get('/getAll', passport.authenticate('userAuth', { session: false }), asy
   helper.resSend(res, user)
 })
 
+router.put('/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  const user = await prisma.user.update({
+    where: {
+      id: req.user.id
+    },
+    data: {
+      firstname: req.body.firstname ?? undefined,
+      lastname: req.body.lastname ?? undefined,
+      email: req.body.email ?? undefined,
+      profile_image: req.body.profile_image ?? undefined,
+      color: req.body.color ?? undefined
+    }
+  })
+  helper.resSend(res, user)
+})
+
 router.post('/sendrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const inviteCode = parseInt(req.body.code)
   console.log(req.body.code)

@@ -32,6 +32,7 @@ model user {
   profile_image                         String?     @default("https://i.imgur.com/pWHgnHA.jpg") @db.VarChar(200)
   firstname                             String      @db.VarChar(100)
   lastname                              String      @db.VarChar(100)
+  color                                 String      @default("#2e3039") @db.VarChar(7)
   community                             community?  @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
   community_community_fk_admin_idTouser community[] @relation("community_fk_admin_idTouser")
   request                               request[]
