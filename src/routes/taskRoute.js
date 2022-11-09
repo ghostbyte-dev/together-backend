@@ -6,7 +6,7 @@ const { PrismaClient } = require('@prisma/client')
 const helper = require('../helper')
 const prisma = new PrismaClient()
 
-router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+const createTask = async (req, res) => {
   if (!req.body.name || !req.body.notes || !req.body.date) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
@@ -21,14 +21,9 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
     }
   })
   helper.resSend(res, task)
-})
+}
 
-router.put('/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
-  const taskId = req.body.id
-  if (!taskId) {
-    helper.resSend(res, null, helper.resStatuses.error, 'Missing Field ID')
-    return
-  }
+const updateTask = async (req, res, taskId) => {
   const task = await prisma.task.update({
     where: { id: taskId },
     data: {
@@ -39,6 +34,15 @@ router.put('/update', passport.authenticate('userAuth', { session: false }), asy
     }
   })
   helper.resSend(res, task)
+}
+
+router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  const taskId = req.body.id
+  if (!taskId) {
+    createTask(req, res)
+  } else {
+    updateTask(req, res, taskId)
+  }
 })
 
 router.post('/gettasksininterval', passport.authenticate('userAuth', { session: false }), async (req, res) => {
