@@ -7,7 +7,7 @@ const helper = require('../helper')
 const prisma = new PrismaClient()
 
 const createTask = async (req, res) => {
-  if (!req.body.name || !req.body.notes || !req.body.date) {
+  if (!req.body.name || !req.body.date) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
   }
@@ -15,7 +15,7 @@ const createTask = async (req, res) => {
   const task = await prisma.task.create({
     data: {
       name: req.body.name,
-      notes: req.body.notes,
+      notes: req.body.notes ?? '',
       date: new Date(req.body.date),
       fk_community_id: req.user.fk_community_id
     }

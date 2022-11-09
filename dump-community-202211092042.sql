@@ -122,7 +122,7 @@ CREATE TABLE `task` (
   KEY `task_FK` (`fk_routine_id`),
   CONSTRAINT `task_FK` FOREIGN KEY (`fk_routine_id`) REFERENCES `routine` (`id`),
   CONSTRAINT `tasks_FK_2` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,7 +131,7 @@ CREATE TABLE `task` (
 
 LOCK TABLES `task` WRITE;
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
-INSERT INTO `task` VALUES (2,'Kochen','schnitzel kochen','2022-11-07',0,4,NULL),(3,'Release','speeed app fertig machen','2022-11-11',0,4,NULL);
+INSERT INTO `task` VALUES (2,'Gym','Leg Day','2022-11-09',0,4,NULL),(3,'Release','speeed app fertig machen','2022-11-11',0,4,NULL),(4,'Kochen','schnitzel kochen','2022-11-14',0,4,NULL),(5,'Kochen','schnitzel kochen','2022-11-14',1,4,NULL);
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -181,6 +181,7 @@ CREATE TABLE `user` (
   `profile_image` varchar(200) DEFAULT 'https://i.imgur.com/pWHgnHA.jpg',
   `firstname` varchar(100) NOT NULL,
   `lastname` varchar(100) NOT NULL,
+  `color` varchar(7) NOT NULL DEFAULT '#2e3039',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_email_un` (`email`),
   UNIQUE KEY `user_un` (`verificationcode`),
@@ -195,7 +196,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (13,4,'emanuel.hiebeler@gmail.com',NULL,1,'$2b$04$SKDzr9AqNo/HTE1iShxl1e6mh5QuBYaMSPrJb28.//XHNYwHdD2HC','2022-11-06','https://i.imgur.com/pWHgnHA.jpg','Emanuel','Hiebeler'),(14,NULL,'hiebeler.daniel@gmail.com','tZxdSufLMr4PdH6DIc-zc6T-P3r6nFkaBduVubKmIDjhN-N4qD-LfQLfjmt3viVfNW8ujlIvp6cxr9Vf-pOfsGNmOR',0,'$2b$04$QtB.KxInNGJIhVGZTbaLOOFqYCJLuOY6Jzor3aBuLHPpttI7IfeSy','2022-11-07','https://i.imgur.com/pWHgnHA.jpg','Daniel','Hiebeler');
+INSERT INTO `user` VALUES (13,4,'emanuel.hiebeler@gmail.com',NULL,1,'$2b$04$SKDzr9AqNo/HTE1iShxl1e6mh5QuBYaMSPrJb28.//XHNYwHdD2HC','2022-11-06','https://i.imgur.com/pWHgnHA.jpg','Emanuel','Hiebeler','#0f2244'),(14,NULL,'hiebeler.daniel@gmail.com','tZxdSufLMr4PdH6DIc-zc6T-P3r6nFkaBduVubKmIDjhN-N4qD-LfQLfjmt3viVfNW8ujlIvp6cxr9Vf-pOfsGNmOR',0,'$2b$04$QtB.KxInNGJIhVGZTbaLOOFqYCJLuOY6Jzor3aBuLHPpttI7IfeSy','2022-11-07','https://i.imgur.com/pWHgnHA.jpg','Daniel','Hiebeler','#2e3039');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,4 +213,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-08 20:04:00
+-- Dump completed on 2022-11-09 20:42:41
