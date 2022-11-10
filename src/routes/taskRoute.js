@@ -17,7 +17,8 @@ const createTask = async (req, res) => {
       name: req.body.name,
       notes: req.body.notes ?? '',
       date: new Date(req.body.date),
-      fk_community_id: req.user.fk_community_id
+      fk_community_id: req.user.fk_community_id,
+      fk_routine_id: req.body.fk_routine_id ?? undefined
     }
   })
   helper.resSend(res, task)
@@ -69,10 +70,8 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
       fk_community_id: req.user.fk_community_id
     }
   })
-  console.log(routines)
   for (const routine in routines) {
     const date = routines[routine].startDate
-    console.log(routines[routine])
     while (date <= new Date(req.body.endDate)) {
       if (date >= new Date(req.body.startDate)) {
         const task = await prisma.task.findFirst({
@@ -82,7 +81,9 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
           }
         })
         console.log(task)
-        tasks.push({ name: routines[routine].name, notes: task ? task.notes : '', date: date.toISOString(), done: task ? task.done : false, fk_community_id: req.user.fk_community_id, fk_routine_id: routines[routine].id })
+        if (!task) {
+          tasks.push({ name: routines[routine].name, notes: task ? task.notes : '', date: date.toISOString(), done: task ? task.done : false, fk_community_id: req.user.fk_community_id, fk_routine_id: routines[routine].id })
+        }
       }
       date.setDate(date.getDate() + routines[routine].interval)
     }
