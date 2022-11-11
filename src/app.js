@@ -2,6 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const passport = require('passport')
+const https = require('https')
+const fs = require('fs')
 
 app.use(cors())
 app.use(express.json())
@@ -21,6 +23,12 @@ app.use('/community', communityRoute)
 const taskRoute = require('./routes/taskRoute')
 app.use('/task', taskRoute)
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
-})
+const options = {
+  key: fs.readFileSync('../key.pem'),
+  cert: fs.readFileSync('../cert.pem')
+}
+
+https.createServer(options, function (req, res) {
+  res.writeHead(200)
+  res.end('hello world\n')
+}).listen(8000)
