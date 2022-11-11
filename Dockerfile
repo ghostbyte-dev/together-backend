@@ -15,5 +15,7 @@ RUN npm install
 # Bundle app source
 COPY . /app
 
+RUN npx prisma generate
+
 EXPOSE 3000
 CMD node src/app.js
