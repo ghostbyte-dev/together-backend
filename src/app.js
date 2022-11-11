@@ -21,11 +21,11 @@ app.use('/community', communityRoute)
 const taskRoute = require('./routes/taskRoute')
 app.use('/task', taskRoute)
 
-app.get('test', (req, res) => {
+app.get('/test', (req, res) => {
   console.log('test')
   res.send('test')
 })
 
 app.listen(3000, () => {
-  console.log('App listening on Port 300')
+  console.log('App listening on Port 3000')
 })
