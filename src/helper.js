@@ -1,6 +1,6 @@
 const mailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
-// const Str = require('@supercharge/strings')
+const Str = require('@supercharge/strings')
 
 const pwStrength = /^(?=.*[A-Za-z])(?=.*\d)[\S]{6,}$/ // mindestens 6 Stellen && eine Zahl && ein Buchstabe
 
@@ -16,8 +16,7 @@ module.exports = {
   },
 
   generateRandomString: function () {
-    // return Str.random(90)
-    return Math.random().toString(36).substring(2, 90 + 2)
+    return Str.random(90)
   },
 
   generateCommunityInviteCode: function () {
