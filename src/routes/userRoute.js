@@ -35,6 +35,23 @@ router.get('/getAll', passport.authenticate('userAuth', { session: false }), asy
   helper.resSend(res, user)
 })
 
+router.get('/getcommunitymembers/:communityId', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  if (!req.params.communityId) {
+    helper.resSend(res, null, helper.resStatuses.error, 'Missing Community Id')
+    return
+  }
+  const user = await prisma.user.findMany({
+    where: {
+      fk_community_id: parseInt(req.params.communityId)
+    }
+  })
+  if (!user) {
+    helper.resSend(res, null, helper.resStatuses.error, 'No User Exists in this Community')
+    return
+  }
+  helper.resSend(res, user)
+})
+
 router.put('/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const user = await prisma.user.update({
     where: {
