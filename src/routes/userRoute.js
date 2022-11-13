@@ -8,7 +8,6 @@ const prisma = new PrismaClient()
 
 router.get('/getUser', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const userId = req.user.id
-  console.log(userId)
   const user = await prisma.user.findUnique({
     where: { id: userId }
   })
@@ -54,7 +53,6 @@ router.put('/update', passport.authenticate('userAuth', { session: false }), asy
 
 router.post('/sendrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const inviteCode = parseInt(req.body.code)
-  console.log(req.body.code)
   if (!inviteCode) {
     helper.resSend(res, null, helper.resStatuses.error, 'Missing Invite Code')
     return

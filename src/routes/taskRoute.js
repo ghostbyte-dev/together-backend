@@ -4,14 +4,34 @@ const passport = require('passport')
 
 const { PrismaClient } = require('@prisma/client')
 const helper = require('../helper')
+const { PrismaClientRustPanicError } = require('@prisma/client/runtime')
 const prisma = new PrismaClient()
+
+const getSingleTask = async (taskId) => {
+  return await prisma.task.findUnique({
+    where: {
+      id: taskId
+    },
+    include: {
+      task_user: {
+        select: {
+          user: {
+            select: {
+              firstname: true,
+              color: true
+            }
+          }
+        }
+      }
+    }
+  })
+}
 
 const createTask = async (req, res) => {
   if (!req.body.name || !req.body.date) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
   }
-  console.log(req.user)
   const task = await prisma.task.create({
     data: {
       name: req.body.name,
@@ -21,7 +41,15 @@ const createTask = async (req, res) => {
       fk_routine_id: req.body.fk_routine_id ?? undefined
     }
   })
-  helper.resSend(res, task)
+  if (req.body.assignedUser) {
+    await prisma.task_user.create({
+      data: {
+        user: { connect: { id: req.body.assignedUser } },
+        task: { connect: { id: task.id } }
+      }
+    })
+  }
+  helper.resSend(res, await getSingleTask(task.id))
 }
 
 const updateTask = async (req, res, taskId) => {
@@ -32,9 +60,34 @@ const updateTask = async (req, res, taskId) => {
       notes: req.body.notes ?? undefined,
       date: req.body.date ? new Date(req.body.date) : undefined,
       done: req.body.done ?? undefined
+    },
+    include: {
+      task_user: {
+        where: {
+          fk_user_id: req.body.assignedUser
+        }
+      }
     }
   })
-  helper.resSend(res, task)
+  console.log(task)
+  if (req.body.assignedUser) {
+    if (task.task_user.length === 0) {
+      await prisma.task_user.create({
+        data: {
+          user: { connect: { id: req.body.assignedUser } },
+          task: { connect: { id: task.id } }
+        }
+      })
+    } else if (task.task_user[0].fk_user_id !== req.body.assignedUser) {
+      await prisma.task_user.create({
+        data: {
+          user: { connect: { id: req.body.assignedUser } },
+          task: { connect: { id: task.id } }
+        }
+      })
+    }
+  }
+  helper.resSend(res, await getSingleTask(taskId))
 }
 
 router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
@@ -59,6 +112,18 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
         lte: new Date(req.body.endDate)
       }
     },
+    include: {
+      task_user: {
+        select: {
+          user: {
+            select: {
+              firstname: true,
+              color: true
+            }
+          }
+        }
+      }
+    },
     orderBy: [
       {
         date: 'asc'
@@ -80,7 +145,6 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
             date
           }
         })
-        console.log(task)
         if (!task) {
           tasks.push({ name: routines[routine].name, notes: task ? task.notes : '', date: date.toISOString(), done: task ? task.done : false, fk_community_id: req.user.fk_community_id, fk_routine_id: routines[routine].id })
         }

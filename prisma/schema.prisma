@@ -72,11 +72,11 @@ model task {
 model task_user {
   id         Int  @id @default(autoincrement())
   fk_user_id Int
-  fk_taks_id Int
-  task       task @relation(fields: [fk_taks_id], references: [id], onUpdate: Restrict, map: "task_user_FK")
+  fk_task_id Int
+  task       task @relation(fields: [fk_task_id], references: [id], onUpdate: Restrict, map: "task_user_FK")
   user       user @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "task_user_FK_1")
 
-  @@index([fk_taks_id], map: "task_user_FK")
+  @@index([fk_task_id], map: "task_user_FK")
   @@index([fk_user_id], map: "task_user_FK_1")
 }
 

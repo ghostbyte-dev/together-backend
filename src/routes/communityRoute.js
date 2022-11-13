@@ -63,8 +63,6 @@ router.get('/getbycode/:code', passport.authenticate('userAuth', { session: fals
     helper.resSend(res, null, helper.resStatuses.error, 'Comunity with the id ' + code.toString() + " doesn't exist")
     return
   }
-
-  console.log(community)
   helper.resSend(res, community)
 })
 
@@ -90,7 +88,6 @@ router.get('/requests', passport.authenticate('userAuth', { session: false }), a
     helper.resSend(res, null, helper.resStatuses.error, 'No Admin of a Community')
     return
   }
-  console.log(community.request)
   helper.resSend(res, community.request)
 })
 
