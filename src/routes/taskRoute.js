@@ -27,6 +27,24 @@ const getSingleTask = async (taskId) => {
   })
 }
 
+const createTaskUserArray = (assignedUsers, taskId) => {
+  const result = []
+  assignedUsers.forEach(element => {
+    result.push(
+      {
+        fk_user_id: element, fk_task_id: taskId
+      }
+    )
+  })
+  return result
+}
+
+const createManyTaskUser = async (assignedUser, taskId) => {
+  await prisma.task_user.createMany({
+    data: createTaskUserArray(assignedUser, taskId)
+  })
+}
+
 const createTask = async (req, res) => {
   if (!req.body.name || !req.body.date) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
@@ -42,12 +60,7 @@ const createTask = async (req, res) => {
     }
   })
   if (req.body.assignedUser) {
-    await prisma.task_user.create({
-      data: {
-        user: { connect: { id: req.body.assignedUser } },
-        task: { connect: { id: task.id } }
-      }
-    })
+    await createManyTaskUser(req.body.assignedUser, task.id)
   }
   helper.resSend(res, await getSingleTask(task.id))
 }
@@ -64,27 +77,14 @@ const updateTask = async (req, res, taskId) => {
     include: {
       task_user: {
         where: {
-          fk_user_id: req.body.assignedUser
+          fk_user_id: { in: req.body.assignedUser }
         }
       }
     }
   })
-  console.log(task)
   if (req.body.assignedUser) {
     if (task.task_user.length === 0) {
-      await prisma.task_user.create({
-        data: {
-          user: { connect: { id: req.body.assignedUser } },
-          task: { connect: { id: task.id } }
-        }
-      })
-    } else if (task.task_user[0].fk_user_id !== req.body.assignedUser) {
-      await prisma.task_user.create({
-        data: {
-          user: { connect: { id: req.body.assignedUser } },
-          task: { connect: { id: task.id } }
-        }
-      })
+      await createManyTaskUser(req.body.assignedUser, task.id)
     }
   }
   helper.resSend(res, await getSingleTask(taskId))
