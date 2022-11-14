@@ -137,6 +137,7 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
         select: {
           user: {
             select: {
+              id: true,
               firstname: true,
               color: true
             }
