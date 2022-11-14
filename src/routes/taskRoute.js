@@ -104,11 +104,13 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
   }
+  const startDate = new Date()
+  startDate.setDate(startDate.getDate() - 1)
   const tasks = await prisma.task.findMany({
     where: {
       fk_community_id: req.user.fk_community_id,
       date: {
-        gte: new Date(req.body.startDate),
+        gte: startDate,
         lte: new Date(req.body.endDate)
       }
     },
