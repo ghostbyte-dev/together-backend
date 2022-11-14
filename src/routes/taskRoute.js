@@ -99,6 +99,24 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
   }
 })
 
+router.delete('/delete', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  if (!req.body.id) {
+    helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
+    return
+  }
+  await prisma.task_user.deleteMany({
+    where: {
+      fk_task_id: req.body.id
+    }
+  })
+  await prisma.task.delete({
+    where: {
+      id: req.body.id
+    }
+  })
+  helper.resSend(res, 'deleted Task ' + req.body.id)
+})
+
 router.post('/gettasksininterval', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   if (!req.body.startDate || !req.body.endDate) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
