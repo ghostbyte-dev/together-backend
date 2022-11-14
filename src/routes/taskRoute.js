@@ -4,7 +4,6 @@ const passport = require('passport')
 
 const { PrismaClient } = require('@prisma/client')
 const helper = require('../helper')
-const { PrismaClientRustPanicError } = require('@prisma/client/runtime')
 const prisma = new PrismaClient()
 
 const getSingleTask = async (taskId) => {
@@ -40,9 +39,10 @@ const createTaskUserArray = (assignedUsers, taskId) => {
 }
 
 const createManyTaskUser = async (assignedUser, taskId) => {
-  await prisma.task_user.createMany({
+  const tasksUser = await prisma.task_user.createMany({
     data: createTaskUserArray(assignedUser, taskId)
   })
+  console.log(tasksUser)
 }
 
 const createTask = async (req, res) => {
@@ -128,7 +128,7 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
     where: {
       fk_community_id: req.user.fk_community_id,
       date: {
-        gte: startDate,
+        gte: new Date(req.body.startDate),
         lte: new Date(req.body.endDate)
       }
     },
