@@ -172,7 +172,7 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
       if (date >= new Date(req.body.startDate.split('T')[0])) {
         const task = await prisma.task.findFirst({
           where: {
-            fk_routine_id: routines[routine].id
+            fk_routine_id: routines[routine].id, date
           }
         })
         if (!task) {
