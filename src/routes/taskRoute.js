@@ -26,12 +26,12 @@ const getSingleTask = async (taskId) => {
   })
 }
 
-const createTaskUserArray = (assignedUsers, taskId) => {
+const createTaskUserArray = (assignedUsers, taskRoutineId, taskOrRoutineString) => {
   const result = []
   assignedUsers.forEach(element => {
     result.push(
       {
-        fk_user_id: element, fk_task_id: taskId
+        fk_user_id: element, [taskOrRoutineString]: taskRoutineId
       }
     )
   })
@@ -40,7 +40,7 @@ const createTaskUserArray = (assignedUsers, taskId) => {
 
 const createManyTaskUser = async (assignedUser, taskId) => {
   const tasksUser = await prisma.task_user.createMany({
-    data: createTaskUserArray(assignedUser, taskId)
+    data: createTaskUserArray(assignedUser, taskId, 'fk_task_id')
   })
   console.log(tasksUser)
 }
@@ -152,20 +152,31 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
   const routines = await prisma.routine.findMany({
     where: {
       fk_community_id: req.user.fk_community_id
+    },
+    include: {
+      routine_user: {
+        select: {
+          user: {
+            select: {
+              firstname: true,
+              color: true
+            }
+          }
+        }
+      }
     }
   })
   for (const routine in routines) {
     const date = routines[routine].startDate
     while (date <= new Date(req.body.endDate)) {
-      if (date >= new Date(req.body.startDate)) {
+      if (date >= new Date(req.body.startDate.split('T')[0])) {
         const task = await prisma.task.findFirst({
           where: {
-            fk_routine_id: routines[routine].id,
-            date
+            fk_routine_id: routines[routine].id
           }
         })
         if (!task) {
-          tasks.push({ name: routines[routine].name, notes: task ? task.notes : '', date: date.toISOString(), done: task ? task.done : false, fk_community_id: req.user.fk_community_id, fk_routine_id: routines[routine].id })
+          tasks.push({ name: routines[routine].name, notes: task ? task.notes : '', date: date.toISOString(), done: task ? task.done : false, fk_community_id: req.user.fk_community_id, fk_routine_id: routines[routine].id, task_user: routines[routine].routine_user })
         }
       }
       date.setDate(date.getDate() + routines[routine].interval)
@@ -174,7 +185,27 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
   helper.resSend(res, tasks)
 })
 
-router.post('/routine/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+const getSingleRoutine = async (routineId) => {
+  return await prisma.routine.findUnique({
+    where: {
+      id: routineId
+    },
+    include: {
+      routine_user: {
+        select: {
+          user: {
+            select: {
+              firstname: true,
+              color: true
+            }
+          }
+        }
+      }
+    }
+  })
+}
+
+const createRoutine = async (req, res) => {
   if (!req.body.name || !req.body.startDate || !req.body.interval) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
@@ -187,7 +218,23 @@ router.post('/routine/create', passport.authenticate('userAuth', { session: fals
       fk_community_id: req.user.fk_community_id
     }
   })
-  helper.resSend(res, routine)
+  if (req.body.assignedUser) {
+    const assignedUser = req.body.assignedUser
+    await prisma.routine_user.createMany({
+      data: createTaskUserArray(assignedUser, routine.id, 'fk_routine_id')
+
+    })
+  }
+  helper.resSend(res, await getSingleRoutine(routine.id))
+}
+
+router.post('/routine/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  const routineId = req.body.id
+  if (!routineId) {
+    createRoutine(req, res)
+  } else {
+    // updateTask(req, res, routineId)
+  }
 })
 
 module.exports = router

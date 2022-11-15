@@ -22,20 +22,21 @@ model community {
 }
 
 model user {
-  id                                    Int         @id @default(autoincrement())
+  id                                    Int            @id @default(autoincrement())
   fk_community_id                       Int?
-  email                                 String      @unique(map: "user_email_un") @db.VarChar(100)
-  verificationcode                      String?     @unique(map: "user_un") @db.VarChar(90)
-  verified                              Boolean     @default(false)
-  password                              String      @db.VarChar(100)
-  creationdate                          DateTime    @default(dbgenerated("(curdate())")) @db.Date
-  profile_image                         String?     @default("https://i.imgur.com/pWHgnHA.jpg") @db.VarChar(200)
-  firstname                             String      @db.VarChar(100)
-  lastname                              String      @db.VarChar(100)
-  color                                 String      @default("#2e3039") @db.VarChar(7)
-  community                             community?  @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
-  community_community_fk_admin_idTouser community[] @relation("community_fk_admin_idTouser")
+  email                                 String         @unique(map: "user_email_un") @db.VarChar(100)
+  verificationcode                      String?        @unique(map: "user_un") @db.VarChar(90)
+  verified                              Boolean        @default(false)
+  password                              String         @db.VarChar(100)
+  creationdate                          DateTime       @default(dbgenerated("(curdate())")) @db.Date
+  profile_image                         String?        @default("https://i.imgur.com/pWHgnHA.jpg") @db.VarChar(200)
+  firstname                             String         @db.VarChar(100)
+  lastname                              String         @db.VarChar(100)
+  color                                 String         @default("#2e3039") @db.VarChar(7)
+  community                             community?     @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
+  community_community_fk_admin_idTouser community[]    @relation("community_fk_admin_idTouser")
   request                               request[]
+  routine_user                          routine_user[]
   task_user                             task_user[]
 
   @@index([fk_community_id], map: "user_FK")
@@ -81,13 +82,25 @@ model task_user {
 }
 
 model routine {
-  id              Int       @id @default(autoincrement())
-  startDate       DateTime  @db.Date
+  id              Int            @id @default(autoincrement())
+  startDate       DateTime       @db.Date
   interval        Int
-  name            String    @db.VarChar(100)
+  name            String         @db.VarChar(100)
   fk_community_id Int
-  community       community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "routine_FK")
+  community       community      @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "routine_FK")
+  routine_user    routine_user[]
   task            task[]
 
   @@index([fk_community_id], map: "routine_FK")
+}
+
+model routine_user {
+  id            Int     @id @default(autoincrement())
+  fk_user_id    Int
+  fk_routine_id Int
+  routine       routine @relation(fields: [fk_routine_id], references: [id], onUpdate: Restrict, map: "routine_user_FK")
+  user          user    @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "routine_user_FK_1")
+
+  @@index([fk_routine_id], map: "routine_user_FK")
+  @@index([fk_user_id], map: "routine_user_FK_1")
 }
