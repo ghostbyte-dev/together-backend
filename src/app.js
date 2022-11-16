@@ -21,6 +21,9 @@ app.use('/community', communityRoute)
 const taskRoute = require('./routes/taskRoute')
 app.use('/task', taskRoute)
 
+const shoppinglistRoute = require('./routes/shoppinglistRoute')
+app.use('/shoppinglist', shoppinglistRoute)
+
 app.get('/test', (req, res) => {
   console.log('test')
   res.send('test')

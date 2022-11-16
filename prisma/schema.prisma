@@ -8,13 +8,14 @@ datasource db {
 }
 
 model community {
-  id                               Int       @id @default(autoincrement())
-  name                             String    @db.VarChar(100)
-  code                             Int       @unique(map: "community_un")
+  id                               Int           @id @default(autoincrement())
+  name                             String        @db.VarChar(100)
+  code                             Int           @unique(map: "community_un")
   fk_admin_id                      Int
-  user_community_fk_admin_idTouser user      @relation("community_fk_admin_idTouser", fields: [fk_admin_id], references: [id], onUpdate: Restrict, map: "community_FK")
+  user_community_fk_admin_idTouser user          @relation("community_fk_admin_idTouser", fields: [fk_admin_id], references: [id], onUpdate: Restrict, map: "community_FK")
   request                          request[]
   routine                          routine[]
+  shoppinglist                     shoppinglist?
   task                             task[]
   user                             user[]
 
@@ -103,4 +104,22 @@ model routine_user {
 
   @@index([fk_routine_id], map: "routine_user_FK")
   @@index([fk_user_id], map: "routine_user_FK_1")
+}
+
+model shoppinglist {
+  id                Int                 @id @default(autoincrement())
+  fk_community_id   Int                 @unique(map: "shoppinglist_un")
+  community         community           @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "shoppinglist_FK")
+  shoppinglist_item shoppinglist_item[]
+}
+
+model shoppinglist_item {
+  id                 Int          @id @default(autoincrement())
+  fk_shoppinglist_id Int
+  name               String       @db.VarChar(100)
+  amount             Int          @default(1)
+  done               Boolean      @default(false)
+  shoppinglist       shoppinglist @relation(fields: [fk_shoppinglist_id], references: [id], onUpdate: Restrict, map: "shoppingIist_item_FK")
+
+  @@index([fk_shoppinglist_id], map: "shoppingIist_item_FK")
 }

@@ -113,21 +113,22 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
     return
   }
   const inviteCode = helper.generateCommunityInviteCode()
-  await prisma.community.create({
+  const community = await prisma.community.create({
     data: {
       name: req.body.name,
       code: inviteCode,
-      fk_admin_id: req.user.id // use id from jwt Token
+      fk_admin_id: req.user.id
     }
-  })
-  const communityId = await prisma.community.findFirst({
-    where: { fk_admin_id: req.user.id },
-    select: { id: true }
   })
   await prisma.user.update({
     where: { id: req.user.id },
     data: {
-      fk_community_id: communityId.id
+      fk_community_id: community.id
+    }
+  })
+  await prisma.shoppinglist.create({
+    data: {
+      fk_community_id: community.id
     }
   })
   helper.resSend(res, { code: inviteCode })
