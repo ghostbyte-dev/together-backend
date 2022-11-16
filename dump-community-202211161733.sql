@@ -31,7 +31,7 @@ CREATE TABLE `community` (
   UNIQUE KEY `community_un` (`code`),
   KEY `community_FK` (`fk_admin_id`),
   CONSTRAINT `community_FK` FOREIGN KEY (`fk_admin_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `community` (
 
 LOCK TABLES `community` WRITE;
 /*!40000 ALTER TABLE `community` DISABLE KEYS */;
-INSERT INTO `community` VALUES (4,'Hiebeler',452674,13);
+INSERT INTO `community` VALUES (4,'Hiebeler',452674,13),(5,'Hiebelers',763847,13);
 /*!40000 ALTER TABLE `community` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,7 +89,7 @@ CREATE TABLE `routine` (
   PRIMARY KEY (`id`),
   KEY `routine_FK` (`fk_community_id`),
   CONSTRAINT `routine_FK` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,8 +98,37 @@ CREATE TABLE `routine` (
 
 LOCK TABLES `routine` WRITE;
 /*!40000 ALTER TABLE `routine` DISABLE KEYS */;
-INSERT INTO `routine` VALUES (2,'2022-11-08',2,'Abwaschen',4),(3,'2022-11-07',3,'fooof',4);
+INSERT INTO `routine` VALUES (18,'2022-11-15',3,'Kochen',4);
 /*!40000 ALTER TABLE `routine` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `routine_user`
+--
+
+DROP TABLE IF EXISTS `routine_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `routine_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_user_id` int(11) NOT NULL,
+  `fk_routine_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `routine_user_FK` (`fk_routine_id`),
+  KEY `routine_user_FK_1` (`fk_user_id`),
+  CONSTRAINT `routine_user_FK` FOREIGN KEY (`fk_routine_id`) REFERENCES `routine` (`id`),
+  CONSTRAINT `routine_user_FK_1` FOREIGN KEY (`fk_user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `routine_user`
+--
+
+LOCK TABLES `routine_user` WRITE;
+/*!40000 ALTER TABLE `routine_user` DISABLE KEYS */;
+INSERT INTO `routine_user` VALUES (19,13,18),(20,14,18);
+/*!40000 ALTER TABLE `routine_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -122,7 +151,7 @@ CREATE TABLE `task` (
   KEY `task_FK` (`fk_routine_id`),
   CONSTRAINT `task_FK` FOREIGN KEY (`fk_routine_id`) REFERENCES `routine` (`id`),
   CONSTRAINT `tasks_FK_2` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,7 +160,6 @@ CREATE TABLE `task` (
 
 LOCK TABLES `task` WRITE;
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
-INSERT INTO `task` VALUES (2,'Gym','Push Day','2022-11-13',0,4,NULL),(3,'Release','speeed app fertig machen','2022-11-11',0,4,NULL),(4,'Kochen','schnitzel kochen','2022-11-14',0,4,NULL),(5,'Kochen','schnitzel kochen','2022-11-14',1,4,NULL),(6,'Abwaschen','bla bla bla','2022-11-08',0,4,NULL),(7,'fooof','adsf','2022-11-07',0,4,3);
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,7 +179,7 @@ CREATE TABLE `task_user` (
   KEY `task_user_FK_1` (`fk_user_id`),
   CONSTRAINT `task_user_FK` FOREIGN KEY (`fk_task_id`) REFERENCES `task` (`id`),
   CONSTRAINT `task_user_FK_1` FOREIGN KEY (`fk_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -160,7 +188,6 @@ CREATE TABLE `task_user` (
 
 LOCK TABLES `task_user` WRITE;
 /*!40000 ALTER TABLE `task_user` DISABLE KEYS */;
-INSERT INTO `task_user` VALUES (13,13,2);
 /*!40000 ALTER TABLE `task_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -188,7 +215,7 @@ CREATE TABLE `user` (
   UNIQUE KEY `user_un` (`verificationcode`),
   KEY `user_FK` (`fk_community_id`),
   CONSTRAINT `user_FK` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,7 +224,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (13,4,'emanuel.hiebeler@gmail.com',NULL,1,'$2b$04$SKDzr9AqNo/HTE1iShxl1e6mh5QuBYaMSPrJb28.//XHNYwHdD2HC','2022-11-06','https://i.imgur.com/pWHgnHA.jpg','Emanuel','Hiebeler','#0f2244'),(14,NULL,'hiebeler.daniel@gmail.com','tZxdSufLMr4PdH6DIc-zc6T-P3r6nFkaBduVubKmIDjhN-N4qD-LfQLfjmt3viVfNW8ujlIvp6cxr9Vf-pOfsGNmOR',0,'$2b$04$QtB.KxInNGJIhVGZTbaLOOFqYCJLuOY6Jzor3aBuLHPpttI7IfeSy','2022-11-07','https://i.imgur.com/pWHgnHA.jpg','Daniel','Hiebeler','#2e3039');
+INSERT INTO `user` VALUES (13,4,'emanuel.hiebeler@gmail.com',NULL,1,'$2b$04$SKDzr9AqNo/HTE1iShxl1e6mh5QuBYaMSPrJb28.//XHNYwHdD2HC','2022-11-06','https://i.imgur.com/pWHgnHA.jpg','Emanuel','Hiebeler','#0f2244'),(14,NULL,'hiebeler.daniel@gmail.com','tZxdSufLMr4PdH6DIc-zc6T-P3r6nFkaBduVubKmIDjhN-N4qD-LfQLfjmt3viVfNW8ujlIvp6cxr9Vf-pOfsGNmOR',0,'$2b$04$QtB.KxInNGJIhVGZTbaLOOFqYCJLuOY6Jzor3aBuLHPpttI7IfeSy','2022-11-07','https://i.imgur.com/pWHgnHA.jpg','Daniel','Hiebeler','#2e3039'),(15,NULL,'test@gmail.com','t9sbMSiCJ8ZkRfXQyYhYMsB6eapWktCF4XzemuYG93TOc8OkypnOX_NJdT8jS2dIFy5hqX38CKJQFbf-PqpMALd1pR',0,'$2b$04$orTvSjibRCHe14trjZhfV.Gg7ndMM5Zg9s3.GL.WZoeRxLQTzYPTa','2022-11-14','https://i.imgur.com/pWHgnHA.jpg','test','test','#2e3039');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -214,4 +241,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-13 21:14:26
+-- Dump completed on 2022-11-16 17:33:53
