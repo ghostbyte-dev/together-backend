@@ -62,9 +62,6 @@ const createTask = async (req, res) => {
       fk_routine_id: req.body.fk_routine_id ?? undefined
     }
   })
-  console.log(req.body)
-  console.log(req.body.assignedUser)
-  console.log(req.body.assignedUser[0] == null)
   if (req.body.assignedUser && req.body.assignedUser[0] !== null) {
     await createManyTaskUser(req.body.assignedUser, task.id)
   }
@@ -88,8 +85,15 @@ const updateTask = async (req, res, taskId) => {
       }
     }
   })
+  console.log(task.task_user)
   if (req.body.assignedUser) {
     if (task.task_user.length === 0) {
+      await createManyTaskUser(req.body.assignedUser, task.id)
+    } else {
+      console.log(task)
+      await prisma.task_user.deleteMany({
+        where: { fk_task_id: task.id }
+      })
       await createManyTaskUser(req.body.assignedUser, task.id)
     }
   }
@@ -98,6 +102,7 @@ const updateTask = async (req, res, taskId) => {
 
 router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const taskId = req.body.id
+  console.log(taskId)
   if (!taskId) {
     createTask(req, res)
   } else {
