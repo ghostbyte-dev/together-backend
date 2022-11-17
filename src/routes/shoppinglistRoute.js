@@ -19,10 +19,22 @@ router.post('/items/add', passport.authenticate('userAuth', { session: false }),
   helper.resSend(res, shoppingItem)
 })
 
-router.get('/items/all', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/items/getundone', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const items = await prisma.shoppinglist_item.findMany({
     where: {
-      fk_community_id: req.user.fk_community_id
+      fk_community_id: req.user.fk_community_id,
+      done: false
+    }
+  })
+  helper.resSend(res, items)
+})
+
+router.get('/items/getdone', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  const items = await prisma.shoppinglist_item.findMany({
+    where: {
+      fk_community_id: req.user.fk_community_id,
+      done: true,
+      done_date: { gte: new Date(new Date().toISOString().split('T')[0]) }
     }
   })
   helper.resSend(res, items)
