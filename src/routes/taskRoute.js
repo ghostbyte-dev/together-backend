@@ -28,7 +28,9 @@ const getSingleTask = async (taskId) => {
 
 const createTaskUserArray = (assignedUsers, taskRoutineId, taskOrRoutineString) => {
   const result = []
+  console.log(assignedUsers)
   assignedUsers.forEach(element => {
+    console.log(element)
     result.push(
       {
         fk_user_id: element, [taskOrRoutineString]: taskRoutineId
@@ -39,6 +41,7 @@ const createTaskUserArray = (assignedUsers, taskRoutineId, taskOrRoutineString) 
 }
 
 const createManyTaskUser = async (assignedUser, taskId) => {
+  console.log(createTaskUserArray(assignedUser, taskId, 'fk_task_id'))
   const tasksUser = await prisma.task_user.createMany({
     data: createTaskUserArray(assignedUser, taskId, 'fk_task_id')
   })
@@ -59,7 +62,10 @@ const createTask = async (req, res) => {
       fk_routine_id: req.body.fk_routine_id ?? undefined
     }
   })
-  if (req.body.assignedUser) {
+  console.log(req.body)
+  console.log(req.body.assignedUser)
+  console.log(req.body.assignedUser[0] == null)
+  if (req.body.assignedUser && req.body.assignedUser[0] !== null) {
     await createManyTaskUser(req.body.assignedUser, task.id)
   }
   helper.resSend(res, await getSingleTask(task.id))
@@ -158,6 +164,7 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
         select: {
           user: {
             select: {
+              id: true,
               firstname: true,
               color: true
             }
