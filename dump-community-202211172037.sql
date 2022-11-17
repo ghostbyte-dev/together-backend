@@ -132,32 +132,6 @@ INSERT INTO `routine_user` VALUES (19,13,18),(20,14,18);
 UNLOCK TABLES;
 
 --
--- Table structure for table `shoppinglist`
---
-
-DROP TABLE IF EXISTS `shoppinglist`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `shoppinglist` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fk_community_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `shoppinglist_un` (`fk_community_id`),
-  CONSTRAINT `shoppinglist_FK` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `shoppinglist`
---
-
-LOCK TABLES `shoppinglist` WRITE;
-/*!40000 ALTER TABLE `shoppinglist` DISABLE KEYS */;
-INSERT INTO `shoppinglist` VALUES (2,4);
-/*!40000 ALTER TABLE `shoppinglist` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `shoppinglist_item`
 --
 
@@ -166,14 +140,14 @@ DROP TABLE IF EXISTS `shoppinglist_item`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `shoppinglist_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fk_shoppinglist_id` int(11) NOT NULL,
+  `fk_community_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `amount` int(11) NOT NULL DEFAULT 1,
   `done` tinyint(1) NOT NULL DEFAULT 0,
+  `done_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `shoppingIist_item_FK` (`fk_shoppinglist_id`),
-  CONSTRAINT `shoppingIist_item_FK` FOREIGN KEY (`fk_shoppinglist_id`) REFERENCES `shoppinglist` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+  KEY `shoppinglist_item_FK` (`fk_community_id`),
+  CONSTRAINT `shoppinglist_item_FK` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,7 +156,6 @@ CREATE TABLE `shoppinglist_item` (
 
 LOCK TABLES `shoppinglist_item` WRITE;
 /*!40000 ALTER TABLE `shoppinglist_item` DISABLE KEYS */;
-INSERT INTO `shoppinglist_item` VALUES (1,2,'Banane',5,0);
 /*!40000 ALTER TABLE `shoppinglist_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -206,7 +179,7 @@ CREATE TABLE `task` (
   KEY `task_FK` (`fk_routine_id`),
   CONSTRAINT `task_FK` FOREIGN KEY (`fk_routine_id`) REFERENCES `routine` (`id`),
   CONSTRAINT `tasks_FK_2` FOREIGN KEY (`fk_community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -215,6 +188,7 @@ CREATE TABLE `task` (
 
 LOCK TABLES `task` WRITE;
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
+INSERT INTO `task` VALUES (57,'Kochen','tsetss','2022-11-18',0,4,18),(58,'Kochen','test','2022-11-30',0,4,18);
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -234,7 +208,7 @@ CREATE TABLE `task_user` (
   KEY `task_user_FK_1` (`fk_user_id`),
   CONSTRAINT `task_user_FK` FOREIGN KEY (`fk_task_id`) REFERENCES `task` (`id`),
   CONSTRAINT `task_user_FK_1` FOREIGN KEY (`fk_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -243,6 +217,7 @@ CREATE TABLE `task_user` (
 
 LOCK TABLES `task_user` WRITE;
 /*!40000 ALTER TABLE `task_user` DISABLE KEYS */;
+INSERT INTO `task_user` VALUES (51,14,58),(52,13,57);
 /*!40000 ALTER TABLE `task_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -296,4 +271,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-16 22:22:44
+-- Dump completed on 2022-11-17 20:37:57

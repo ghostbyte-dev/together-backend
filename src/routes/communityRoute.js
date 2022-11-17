@@ -126,11 +126,6 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
       fk_community_id: community.id
     }
   })
-  await prisma.shoppinglist.create({
-    data: {
-      fk_community_id: community.id
-    }
-  })
   helper.resSend(res, { code: inviteCode })
 })
 
