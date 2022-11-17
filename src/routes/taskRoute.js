@@ -148,7 +148,8 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
             select: {
               id: true,
               firstname: true,
-              color: true
+              color: true,
+              profile_image: true
             }
           }
         }
@@ -171,7 +172,8 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
             select: {
               id: true,
               firstname: true,
-              color: true
+              color: true,
+              profile_image: true
             }
           }
         }
