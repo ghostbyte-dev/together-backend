@@ -6,20 +6,20 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 router.post('/items/add', passport.authenticate('userAuth', { session: false }), async (req, res) => {
-  if (!req.body.name || !req.body.fk_community_id) {
+  if (!req.body.name) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
   }
   const shoppingItem = await prisma.shoppinglist_item.create({
     data: {
       name: req.body.name,
-      fk_community_id: req.body.fk_community_id
+      fk_community_id: req.user.fk_community_id
     }
   })
   helper.resSend(res, shoppingItem)
 })
 
-router.get('/items/getundone', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/items/getopen', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const items = await prisma.shoppinglist_item.findMany({
     where: {
       fk_community_id: req.user.fk_community_id,
