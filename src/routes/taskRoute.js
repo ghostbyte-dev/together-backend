@@ -69,6 +69,7 @@ const createTask = async (req, res) => {
 }
 
 const updateTask = async (req, res, taskId) => {
+  console.log(req.body.assignedUser)
   const task = await prisma.task.update({
     where: { id: taskId },
     data: {
@@ -80,14 +81,15 @@ const updateTask = async (req, res, taskId) => {
     include: {
       task_user: {
         where: {
-          fk_user_id: { in: req.body.assignedUser }
+          fk_task_id: taskId
         }
       }
     }
   })
+  console.log(task)
   console.log(task.task_user)
   if (req.body.assignedUser) {
-    if (task.task_user.length === 0) {
+    if (task.task_user.length === 0 && req.body.assignedUser.length !== 0) {
       await createManyTaskUser(req.body.assignedUser, task.id)
     } else {
       console.log(task)
