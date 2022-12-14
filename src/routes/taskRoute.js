@@ -58,6 +58,7 @@ const createTask = async (req, res) => {
       name: req.body.name,
       notes: req.body.notes ?? '',
       date: new Date(req.body.date),
+      done: req.body.done ?? false,
       fk_community_id: req.user.fk_community_id,
       fk_routine_id: req.body.fk_routine_id ?? undefined
     }
