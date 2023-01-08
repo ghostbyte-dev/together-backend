@@ -1,7 +1,7 @@
 const mailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
 const Str = require('@supercharge/strings')
-
+require('dotenv').config()
 const pwStrength = /^(?=.*[A-Za-z])(?=.*\d)[\S]{6,}$/ // mindestens 6 Stellen && eine Zahl && ein Buchstabe
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
   },
 
   createJWT: function (id, email, username) {
-    return jwt.sign({ id, email, username }, 'community1251', {
+    return jwt.sign({ id, email, username }, process.env.JWT_SECRET, {
       expiresIn: '1y'
     })
   },

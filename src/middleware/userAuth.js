@@ -2,10 +2,11 @@ const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+require('dotenv').config()
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'community1251'
+  secretOrKey: process.env.JWT_SECRET
 }
 
 module.exports = new JwtStrategy(opts, async function async (jwtPayload, done) {

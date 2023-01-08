@@ -15,6 +15,8 @@ RUN npm install
 # Bundle app source
 COPY . /app
 
+ENV DATABASE_URL ""
+
 RUN npx prisma generate
 
 EXPOSE 3000
