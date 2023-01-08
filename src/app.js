@@ -2,6 +2,9 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const passport = require('passport')
+require('dotenv').config()
+
+console.log(process.env.DATABASE_URL)
 
 app.use(cors())
 app.use(express.json())
