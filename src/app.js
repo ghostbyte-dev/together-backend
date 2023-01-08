@@ -24,6 +24,9 @@ app.use('/task', taskRoute)
 const shoppinglistRoute = require('./routes/shoppinglistRoute')
 app.use('/shoppinglist', shoppinglistRoute)
 
+const debtRoute = require('./routes/debtRoute')
+app.use('/debt', debtRoute)
+
 app.get('/test', (req, res) => {
   console.log('test')
   res.send('test')
