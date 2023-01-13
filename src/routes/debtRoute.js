@@ -32,6 +32,28 @@ router.get('/all', passport.authenticate('userAuth', { session: false }), async 
   helper.resSend(res, debts)
 })
 
+router.get('/balance', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  const moneyToPay = await prisma.debt.groupBy({
+    by: ['fk_user_creditor_id'],
+    where: {
+      fk_user_debtor_id: req.user.id
+    },
+    _sum: {
+      amount: true
+    }
+  })
+  const gettingMoney = await prisma.debt.groupBy({
+    by: ['fk_user_debtor_id'],
+    where: {
+      fk_user_creditor_id: req.user.id
+    },
+    _sum: {
+      amount: true
+    }
+  })
+  helper.resSend(res, { gettingMoney, moneyToPay })
+})
+
 router.get('/single/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const debt = await prisma.debt.findUnique({
     where: {
