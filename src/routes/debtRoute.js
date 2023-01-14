@@ -51,8 +51,55 @@ router.get('/balance', passport.authenticate('userAuth', { session: false }), as
       amount: true
     }
   })
-  helper.resSend(res, { gettingMoney, moneyToPay })
+  const result = await createOneBalanceOutOfgettingAndPayingMoney(moneyToPay, gettingMoney, req.user)
+  helper.resSend(res, result)
 })
+
+const createOneBalanceOutOfgettingAndPayingMoney = async (moneyToPay, gettingMoney, myUser) => {
+  const moneyToPayAlreadyAddedToResult = []
+  const result = []
+  const allUsers = await getAllUsers(myUser.fk_community_id)
+  gettingMoney.forEach((element) => {
+    const moneyToPayDebt = moneyToPay.find(el => el.fk_user_creditor_id === element.fk_user_debtor_id)
+    let amount = parseFloat(element._sum.amount)
+    if (moneyToPayDebt !== undefined) {
+      amount -= moneyToPayDebt._sum.amount
+      moneyToPayAlreadyAddedToResult.push(element.fk_user_debtor_id)
+    }
+    const debtorUser = allUsers.find(user => user.id === element.fk_user_debtor_id)
+    if (amount !== 0) {
+      result.push({
+        amount,
+        debtor: debtorUser
+      })
+    }
+  })
+  moneyToPay.forEach((element) => {
+    if (!moneyToPayAlreadyAddedToResult.includes(element.fk_user_creditor_id)) {
+      const debtorUser = allUsers.find(user => user.id === element.fk_user_creditor_id)
+      result.push({
+        amount: element._sum.amount * -1,
+        debtor: debtorUser
+      })
+    }
+  })
+  return result
+}
+
+const getAllUsers = async (communityId) => {
+  const user = await prisma.user.findMany({
+    where: {
+      fk_community_id: communityId
+    },
+    select: {
+      id: true,
+      firstname: true,
+      lastname: true,
+      profile_image: true
+    }
+  })
+  return user
+}
 
 router.get('/single/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const debt = await prisma.debt.findUnique({
