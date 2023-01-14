@@ -38,7 +38,7 @@ model user {
   community                             community?     @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
   community_community_fk_admin_idTouser community[]    @relation("community_fk_admin_idTouser")
   debt_debt_fk_user_creditor_idTouser   debt[]         @relation("debt_fk_user_creditor_idTouser")
-  debt_debt_fk_user_debtor_idTouser     debt[]         @relation("debt_fk_user_debtor_idTouser")
+  debt                                  debt[]         @relation("debt_fk_user_debitor_idTouser")
   request                               request[]
   routine_user                          routine_user[]
   task_user                             task_user[]
@@ -124,14 +124,14 @@ model debt {
   id                                  Int       @id @default(autoincrement())
   fk_community_id                     Int
   fk_user_creditor_id                 Int
-  fk_user_debtor_id                   Int
+  fk_user_debitor_id                  Int
   amount                              Decimal   @db.Decimal(10, 2)
   name                                String    @db.VarChar(100)
   community                           community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "debt_FK")
   user_debt_fk_user_creditor_idTouser user      @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onUpdate: Restrict, map: "debt_FK_1")
-  user_debt_fk_user_debtor_idTouser   user      @relation("debt_fk_user_debtor_idTouser", fields: [fk_user_debtor_id], references: [id], onUpdate: Restrict, map: "debt_FK_2")
+  user                                user      @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onUpdate: Restrict, map: "debt_FK_2")
 
   @@index([fk_community_id], map: "debt_FK")
   @@index([fk_user_creditor_id], map: "debt_FK_1")
-  @@index([fk_user_debtor_id], map: "debt_FK_2")
+  @@index([fk_user_debitor_id], map: "debt_FK_2")
 }

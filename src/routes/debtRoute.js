@@ -15,7 +15,7 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
     data: {
       fk_community_id: req.user.fk_community_id,
       fk_user_creditor_id: req.user.id,
-      fk_user_debtor_id: req.body.debtorId,
+      fk_user_debitor_id: req.body.debtorId,
       name: req.body.name,
       amount: req.body.amount
     }
@@ -36,14 +36,14 @@ router.get('/balance', passport.authenticate('userAuth', { session: false }), as
   const moneyToPay = await prisma.debt.groupBy({
     by: ['fk_user_creditor_id'],
     where: {
-      fk_user_debtor_id: req.user.id
+      fk_user_debitor_id: req.user.id
     },
     _sum: {
       amount: true
     }
   })
   const gettingMoney = await prisma.debt.groupBy({
-    by: ['fk_user_debtor_id'],
+    by: ['fk_user_debitor_id'],
     where: {
       fk_user_creditor_id: req.user.id
     },
@@ -60,13 +60,13 @@ const createOneBalanceOutOfgettingAndPayingMoney = async (moneyToPay, gettingMon
   const result = []
   const allUsers = await getAllUsers(myUser.fk_community_id)
   gettingMoney.forEach((element) => {
-    const moneyToPayDebt = moneyToPay.find(el => el.fk_user_creditor_id === element.fk_user_debtor_id)
+    const moneyToPayDebt = moneyToPay.find(el => el.fk_user_creditor_id === element.fk_user_debitor_id)
     let amount = parseFloat(element._sum.amount)
     if (moneyToPayDebt !== undefined) {
       amount -= moneyToPayDebt._sum.amount
-      moneyToPayAlreadyAddedToResult.push(element.fk_user_debtor_id)
+      moneyToPayAlreadyAddedToResult.push(element.fk_user_debitor_id)
     }
-    const debtorUser = allUsers.find(user => user.id === element.fk_user_debtor_id)
+    const debtorUser = allUsers.find(user => user.id === element.fk_user_debitor_id)
     if (amount !== 0) {
       result.push({
         amount,
