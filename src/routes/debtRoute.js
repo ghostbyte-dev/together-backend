@@ -7,15 +7,16 @@ const helper = require('../helper')
 const prisma = new PrismaClient()
 
 router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
-  if (!req.body.name || !req.body.amount || !req.body.debtorId) {
+  console.log(req.body)
+  if (!req.body.name || !req.body.amount || !req.body.debitorId) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
   }
   const debt = await prisma.debt.create({
     data: {
       fk_community_id: req.user.fk_community_id,
-      fk_user_creditor_id: req.user.id,
-      fk_user_debitor_id: req.body.debtorId,
+      fk_user_creditor_id: req.body.creditorId,
+      fk_user_debitor_id: req.body.debitorId,
       name: req.body.name,
       amount: req.body.amount
     }
