@@ -7,7 +7,7 @@ const doc = {
     description: 'API for Kommiuniti App'
   },
   host: process.env.HOST,
-  schemes: ['http'],
+  schemes: ['http', 'https'],
   consumes: ['application/json'],
   produces: ['application/json'],
   securityDefinitions: {

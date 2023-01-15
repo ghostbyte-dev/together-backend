@@ -5,10 +5,11 @@
     "description": "API for Kommiuniti App",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "api.community.daniebeler.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "http",
+    "https"
   ],
   "securityDefinitions": {
     "Bearer": {
