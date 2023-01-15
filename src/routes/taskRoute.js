@@ -252,7 +252,7 @@ const createRoutine = async (req, res) => {
 }
 
 const updateRoutine = async (req, res, routineId) => {
-  if (req.body.name || req.body.startDate || req.body.interval || req.body.active) {
+  if (req.body.name || req.body.startDate || req.body.interval || req.body.active !== undefined) {
     await prisma.routine.update({
       where: {
         id: routineId
