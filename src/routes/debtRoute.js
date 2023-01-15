@@ -24,11 +24,46 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
   helper.resSend(res, debt)
 })
 
-router.get('/all', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/mine', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   const debts = await prisma.debt.findMany({
     where: {
-      fk_community_id: req.user.fk_community_id
-    }
+      fk_community_id: req.user.fk_community_id,
+      OR: [
+        {
+          fk_user_creditor_id: req.user.id
+        },
+        {
+          fk_user_debitor_id: req.user.id
+        }
+      ]
+    },
+    select: {
+      id: true,
+      name: true,
+      amount: true,
+      timestamp: true,
+      user_debt_fk_user_creditor_idTouser: {
+        select: {
+          firstname: true,
+          lastname: true,
+          color: true,
+          profile_image: true
+        }
+      },
+      user: {
+        select: {
+          firstname: true,
+          lastname: true,
+          color: true,
+          profile_image: true
+        }
+      }
+    },
+    orderBy: [
+      {
+        timestamp: 'desc'
+      }
+    ]
   })
   helper.resSend(res, debts)
 })

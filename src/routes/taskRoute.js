@@ -293,7 +293,8 @@ router.get('/routine/all', passport.authenticate('userAuth', { session: false })
           user: {
             select: {
               firstname: true,
-              color: true
+              color: true,
+              profile_image: true
             }
           }
         }
