@@ -91,6 +91,7 @@ model routine {
   interval        Int
   name            String         @db.VarChar(100)
   fk_community_id Int
+  active          Boolean        @default(true)
   community       community      @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "routine_FK")
   routine_user    routine_user[]
   task            task[]

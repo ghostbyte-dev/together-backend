@@ -166,7 +166,8 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
   })
   const routines = await prisma.routine.findMany({
     where: {
-      fk_community_id: req.user.fk_community_id
+      fk_community_id: req.user.fk_community_id,
+      active: true
     },
     include: {
       routine_user: {
@@ -246,7 +247,7 @@ const createRoutine = async (req, res) => {
 }
 
 const updateRoutine = async (req, res, routineId) => {
-  if (req.body.name || req.body.startDate || req.body.interval) {
+  if (req.body.name || req.body.startDate || req.body.interval || req.body.active) {
     await prisma.routine.update({
       where: {
         id: routineId
@@ -255,6 +256,7 @@ const updateRoutine = async (req, res, routineId) => {
         name: req.body.name ?? undefined,
         startDate: req.body.startDate ? new Date(req.body.startDate) : undefined,
         interval: req.body.interval ?? undefined,
+        active: req.body.active ?? undefined,
         fk_community_id: req.user.fk_community_id
       }
     })
