@@ -303,6 +303,7 @@ router.get('/routine/all', passport.authenticate('userAuth', { session: false })
         select: {
           user: {
             select: {
+              id: true,
               firstname: true,
               color: true,
               profile_image: true
