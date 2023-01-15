@@ -7,6 +7,8 @@ const helper = require('../helper')
 const prisma = new PrismaClient()
 
 router.get('/getUser', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['User']
+  /* #swagger.security = [{"Bearer": []}] */
   const userId = req.user.id
   const user = await prisma.user.findUnique({
     where: { id: userId }
@@ -15,6 +17,8 @@ router.get('/getUser', passport.authenticate('userAuth', { session: false }), as
 })
 
 router.get('/databyuserid/:userid', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['User']
+  /* #swagger.security = [{"Bearer": []}] */
   const userId = parseInt(req.params.userid)
   const user = await prisma.user.findUnique({
     where: { id: userId }
@@ -27,6 +31,8 @@ router.get('/databyuserid/:userid', passport.authenticate('userAuth', { session:
 })
 
 router.get('/getAll', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['User']
+  /* #swagger.security = [{"Bearer": []}] */
   const user = await prisma.user.findMany()
   if (!user) {
     helper.resSend(res, null, helper.resStatuses.error, 'No User Exists')
@@ -36,6 +42,8 @@ router.get('/getAll', passport.authenticate('userAuth', { session: false }), asy
 })
 
 router.get('/getcommunitymembers/:communityId', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['User']
+  /* #swagger.security = [{"Bearer": []}] */
   if (!req.params.communityId) {
     helper.resSend(res, null, helper.resStatuses.error, 'Missing Community Id')
     return
@@ -53,6 +61,8 @@ router.get('/getcommunitymembers/:communityId', passport.authenticate('userAuth'
 })
 
 router.put('/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['User']
+  /* #swagger.security = [{"Bearer": []}] */
   const user = await prisma.user.update({
     where: {
       id: req.user.id
@@ -69,6 +79,8 @@ router.put('/update', passport.authenticate('userAuth', { session: false }), asy
 })
 
 router.post('/sendrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['User']
+  /* #swagger.security = [{"Bearer": []}] */
   const inviteCode = parseInt(req.body.code)
   if (!inviteCode) {
     helper.resSend(res, null, helper.resStatuses.error, 'Missing Invite Code')

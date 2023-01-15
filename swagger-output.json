@@ -1,0 +1,752 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Kommiuniti API",
+    "description": "API for Kommiuniti App",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/registration/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Registrate a new user.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "firstname": {
+                  "example": "any"
+                },
+                "lastname": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/registration/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Login",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/registration/verify/{code}": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Verfy a new account",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/user/getUser": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/user/databyuserid/{userid}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/user/getAll": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/user/getcommunitymembers/{communityId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "communityId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/user/update": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstname": {
+                  "example": "any"
+                },
+                "lastname": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "profile_image": {
+                  "example": "any"
+                },
+                "color": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/user/sendrequest": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/community/getbyid/{id}": {
+      "get": {
+        "tags": [
+          "Community"
+        ],
+        "description": "Get Community by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/community/getbycode/{code}": {
+      "get": {
+        "tags": [
+          "Community"
+        ],
+        "description": "Find Community by the invite code",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/community/requests": {
+      "get": {
+        "tags": [
+          "Community"
+        ],
+        "description": "Get all requests to a community, only admin can do this",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/community/requests/{communityid}": {
+      "get": {
+        "tags": [
+          "Community"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "communityid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/community/acceptrequest": {
+      "post": {
+        "tags": [
+          "Community"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/community/denierequest": {
+      "post": {
+        "tags": [
+          "Community"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/community/create": {
+      "post": {
+        "tags": [
+          "Community"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/task/create": {
+      "post": {
+        "tags": [
+          "Task"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "name": {
+                  "example": "any"
+                },
+                "date": {
+                  "example": "any"
+                },
+                "notes": {
+                  "example": "any"
+                },
+                "done": {
+                  "example": "any"
+                },
+                "fk_routine_id": {
+                  "example": "any"
+                },
+                "assignedUser": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/task/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Task"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/task/gettasksininterval": {
+      "post": {
+        "tags": [
+          "Task"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "startDate": {
+                  "example": "any"
+                },
+                "endDate": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/task/routine/modify": {
+      "post": {
+        "tags": [
+          "Task"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "name": {
+                  "example": "any"
+                },
+                "startDate": {
+                  "example": "any"
+                },
+                "interval": {
+                  "example": "any"
+                },
+                "assignedUser": {
+                  "example": "any"
+                },
+                "active": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/task/routine/all": {
+      "get": {
+        "tags": [
+          "Task"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/shoppinglist/items/add": {
+      "post": {
+        "tags": [
+          "Shopping List"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/shoppinglist/items/getopen": {
+      "get": {
+        "tags": [
+          "Shopping List"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/shoppinglist/items/getdone": {
+      "get": {
+        "tags": [
+          "Shopping List"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/shoppinglist/items/update": {
+      "put": {
+        "tags": [
+          "Shopping List"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "done": {
+                  "example": "any"
+                },
+                "name": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/debt/create": {
+      "post": {
+        "tags": [
+          "Debt"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                },
+                "amount": {
+                  "example": "any"
+                },
+                "debitorId": {
+                  "example": "any"
+                },
+                "creditorId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/debt/mine": {
+      "get": {
+        "tags": [
+          "Debt"
+        ],
+        "description": "Endpoint to get all debts of a user.",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/debt/balance": {
+      "get": {
+        "tags": [
+          "Debt"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/debt/single/{id}": {
+      "get": {
+        "tags": [
+          "Debt"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {},
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  }
+}

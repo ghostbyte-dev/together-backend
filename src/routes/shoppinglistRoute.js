@@ -6,6 +6,8 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 router.post('/items/add', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Shopping List']
+  /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.name) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
@@ -20,6 +22,8 @@ router.post('/items/add', passport.authenticate('userAuth', { session: false }),
 })
 
 router.get('/items/getopen', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Shopping List']
+  /* #swagger.security = [{"Bearer": []}] */
   const items = await prisma.shoppinglist_item.findMany({
     where: {
       fk_community_id: req.user.fk_community_id,
@@ -30,6 +34,8 @@ router.get('/items/getopen', passport.authenticate('userAuth', { session: false 
 })
 
 router.get('/items/getdone', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Shopping List']
+  /* #swagger.security = [{"Bearer": []}] */
   const items = await prisma.shoppinglist_item.findMany({
     where: {
       fk_community_id: req.user.fk_community_id,
@@ -41,6 +47,8 @@ router.get('/items/getdone', passport.authenticate('userAuth', { session: false 
 })
 
 router.put('/items/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Shopping List']
+  /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.id) {
     helper.resSend(res, null, helper.resStatuses.error, 'Missing Id')
     return

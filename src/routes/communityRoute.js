@@ -43,6 +43,9 @@ const deleteOrAcceptRequest = async function (req, res, accept) {
 }
 
 router.get('/getbyid/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Community']
+  // #swagger.description = 'Get Community by id'
+  /* #swagger.security = [{"Bearer": []}] */
   const communityId = parseInt(req.params.id)
   const community = await prisma.community.findUnique({
     where: { id: communityId }
@@ -55,6 +58,9 @@ router.get('/getbyid/:id', passport.authenticate('userAuth', { session: false })
 })
 
 router.get('/getbycode/:code', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Community']
+  // #swagger.description = 'Find Community by the invite code'
+  /* #swagger.security = [{"Bearer": []}] */
   const code = parseInt(req.params.code)
   const community = await prisma.community.findUnique({
     where: { code }
@@ -67,6 +73,9 @@ router.get('/getbycode/:code', passport.authenticate('userAuth', { session: fals
 })
 
 router.get('/requests', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Community']
+  // #swagger.description = 'Get all requests to a community, only admin can do this'
+  /* #swagger.security = [{"Bearer": []}] */
   const community = await prisma.community.findFirst({
     where: { fk_admin_id: req.user.id },
     include: {
@@ -92,6 +101,8 @@ router.get('/requests', passport.authenticate('userAuth', { session: false }), a
 })
 
 router.get('/requests/:communityid', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Community']
+  /* #swagger.security = [{"Bearer": []}] */
   const communityId = parseInt(req.params.communityid)
   const requests = await prisma.request.findMany({
     where: { fk_community_id: communityId }
@@ -100,14 +111,20 @@ router.get('/requests/:communityid', passport.authenticate('userAuth', { session
 })
 
 router.post('/acceptrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Community']
+  /* #swagger.security = [{"Bearer": []}] */
   deleteOrAcceptRequest(req, res, true)
 })
 
 router.post('/denierequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Community']
+  /* #swagger.security = [{"Bearer": []}] */
   deleteOrAcceptRequest(req, res, false)
 })
 
 router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Community']
+  /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.name) {
     helper.resSend(res, null, helper.resStatuses.error, 'missing Name')
     return

@@ -104,6 +104,8 @@ const updateTask = async (req, res, taskId) => {
 }
 
 router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Task']
+  /* #swagger.security = [{"Bearer": []}] */
   const taskId = req.body.id
   console.log(taskId)
   if (!taskId) {
@@ -114,6 +116,8 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
 })
 
 router.delete('/delete/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Task']
+  /* #swagger.security = [{"Bearer": []}] */
   if (!req.params.id || isNaN(req.params.id)) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
@@ -132,6 +136,8 @@ router.delete('/delete/:id', passport.authenticate('userAuth', { session: false 
 })
 
 router.post('/gettasksininterval', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Task']
+  /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.startDate || !req.body.endDate) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
@@ -240,7 +246,6 @@ const createRoutine = async (req, res) => {
     const assignedUser = req.body.assignedUser
     await prisma.routine_user.createMany({
       data: createTaskUserArray(assignedUser, routine.id, 'fk_routine_id')
-
     })
   }
   helper.resSend(res, await getSingleRoutine(routine.id))
@@ -276,6 +281,8 @@ const updateRoutine = async (req, res, routineId) => {
 }
 
 router.post('/routine/modify', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Task']
+  /* #swagger.security = [{"Bearer": []}] */
   const routineId = req.body.id
   if (!routineId) {
     createRoutine(req, res)
@@ -285,6 +292,8 @@ router.post('/routine/modify', passport.authenticate('userAuth', { session: fals
 })
 
 router.get('/routine/all', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Task']
+  /* #swagger.security = [{"Bearer": []}] */
   const routines = await prisma.routine.findMany({
     where: {
       fk_community_id: req.user.fk_community_id

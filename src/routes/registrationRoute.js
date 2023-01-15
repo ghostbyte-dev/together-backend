@@ -6,6 +6,9 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 router.post('/register', async (req, res) => {
+  // #swagger.tags = ['Authentication']
+  // #swagger.description = 'Registrate a new user.'
+
   if (
     !req.body.email ||
     !req.body.firstname ||
@@ -61,6 +64,8 @@ router.post('/register', async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
+  // #swagger.tags = ['Authentication']
+  // #swagger.description = 'Login'
   if (!req.body.email || !req.body.password) {
     return res.json({ message: 'Empty fields!' })
   } else {
@@ -96,6 +101,8 @@ router.post('/login', async (req, res) => {
 })
 
 router.get('/verify/:code', async (req, res) => {
+  // #swagger.tags = ['Authentication']
+  // #swagger.description = 'Verfy a new account'
   const verified = await prisma.user.findFirst({
     where: { verificationcode: req.params.code },
     select: {

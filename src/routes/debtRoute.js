@@ -7,6 +7,8 @@ const helper = require('../helper')
 const prisma = new PrismaClient()
 
 router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Debt']
+  /* #swagger.security = [{"Bearer": []}] */
   console.log(req.body)
   if (!req.body.name || !req.body.amount || !req.body.debitorId) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
@@ -25,6 +27,9 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
 })
 
 router.get('/mine', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Debt']
+  // #swagger.description = 'Endpoint to get all debts of a user.'
+  /* #swagger.security = [{"Bearer": []}] */
   const debts = await prisma.debt.findMany({
     where: {
       fk_community_id: req.user.fk_community_id,
@@ -69,6 +74,8 @@ router.get('/mine', passport.authenticate('userAuth', { session: false }), async
 })
 
 router.get('/balance', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Debt']
+  /* #swagger.security = [{"Bearer": []}] */
   const moneyToPay = await prisma.debt.groupBy({
     by: ['fk_user_creditor_id'],
     where: {
@@ -138,6 +145,8 @@ const getAllUsers = async (communityId) => {
 }
 
 router.get('/single/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Debt']
+  /* #swagger.security = [{"Bearer": []}] */
   const debt = await prisma.debt.findUnique({
     where: {
       id: parseInt(req.params.id)
