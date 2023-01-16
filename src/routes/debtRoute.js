@@ -52,7 +52,8 @@ router.get('/mine', passport.authenticate('userAuth', { session: false }), async
           firstname: true,
           lastname: true,
           color: true,
-          profile_image: true
+          profile_image: true,
+          id: true
         }
       },
       user: {
@@ -60,7 +61,8 @@ router.get('/mine', passport.authenticate('userAuth', { session: false }), async
           firstname: true,
           lastname: true,
           color: true,
-          profile_image: true
+          profile_image: true,
+          id: true
         }
       }
     },
