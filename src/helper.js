@@ -9,8 +9,8 @@ module.exports = {
     return pwStrength.test(password)
   },
 
-  createJWT: function (id, email, username) {
-    return jwt.sign({ id, email, username }, process.env.JWT_SECRET, {
+  createJWT: function (id, email, username, communityId) {
+    return jwt.sign({ id, email, username, communityId }, process.env.JWT_SECRET, {
       expiresIn: '1y'
     })
   },

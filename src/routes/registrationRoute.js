@@ -89,7 +89,8 @@ router.post('/login', async (req, res) => {
           const usertoken = helper.createJWT(
             user.id,
             user.email,
-            user.username
+            user.username,
+            user.fk_community_id
           )
 
           const answer = { token: usertoken }
