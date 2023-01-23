@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcrypt')
 const helper = require('../helper')
+const passport = require('passport')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
@@ -99,6 +100,25 @@ router.post('/login', async (req, res) => {
       }
     )
   }
+})
+
+router.get('/getnewtoken', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+  // #swagger.tags = ['Authentication']
+  // #swagger.description = 'Get new JWT'
+
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id }
+  })
+
+  const usertoken = helper.createJWT(
+    user.id,
+    user.email,
+    user.username,
+    user.fk_community_id
+  )
+
+  const answer = { token: usertoken }
+  helper.resSend(res, answer)
 })
 
 router.get('/verify/:code', async (req, res) => {
