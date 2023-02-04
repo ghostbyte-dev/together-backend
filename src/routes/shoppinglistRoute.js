@@ -24,26 +24,35 @@ router.post('/items/add', passport.authenticate('userAuth', { session: false }),
 router.get('/items/getopen', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   // #swagger.tags = ['Shopping List']
   /* #swagger.security = [{"Bearer": []}] */
-  const items = await prisma.shoppinglist_item.findMany({
-    where: {
-      fk_community_id: req.user.fk_community_id,
-      done: false
-    }
-  })
-  helper.resSend(res, items)
+  if (req.user.fk_community_id) {
+    const items = await prisma.shoppinglist_item.findMany({
+      where: {
+        fk_community_id: req.user.fk_community_id,
+        done: false
+      }
+    })
+    helper.resSend(res, items)
+  } else {
+    helper.resSend(res, [])
+  }
 })
 
 router.get('/items/getdone', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   // #swagger.tags = ['Shopping List']
   /* #swagger.security = [{"Bearer": []}] */
-  const items = await prisma.shoppinglist_item.findMany({
-    where: {
-      fk_community_id: req.user.fk_community_id,
-      done: true,
-      done_date: { gte: new Date(new Date().toISOString().split('T')[0]) }
-    }
-  })
-  helper.resSend(res, items)
+  if (req.user.fk_community_id) {
+    const items = await prisma.shoppinglist_item.findMany({
+      where: {
+        fk_community_id: req.user.fk_community_id,
+        done: true,
+        done_date: { gte: new Date(new Date().toISOString().split('T')[0]) }
+      }
+    })
+    console.log(items)
+    helper.resSend(res, items)
+  } else {
+    helper.resSend(res, [])
+  }
 })
 
 router.put('/items/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
