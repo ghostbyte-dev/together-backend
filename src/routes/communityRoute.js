@@ -64,11 +64,15 @@ router.get('/getbycode/:code', passport.authenticate('userAuth', { session: fals
   const code = parseInt(req.params.code)
   const community = await prisma.community.findUnique({
     where: { code },
-    select: {
-      id: true,
-      name: true,
-      code: true,
-      fk_admin_id: true,
+    include: {
+      user_community_fk_admin_idTouser: {
+        select: {
+          id: true,
+          firstname: true,
+          lastname: true,
+          profile_image: true
+        }
+      },
       _count: {
         select: {
           user: true
@@ -80,7 +84,8 @@ router.get('/getbycode/:code', passport.authenticate('userAuth', { session: fals
     helper.resSend(res, null, helper.resStatuses.error, 'Comunity with the id ' + code.toString() + " doesn't exist")
     return
   }
-  helper.resSend(res, { id: community.id, name: community.name, code: community.code, adminId: community.fk_admin_id, userCount: community._count.user })
+  console.log(community)
+  helper.resSend(res, { id: community.id, name: community.name, code: community.code, admin: community.user_community_fk_admin_idTouser, userCount: community._count.user })
 })
 
 router.get('/requests', passport.authenticate('userAuth', { session: false }), async (req, res) => {
