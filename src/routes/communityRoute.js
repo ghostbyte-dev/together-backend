@@ -133,7 +133,7 @@ router.post('/acceptrequest', passport.authenticate('userAuth', { session: false
   deleteOrAcceptRequest(req, res, true)
 })
 
-router.post('/denierequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/denyrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
   // #swagger.tags = ['Community']
   /* #swagger.security = [{"Bearer": []}] */
   deleteOrAcceptRequest(req, res, false)
