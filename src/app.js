@@ -1,15 +1,11 @@
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const passport = require('passport')
 const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('../swagger-output.json')
 
 app.use(cors())
 app.use(express.json())
-
-const userAuth = require('./middleware/userAuth')
-passport.use('userAuth', userAuth)
 
 const registrationRoute = require('./routes/registrationRoute')
 app.use('/registration', registrationRoute)

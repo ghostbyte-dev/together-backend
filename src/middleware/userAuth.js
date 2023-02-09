@@ -1,21 +1,20 @@
-const JwtStrategy = require('passport-jwt').Strategy
-const ExtractJwt = require('passport-jwt').ExtractJwt
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
-require('dotenv').config()
+const jwt = require('jsonwebtoken')
 
-const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET
+const config = process.env
+
+const auth = (req, res, next) => {
+  const token = req.headers.authorization.split(' ')[1]
+
+  if (!token) {
+    return res.status(403).send('A token is required for authentication')
+  }
+  try {
+    const decoded = jwt.verify(token, config.JWT_SECRET)
+    req.user = decoded
+  } catch (err) {
+    return res.status(401).send('Invalid Token')
+  }
+  return next()
 }
 
-module.exports = new JwtStrategy(opts, async function async (jwtPayload, done) {
-  const user = await prisma.user.findUnique({
-    where: { id: jwtPayload.id }
-  })
-  if (user) {
-    return done(null, user)
-  } else {
-    return done(null, false)
-  }
-})
+module.exports = auth

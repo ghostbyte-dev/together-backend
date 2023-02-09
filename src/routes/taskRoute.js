@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const passport = require('passport')
-
+const auth = require('../middleware/userAuth')
 const { PrismaClient } = require('@prisma/client')
 const helper = require('../helper')
 const prisma = new PrismaClient()
@@ -59,7 +58,7 @@ const createTask = async (req, res) => {
       notes: req.body.notes ?? '',
       date: new Date(req.body.date),
       done: req.body.done ?? false,
-      fk_community_id: req.user.fk_community_id,
+      fk_community_id: req.user.communityId,
       fk_routine_id: req.body.fk_routine_id ?? undefined
     }
   })
@@ -103,7 +102,7 @@ const updateTask = async (req, res, taskId) => {
   helper.resSend(res, await getSingleTask(taskId))
 }
 
-router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/create', auth, async (req, res) => {
   // #swagger.tags = ['Task']
   /* #swagger.security = [{"Bearer": []}] */
   const taskId = req.body.id
@@ -115,7 +114,7 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
   }
 })
 
-router.delete('/delete/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.delete('/delete/:id', auth, async (req, res) => {
   // #swagger.tags = ['Task']
   /* #swagger.security = [{"Bearer": []}] */
   if (!req.params.id || isNaN(req.params.id)) {
@@ -135,7 +134,7 @@ router.delete('/delete/:id', passport.authenticate('userAuth', { session: false 
   helper.resSend(res, 'deleted Task ' + req.params.id)
 })
 
-router.post('/gettasksininterval', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/gettasksininterval', auth, async (req, res) => {
   // #swagger.tags = ['Task']
   /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.startDate || !req.body.endDate) {
@@ -144,7 +143,7 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
   }
   const tasks = await prisma.task.findMany({
     where: {
-      fk_community_id: req.user.fk_community_id,
+      fk_community_id: req.user.communityId,
       date: {
         gte: new Date(req.body.startDate.split('T')[0]),
         lte: new Date(req.body.endDate)
@@ -172,7 +171,7 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
   })
   const routines = await prisma.routine.findMany({
     where: {
-      fk_community_id: req.user.fk_community_id,
+      fk_community_id: req.user.communityId,
       active: true
     },
     include: {
@@ -200,7 +199,7 @@ router.post('/gettasksininterval', passport.authenticate('userAuth', { session: 
           }
         })
         if (!task) {
-          tasks.push({ name: routines[routine].name, notes: task ? task.notes : '', date: date.toISOString(), done: task ? task.done : false, fk_community_id: req.user.fk_community_id, fk_routine_id: routines[routine].id, task_user: routines[routine].routine_user })
+          tasks.push({ name: routines[routine].name, notes: task ? task.notes : '', date: date.toISOString(), done: task ? task.done : false, fk_community_id: req.user.communityId, fk_routine_id: routines[routine].id, task_user: routines[routine].routine_user })
         }
       }
       date.setDate(date.getDate() + routines[routine].interval)
@@ -239,7 +238,7 @@ const createRoutine = async (req, res) => {
       name: req.body.name,
       startDate: new Date(req.body.startDate),
       interval: req.body.interval,
-      fk_community_id: req.user.fk_community_id
+      fk_community_id: req.user.communityId
     }
   })
   if (req.body.assignedUser) {
@@ -262,7 +261,7 @@ const updateRoutine = async (req, res, routineId) => {
         startDate: req.body.startDate ? new Date(req.body.startDate) : undefined,
         interval: req.body.interval ?? undefined,
         active: req.body.active ?? undefined,
-        fk_community_id: req.user.fk_community_id
+        fk_community_id: req.user.communityId
       }
     })
   }
@@ -280,7 +279,7 @@ const updateRoutine = async (req, res, routineId) => {
   helper.resSend(res, await getSingleRoutine(routineId))
 }
 
-router.post('/routine/modify', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/routine/modify', auth, async (req, res) => {
   // #swagger.tags = ['Task']
   /* #swagger.security = [{"Bearer": []}] */
   const routineId = req.body.id
@@ -291,12 +290,12 @@ router.post('/routine/modify', passport.authenticate('userAuth', { session: fals
   }
 })
 
-router.get('/routine/all', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/routine/all', auth, async (req, res) => {
   // #swagger.tags = ['Task']
   /* #swagger.security = [{"Bearer": []}] */
   const routines = await prisma.routine.findMany({
     where: {
-      fk_community_id: req.user.fk_community_id
+      fk_community_id: req.user.communityId
     },
     include: {
       routine_user: {

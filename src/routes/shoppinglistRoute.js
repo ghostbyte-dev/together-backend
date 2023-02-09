@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const helper = require('../helper')
-const passport = require('passport')
+const auth = require('../middleware/userAuth')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-router.post('/items/add', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/items/add', auth, async (req, res) => {
   // #swagger.tags = ['Shopping List']
   /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.name) {
@@ -15,19 +15,19 @@ router.post('/items/add', passport.authenticate('userAuth', { session: false }),
   const shoppingItem = await prisma.shoppinglist_item.create({
     data: {
       name: req.body.name,
-      fk_community_id: req.user.fk_community_id
+      fk_community_id: req.user.communityId
     }
   })
   helper.resSend(res, shoppingItem)
 })
 
-router.get('/items/getopen', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/items/getopen', auth, async (req, res) => {
   // #swagger.tags = ['Shopping List']
   /* #swagger.security = [{"Bearer": []}] */
-  if (req.user.fk_community_id) {
+  if (req.user.communityId) {
     const items = await prisma.shoppinglist_item.findMany({
       where: {
-        fk_community_id: req.user.fk_community_id,
+        fk_community_id: req.user.communityId,
         done: false
       }
     })
@@ -37,13 +37,13 @@ router.get('/items/getopen', passport.authenticate('userAuth', { session: false 
   }
 })
 
-router.get('/items/getdone', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/items/getdone', auth, async (req, res) => {
   // #swagger.tags = ['Shopping List']
   /* #swagger.security = [{"Bearer": []}] */
-  if (req.user.fk_community_id) {
+  if (req.user.communityId) {
     const items = await prisma.shoppinglist_item.findMany({
       where: {
-        fk_community_id: req.user.fk_community_id,
+        fk_community_id: req.user.communityId,
         done: true,
         done_date: { gte: new Date(new Date().toISOString().split('T')[0]) }
       }
@@ -55,7 +55,7 @@ router.get('/items/getdone', passport.authenticate('userAuth', { session: false 
   }
 })
 
-router.put('/items/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.put('/items/update', auth, async (req, res) => {
   // #swagger.tags = ['Shopping List']
   /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.id) {

@@ -1,12 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const passport = require('passport')
-
+const auth = require('../middleware/userAuth')
 const { PrismaClient } = require('@prisma/client')
 const helper = require('../helper')
 const prisma = new PrismaClient()
 
-router.get('/getUser', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/getUser', auth, async (req, res) => {
   // #swagger.tags = ['User']
   /* #swagger.security = [{"Bearer": []}] */
   const userId = req.user.id
@@ -16,7 +15,7 @@ router.get('/getUser', passport.authenticate('userAuth', { session: false }), as
   helper.resSend(res, user)
 })
 
-router.get('/databyuserid/:userid', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/databyuserid/:userid', auth, async (req, res) => {
   // #swagger.tags = ['User']
   /* #swagger.security = [{"Bearer": []}] */
   const userId = parseInt(req.params.userid)
@@ -30,7 +29,7 @@ router.get('/databyuserid/:userid', passport.authenticate('userAuth', { session:
   helper.resSend(res, user)
 })
 
-router.get('/getAll', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/getAll', auth, async (req, res) => {
   // #swagger.tags = ['User']
   /* #swagger.security = [{"Bearer": []}] */
   const user = await prisma.user.findMany()
@@ -41,7 +40,7 @@ router.get('/getAll', passport.authenticate('userAuth', { session: false }), asy
   helper.resSend(res, user)
 })
 
-router.get('/getcommunitymembers/:communityId', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/getcommunitymembers/:communityId', auth, async (req, res) => {
   // #swagger.tags = ['User']
   /* #swagger.security = [{"Bearer": []}] */
   if (!req.params.communityId) {
@@ -60,7 +59,7 @@ router.get('/getcommunitymembers/:communityId', passport.authenticate('userAuth'
   helper.resSend(res, user)
 })
 
-router.put('/update', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.put('/update', auth, async (req, res) => {
   // #swagger.tags = ['User']
   /* #swagger.security = [{"Bearer": []}] */
   const user = await prisma.user.update({
@@ -78,7 +77,7 @@ router.put('/update', passport.authenticate('userAuth', { session: false }), asy
   helper.resSend(res, user)
 })
 
-router.post('/sendrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/sendrequest', auth, async (req, res) => {
   // #swagger.tags = ['User']
   /* #swagger.security = [{"Bearer": []}] */
   const inviteCode = parseInt(req.body.code)

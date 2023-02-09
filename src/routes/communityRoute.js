@@ -1,7 +1,7 @@
 const express = require('express')
 const helper = require('../helper')
 const router = express.Router()
-const passport = require('passport')
+const auth = require('../middleware/userAuth')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
@@ -42,7 +42,7 @@ const deleteOrAcceptRequest = async function (req, res, accept) {
   helper.resSend(res, { message: 'worked' })
 }
 
-router.get('/getbyid/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/getbyid/:id', auth, async (req, res) => {
   // #swagger.tags = ['Community']
   // #swagger.description = 'Get Community by id'
   /* #swagger.security = [{"Bearer": []}] */
@@ -57,7 +57,7 @@ router.get('/getbyid/:id', passport.authenticate('userAuth', { session: false })
   helper.resSend(res, community)
 })
 
-router.get('/getbycode/:code', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/getbycode/:code', auth, async (req, res) => {
   // #swagger.tags = ['Community']
   // #swagger.description = 'Find Community by the invite code'
   /* #swagger.security = [{"Bearer": []}] */
@@ -88,7 +88,7 @@ router.get('/getbycode/:code', passport.authenticate('userAuth', { session: fals
   helper.resSend(res, { id: community.id, name: community.name, code: community.code, admin: community.user_community_fk_admin_idTouser, userCount: community._count.user })
 })
 
-router.get('/requests', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/requests', auth, async (req, res) => {
   // #swagger.tags = ['Community']
   // #swagger.description = 'Get all requests to a community, only admin can do this'
   /* #swagger.security = [{"Bearer": []}] */
@@ -117,7 +117,7 @@ router.get('/requests', passport.authenticate('userAuth', { session: false }), a
   helper.resSend(res, community.request)
 })
 
-router.get('/requests/:communityid', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/requests/:communityid', auth, async (req, res) => {
   // #swagger.tags = ['Community']
   /* #swagger.security = [{"Bearer": []}] */
   const communityId = parseInt(req.params.communityid)
@@ -127,19 +127,19 @@ router.get('/requests/:communityid', passport.authenticate('userAuth', { session
   helper.resSend(res, requests)
 })
 
-router.post('/acceptrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/acceptrequest', auth, async (req, res) => {
   // #swagger.tags = ['Community']
   /* #swagger.security = [{"Bearer": []}] */
   deleteOrAcceptRequest(req, res, true)
 })
 
-router.post('/denyrequest', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/denyrequest', auth, async (req, res) => {
   // #swagger.tags = ['Community']
   /* #swagger.security = [{"Bearer": []}] */
   deleteOrAcceptRequest(req, res, false)
 })
 
-router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/create', auth, async (req, res) => {
   // #swagger.tags = ['Community']
   /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.name) {

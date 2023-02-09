@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcrypt')
 const helper = require('../helper')
-const passport = require('passport')
+const auth = require('../middleware/userAuth')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
@@ -102,7 +102,7 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.get('/getnewtoken', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/getnewtoken', auth, async (req, res) => {
   // #swagger.tags = ['Authentication']
   // #swagger.description = 'Get new JWT'
 

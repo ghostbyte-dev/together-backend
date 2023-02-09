@@ -1,12 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const passport = require('passport')
-
+const auth = require('../middleware/userAuth')
 const { PrismaClient } = require('@prisma/client')
 const helper = require('../helper')
 const prisma = new PrismaClient()
 
-router.post('/create', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.post('/create', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
   /* #swagger.security = [{"Bearer": []}] */
   console.log(req.body)
@@ -16,7 +15,7 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
   }
   const debt = await prisma.debt.create({
     data: {
-      fk_community_id: req.user.fk_community_id,
+      fk_community_id: req.user.communityId,
       fk_user_creditor_id: req.body.creditorId,
       fk_user_debitor_id: req.body.debitorId,
       name: req.body.name,
@@ -26,13 +25,13 @@ router.post('/create', passport.authenticate('userAuth', { session: false }), as
   helper.resSend(res, debt)
 })
 
-router.get('/mine', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/mine', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
   // #swagger.description = 'Endpoint to get all debts of a user.'
   /* #swagger.security = [{"Bearer": []}] */
   const debts = await prisma.debt.findMany({
     where: {
-      fk_community_id: req.user.fk_community_id,
+      fk_community_id: req.user.communityId,
       OR: [
         {
           fk_user_creditor_id: req.user.id
@@ -75,7 +74,7 @@ router.get('/mine', passport.authenticate('userAuth', { session: false }), async
   helper.resSend(res, debts)
 })
 
-router.get('/balance', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/balance', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
   /* #swagger.security = [{"Bearer": []}] */
   const moneyToPay = await prisma.debt.groupBy({
@@ -146,7 +145,7 @@ const getAllUsers = async (communityId) => {
   return user
 }
 
-router.get('/single/:id', passport.authenticate('userAuth', { session: false }), async (req, res) => {
+router.get('/single/:id', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
   /* #swagger.security = [{"Bearer": []}] */
   const debt = await prisma.debt.findUnique({
