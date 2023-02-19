@@ -8,7 +8,7 @@ const prisma = new PrismaClient()
 router.post('/create', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
   /* #swagger.security = [{"Bearer": []}] */
-  console.log(req.body)
+
   if (!req.body.name || !req.body.amount || !req.body.debitorId) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return

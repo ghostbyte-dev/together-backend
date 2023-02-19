@@ -84,7 +84,6 @@ router.get('/getbycode/:code', auth, async (req, res) => {
     helper.resSend(res, null, helper.resStatuses.error, 'Comunity with the id ' + code.toString() + " doesn't exist")
     return
   }
-  console.log(community)
   helper.resSend(res, { id: community.id, name: community.name, code: community.code, admin: community.user_community_fk_admin_idTouser, userCount: community._count.user })
 })
 

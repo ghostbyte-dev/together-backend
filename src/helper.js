@@ -1,4 +1,3 @@
-const mailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
 const Str = require('@supercharge/strings')
 require('dotenv').config()
@@ -21,33 +20,6 @@ module.exports = {
 
   generateCommunityInviteCode: function () {
     return Math.floor(Math.random() * (999999 - 100000)) + 100000
-  },
-
-  sendMail: function (to, subject, text) {
-    const transporter = mailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: 'noreply.ideaoverflow@gmail.com',
-        pass: 'Omemomemo420'
-      }
-    })
-
-    const mailOptions = {
-      from: 'noreply.ideaoverflow@gmail.com',
-      to,
-      subject,
-      text
-    }
-
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error)
-      } else {
-        console.log(info)
-      }
-    })
   },
 
   resSend (res, data, status, errors) {

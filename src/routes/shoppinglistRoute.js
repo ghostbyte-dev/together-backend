@@ -48,7 +48,6 @@ router.get('/items/getdone', auth, async (req, res) => {
         done_date: { gte: new Date(new Date().toISOString().split('T')[0]) }
       }
     })
-    console.log(items)
     helper.resSend(res, items)
   } else {
     helper.resSend(res, [])
@@ -62,7 +61,6 @@ router.put('/items/update', auth, async (req, res) => {
     helper.resSend(res, null, helper.resStatuses.error, 'Missing Id')
     return
   }
-  console.log(req.body.done)
   const item = await prisma.shoppinglist_item.update({
     where: { id: req.body.id },
     data: {

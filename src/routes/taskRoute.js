@@ -27,9 +27,7 @@ const getSingleTask = async (taskId) => {
 
 const createTaskUserArray = (assignedUsers, taskRoutineId, taskOrRoutineString) => {
   const result = []
-  console.log(assignedUsers)
   assignedUsers.forEach(element => {
-    console.log(element)
     result.push(
       {
         fk_user_id: element, [taskOrRoutineString]: taskRoutineId
@@ -40,11 +38,9 @@ const createTaskUserArray = (assignedUsers, taskRoutineId, taskOrRoutineString) 
 }
 
 const createManyTaskUser = async (assignedUser, taskId) => {
-  console.log(createTaskUserArray(assignedUser, taskId, 'fk_task_id'))
-  const tasksUser = await prisma.task_user.createMany({
+  await prisma.task_user.createMany({
     data: createTaskUserArray(assignedUser, taskId, 'fk_task_id')
   })
-  console.log(tasksUser)
 }
 
 const createTask = async (req, res) => {
@@ -69,7 +65,6 @@ const createTask = async (req, res) => {
 }
 
 const updateTask = async (req, res, taskId) => {
-  console.log(req.body.assignedUser)
   const task = await prisma.task.update({
     where: { id: taskId },
     data: {
@@ -86,13 +81,10 @@ const updateTask = async (req, res, taskId) => {
       }
     }
   })
-  console.log(task)
-  console.log(task.task_user)
   if (req.body.assignedUser) {
     if (task.task_user.length === 0 && req.body.assignedUser.length !== 0) {
       await createManyTaskUser(req.body.assignedUser, task.id)
     } else {
-      console.log(task)
       await prisma.task_user.deleteMany({
         where: { fk_task_id: task.id }
       })
@@ -106,7 +98,6 @@ router.post('/create', auth, async (req, res) => {
   // #swagger.tags = ['Task']
   /* #swagger.security = [{"Bearer": []}] */
   const taskId = req.body.id
-  console.log(taskId)
   if (!taskId) {
     createTask(req, res)
   } else {
