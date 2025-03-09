@@ -1,6 +1,7 @@
 services:
   api:
     restart: always
+    container_name: commiunity_backend
     build:
       dockerfile: Dockerfile
     ports:
