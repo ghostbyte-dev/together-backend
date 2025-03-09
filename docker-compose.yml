@@ -11,6 +11,7 @@ services:
     expose:
       - 3000
     networks:
+      - proxy-network
       - backend-network
   mariadb:
     restart: always
