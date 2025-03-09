@@ -1,0 +1,35 @@
+services:
+  api:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: "./api"
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    expose:
+      - 3000
+    networks:
+      - backend-network
+  mariadb:
+    restart: always
+    image: mariadb:10.7
+    ports:
+      - 33061:3306
+    volumes:
+      - ~/apps/mariadb_community:/var/lib/mysql
+    env_file:
+      - .env
+    networks:
+      - backend-network
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  proxy-network:
+    external: true
+  backend-network:
+    driver: bridge
