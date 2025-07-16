@@ -9,7 +9,6 @@ const prisma = new PrismaClient()
 router.post('/register', async (req, res) => {
   // #swagger.tags = ['Authentication']
   // #swagger.description = 'Registrate a new user.'
-
   if (
     !req.body.email ||
     !req.body.firstname ||
@@ -22,7 +21,6 @@ router.post('/register', async (req, res) => {
     helper.resSend(res, null, helper.resStatuses.error, 'The password must be at least 6 characters long. There must be at least one letter and one number.')
     return
   }
-
   const user = await prisma.user.findFirst({
     where: { email: req.body.email }
   })
@@ -33,7 +31,7 @@ router.post('/register', async (req, res) => {
 
   const code = helper.generateRandomString()
 
-  bcrypt.genSalt(512, (_err, salt) => {
+  bcrypt.genSalt(10, (_err, salt) => {
     bcrypt.hash(req.body.password, salt, async (_err, enc) => {
       await prisma.user.create({
         data: {
@@ -44,22 +42,12 @@ router.post('/register', async (req, res) => {
           verificationcode: code
         }
       })
-      const user = await prisma.user.findUnique({
-        where: { email: req.body.email },
-        select: { id: true }
-      })
-      // helper.sendMail(
-      //   req.body.email,
-      //   'Email verification',
-      //   'Open this link to enable your account: https://ideaoverflow.xyz/verify/' +
-      //   code
-      // )
-      const usertoken = helper.createJWT(
-        user.id,
+      helper.sendVerifyEmail(
         req.body.email,
-        req.body.firstname
+        'Email verification',
+        process.env.CLIENT_URL + '/verify/' + code
       )
-      helper.resSend(res, { token: usertoken })
+      helper.resSend(res, { registered: true })
     })
   })
 })
@@ -75,6 +63,10 @@ router.post('/login', async (req, res) => {
     })
     if (!user) {
       helper.resSend(res, null, helper.resStatuses.error, 'This user does not exist!')
+      return
+    }
+    if (!user.verified) {
+      helper.resSend(res, null, helper.resStatuses.error, 'This user is not verified yet!')
       return
     }
     bcrypt.compare(
