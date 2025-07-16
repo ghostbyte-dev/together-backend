@@ -66,7 +66,7 @@ router.post('/login', async (req, res) => {
       return
     }
     if (!user.verified) {
-      helper.resSend(res, null, helper.resStatuses.error, 'This user is not verified yet!')
+      helper.resSend(res, { verified: false }, helper.resStatuses.error, 'This user is not verified yet!')
       return
     }
     bcrypt.compare(
@@ -122,7 +122,9 @@ router.get('/verify/:code', async (req, res) => {
       verified: true
     }
   })
-  if (verified === 1) {
+  if (!verified) {
+    return helper.resSend(res, null, helper.resStatuses.error, 'Verification code not found')
+  } else if (verified === 1) {
     return helper.resSend(res, null, helper.resStatuses.error, 'User was already Verified')
   } else if (verified === -1) {
     return helper.resSend(res, null, helper.resStatuses.error, 'Code doesnt exist')
@@ -141,6 +143,43 @@ router.get('/verify/:code', async (req, res) => {
       message: 'Verified successfully'
     })
   }
+})
+
+router.post('/resendVerificationEmail', async (req, res) => {
+  // #swagger.tags = ['Authentication']
+  // #swagger.description = 'Verfy a new account'
+  if (!req.body.email) {
+    return res.json({ message: 'Empty fields!' })
+  }
+  const user = await prisma.user.findUnique({
+    where: { email: req.body.email }
+  })
+
+  if (!user) {
+    return helper.resSend(res, null, helper.resStatuses.error, 'User with this email does not exist')
+  }
+
+  if (user.verified === 1) {
+    return helper.resSend(res, null, helper.resStatuses.error, 'User was already Verified')
+  }
+  const code = helper.generateRandomString()
+  await prisma.user.update({
+    where: {
+      email: req.body.email
+    },
+    data: {
+      verificationcode: code
+    }
+  })
+  helper.sendVerifyEmail(
+    req.body.email,
+    'Email verification',
+    process.env.CLIENT_URL + '/verify/' + code
+  )
+  return helper.resSend(res, {
+    verified: true,
+    message: 'Sent Verification Email'
+  })
 })
 
 module.exports = router
