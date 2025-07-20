@@ -1,4 +1,7 @@
 import { PrismaClient } from '@prisma/client'
+
+require('dotenv').config({ path: '.env.migration' })
+
 const prisma = new PrismaClient()
 
 async function migrateToManyToMany () {
