@@ -10,7 +10,7 @@ module.exports = {
   },
 
   createJWT: function (id, email, username, communities) {
-    return jwt.sign({ version: 2, id, email, username, communities }, process.env.JWT_SECRET, {
+    return jwt.sign({ version: 3, id, email, username, communities }, process.env.JWT_SECRET, {
       expiresIn: '1y'
     })
   },
