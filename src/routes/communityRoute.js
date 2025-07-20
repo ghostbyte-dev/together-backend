@@ -30,7 +30,9 @@ const deleteOrAcceptRequest = async function (req, res, accept) {
     await prisma.user.update({
       where: { id: community.request[0].fk_user_id },
       data: {
-        fk_community_id: community.id
+        communities: {
+          connect: { id: community.id }
+        }
       }
     })
   }
