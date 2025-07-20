@@ -19,6 +19,7 @@ model community {
   shoppinglist_item                shoppinglist_item[]
   task                             task[]
   user                             user[]
+  users                            user[]              @relation("communityUser")
 
   @@index([fk_admin_id], map: "community_FK")
 }
@@ -42,7 +43,7 @@ model user {
   request                               request[]
   routine_user                          routine_user[]
   task_user                             task_user[]
-
+  communities                           community[]    @relation("communityUser")
   @@index([fk_community_id], map: "user_FK")
 }
 

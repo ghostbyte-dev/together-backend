@@ -59,7 +59,10 @@ router.post('/login', async (req, res) => {
     return res.json({ message: 'Empty fields!' })
   } else {
     const user = await prisma.user.findUnique({
-      where: { email: req.body.email }
+      where: { email: req.body.email },
+      include: {
+        communities: true
+      }
     })
     if (!user) {
       helper.resSend(res, null, helper.resStatuses.error, 'This user does not exist!')
@@ -79,11 +82,12 @@ router.post('/login', async (req, res) => {
         if (!isMatch) {
           helper.resSend(res, null, helper.resStatuses.error, 'Wrong password!')
         } else {
+          const communities = user.communities.map((community) => community.id)
           const usertoken = helper.createJWT(
             user.id,
             user.email,
             user.username,
-            user.fk_community_id
+            communities
           )
 
           const answer = { token: usertoken }
@@ -99,14 +103,18 @@ router.get('/getnewtoken', auth, async (req, res) => {
   // #swagger.description = 'Get new JWT'
 
   const user = await prisma.user.findUnique({
-    where: { id: req.user.id }
+    where: { id: req.user.id },
+    include: {
+      communities: true
+    }
   })
+  const communities = user.communities.map((community) => community.id)
 
   const usertoken = helper.createJWT(
     user.id,
     user.email,
     user.username,
-    user.fk_community_id
+    communities
   )
 
   const answer = { token: usertoken }

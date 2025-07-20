@@ -10,8 +10,12 @@ router.get('/getUser', auth, async (req, res) => {
   /* #swagger.security = [{"Bearer": []}] */
   const userId = req.user.id
   const user = await prisma.user.findUnique({
-    where: { id: userId }
+    where: { id: userId },
+    include: {
+      communities: true
+    }
   })
+  console.log(user)
   helper.resSend(res, user)
 })
 
@@ -20,7 +24,10 @@ router.get('/databyuserid/:userid', auth, async (req, res) => {
   /* #swagger.security = [{"Bearer": []}] */
   const userId = parseInt(req.params.userid)
   const user = await prisma.user.findUnique({
-    where: { id: userId }
+    where: { id: userId },
+    include: {
+      communities: true
+    }
   })
   if (!user) {
     helper.resSend(res, null, helper.resStatuses.error, 'User with the id ' + userId.toString() + " doesn't exist")
@@ -47,16 +54,21 @@ router.get('/getcommunitymembers/:communityId', auth, async (req, res) => {
     helper.resSend(res, null, helper.resStatuses.error, 'Missing Community Id')
     return
   }
-  const user = await prisma.user.findMany({
-    where: {
-      fk_community_id: parseInt(req.params.communityId)
+
+  const communityWithUsers = await prisma.community.findUnique({
+    where: { id: parseInt(req.params.communityId) },
+    include: {
+      users: true
     }
   })
-  if (!user) {
+
+  const users = communityWithUsers.users
+
+  if (!users) {
     helper.resSend(res, null, helper.resStatuses.error, 'No User Exists in this Community')
     return
   }
-  helper.resSend(res, user)
+  helper.resSend(res, users)
 })
 
 router.put('/update', auth, async (req, res) => {
