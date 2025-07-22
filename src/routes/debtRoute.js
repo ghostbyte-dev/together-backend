@@ -80,7 +80,8 @@ router.get('/balance', auth, async (req, res) => {
   const moneyToPay = await prisma.debt.groupBy({
     by: ['fk_user_creditor_id'],
     where: {
-      fk_user_debitor_id: req.user.id
+      fk_user_debitor_id: req.user.id,
+      fk_community_id: req.user.communityId
     },
     _sum: {
       amount: true
