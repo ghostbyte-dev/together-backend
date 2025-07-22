@@ -158,10 +158,12 @@ router.post('/create', auth, async (req, res) => {
   await prisma.user.update({
     where: { id: req.user.id },
     data: {
-      fk_community_id: community.id
+      communities: {
+        connect: { id: community.id }
+      }
     }
   })
-  helper.resSend(res, { code: inviteCode })
+  helper.resSend(res, { code: inviteCode, id: community.id })
 })
 
 module.exports = router
