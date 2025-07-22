@@ -8,7 +8,7 @@ const prisma = new PrismaClient()
 const deleteOrAcceptRequest = async function (req, res, accept) {
   const requestId = req.body.id
   const community = await prisma.community.findFirst({
-    where: { fk_admin_id: req.user.id },
+    where: { fk_admin_id: req.user.id, id: req.user.communityId },
     select: {
       id: true,
       request: {
@@ -94,7 +94,7 @@ router.get('/requests', auth, async (req, res) => {
   // #swagger.description = 'Get all requests to a community, only admin can do this'
   /* #swagger.security = [{"Bearer": []}] */
   const community = await prisma.community.findFirst({
-    where: { fk_admin_id: req.user.id },
+    where: { fk_admin_id: req.user.id, id: req.user.communityId },
     include: {
       request: {
         select: {
@@ -115,6 +115,8 @@ router.get('/requests', auth, async (req, res) => {
     helper.resSend(res, null, helper.resStatuses.error, 'No Admin of a Community')
     return
   }
+  console.log(community.request)
+
   helper.resSend(res, community.request)
 })
 
