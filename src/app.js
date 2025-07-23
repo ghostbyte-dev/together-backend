@@ -16,8 +16,8 @@ app.use('/user', userRoute)
 const communityRoute = require('./routes/communityRoute')
 app.use('/community', communityRoute)
 
-const taskRoute = require('./routes/taskRoute')
-app.use('/task', taskRoute)
+const calendarRoute = require('./routes/calendarRoute')
+app.use('/calendar', calendarRoute)
 
 const shoppinglistRoute = require('./routes/shoppinglistRoute')
 app.use('/shoppinglist', shoppinglistRoute)

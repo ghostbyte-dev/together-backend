@@ -125,7 +125,7 @@ router.delete('/delete/:id', auth, async (req, res) => {
   helper.resSend(res, 'deleted Calendar Entry ' + req.params.id)
 })
 
-router.post('/gettasksininterval', auth, async (req, res) => {
+router.post('/interval', auth, async (req, res) => {
   // #swagger.tags = ['Calendar Entry']
   /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.startDate || !req.body.endDate) {
