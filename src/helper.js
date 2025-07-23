@@ -38,7 +38,7 @@ module.exports = {
     // Wrap in an async IIFE so we can use await.
     (async () => {
       const info = await transporter.sendMail({
-        from: `"Kommiuniti" <${process.env.MY_EMAIL}>`,
+        from: `"Together" <${process.env.MY_EMAIL}>`,
         to: email,
         subject,
         html: `<a href=${url}>Verify</a>` // HTML body
