@@ -39,7 +39,7 @@ const createTaskUserArray = (assignedUsers, taskRoutineId, taskOrRoutineString) 
 
 const createManyTaskUser = async (assignedUser, taskId) => {
   await prisma.task_user.createMany({
-    data: createTaskUserArray(assignedUser, taskId, 'fk_task_id')
+    data: createTaskUserArray(assignedUser, taskId, 'fk_calendar_entry_id')
   })
 }
 
