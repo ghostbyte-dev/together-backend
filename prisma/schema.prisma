@@ -17,7 +17,7 @@ model community {
   request                          request[]
   routine                          routine[]
   shoppinglist_item                shoppinglist_item[]
-  task                             task[]
+  calendar_entry                   calendar_entry[]
   user                             user[]
   users                            user[]              @relation("communityUser")
 
@@ -42,7 +42,7 @@ model user {
   debt                                  debt[]         @relation("debt_fk_user_debitor_idTouser")
   request                               request[]
   routine_user                          routine_user[]
-  task_user                             task_user[]
+  calendar_entry_user                             calendar_entry_user[]
   communities                           community[]    @relation("communityUser")
   @@index([fk_community_id], map: "user_FK")
 }
@@ -59,7 +59,7 @@ model request {
   @@index([fk_community_id], map: "requests_FK_1")
 }
 
-model task {
+model calendar_entry {
   id              Int         @id @default(autoincrement())
   name            String      @db.VarChar(100)
   notes           String?     @db.Text
@@ -69,21 +69,21 @@ model task {
   fk_routine_id   Int?
   routine         routine?    @relation(fields: [fk_routine_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "task_FK")
   community       community   @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "tasks_FK_2")
-  task_user       task_user[]
+  calendar_entry_user calendar_entry_user[]
 
-  @@index([fk_community_id], map: "tasks_FK_2")
-  @@index([fk_routine_id], map: "task_FK")
+  @@index([fk_community_id], map: "calendar_entries_FK_2")
+  @@index([fk_routine_id], map: "calendar_entry_FK")
 }
 
-model task_user {
-  id         Int  @id @default(autoincrement())
-  fk_user_id Int
-  fk_task_id Int
-  task       task @relation(fields: [fk_task_id], references: [id], onUpdate: Restrict, map: "task_user_FK")
-  user       user @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "task_user_FK_1")
+model calendar_entry_user {
+  id               Int             @id @default(autoincrement())
+  fk_user_id       Int
+  fk_calendar_entry_id Int
+  calendar_entry   calendar_entry  @relation(fields: [fk_calendar_entry_id], references: [id], onUpdate: Restrict, map: "calendar_entry_user_FK")
+  user             user            @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "calendar_entry_user_FK_1")
 
-  @@index([fk_task_id], map: "task_user_FK")
-  @@index([fk_user_id], map: "task_user_FK_1")
+  @@index([fk_calendar_entry_id], map: "calendar_entry_user_FK")
+  @@index([fk_user_id], map: "calendar_entry_user_FK_1")
 }
 
 model routine {
@@ -95,7 +95,7 @@ model routine {
   active          Boolean        @default(true)
   community       community      @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "routine_FK")
   routine_user    routine_user[]
-  task            task[]
+  calendar_entry  calendar_entry[]
 
   @@index([fk_community_id], map: "routine_FK")
 }

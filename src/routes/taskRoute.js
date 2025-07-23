@@ -5,13 +5,13 @@ const { PrismaClient } = require('@prisma/client')
 const helper = require('../helper')
 const prisma = new PrismaClient()
 
-const getSingleTask = async (taskId) => {
-  return await prisma.task.findUnique({
+const getSingleCalendarEntry = async (calendarEntryId) => {
+  return await prisma.calendar_entry.findUnique({
     where: {
-      id: taskId
+      id: calendarEntryId
     },
     include: {
-      task_user: {
+      calendar_entry_user: {
         select: {
           user: {
             select: {
@@ -25,30 +25,30 @@ const getSingleTask = async (taskId) => {
   })
 }
 
-const createTaskUserArray = (assignedUsers, taskRoutineId, taskOrRoutineString) => {
+const createCalendarEntryUserArray = (assignedUsers, calendarEntryRoutineId, calendarEntryOrRoutineString) => {
   const result = []
   assignedUsers.forEach(element => {
     result.push(
       {
-        fk_user_id: element, [taskOrRoutineString]: taskRoutineId
+        fk_user_id: element, [calendarEntryOrRoutineString]: calendarEntryRoutineId
       }
     )
   })
   return result
 }
 
-const createManyTaskUser = async (assignedUser, taskId) => {
-  await prisma.task_user.createMany({
-    data: createTaskUserArray(assignedUser, taskId, 'fk_calendar_entry_id')
+const createManyCalendarEntryUser = async (assignedUser, calendarEntryId) => {
+  await prisma.calendar_entry_user.createMany({
+    data: createCalendarEntryUserArray(assignedUser, calendarEntryId, 'fk_calendar_entry_id')
   })
 }
 
-const createTask = async (req, res) => {
+const createCalendarEntry = async (req, res) => {
   if (!req.body.name || !req.body.date) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
   }
-  const task = await prisma.task.create({
+  const calendarEntry = await prisma.calendar_entry.create({
     data: {
       name: req.body.name,
       notes: req.body.notes ?? '',
@@ -59,14 +59,14 @@ const createTask = async (req, res) => {
     }
   })
   if (req.body.assignedUser && req.body.assignedUser[0] !== null) {
-    await createManyTaskUser(req.body.assignedUser, task.id)
+    await createManyCalendarEntryUser(req.body.assignedUser, calendarEntry.id)
   }
-  helper.resSend(res, await getSingleTask(task.id))
+  helper.resSend(res, await getSingleCalendarEntry(calendarEntry.id))
 }
 
-const updateTask = async (req, res, taskId) => {
-  const task = await prisma.task.update({
-    where: { id: taskId },
+const updateCalendarEntry = async (req, res, calendarEntryId) => {
+  const calendarEntry = await prisma.calendar_entry.update({
+    where: { id: calendarEntryId },
     data: {
       name: req.body.name ?? undefined,
       notes: req.body.notes ?? undefined,
@@ -74,65 +74,65 @@ const updateTask = async (req, res, taskId) => {
       done: req.body.done ?? undefined
     },
     include: {
-      task_user: {
+      calendar_entry_user: {
         where: {
-          fk_task_id: taskId
+          fk_calendar_entry_id: calendarEntryId
         }
       }
     }
   })
   if (req.body.assignedUser) {
-    if (task.task_user.length === 0 && req.body.assignedUser.length !== 0) {
-      await createManyTaskUser(req.body.assignedUser, task.id)
+    if (calendarEntry.calendar_entry_user.length === 0 && req.body.assignedUser.length !== 0) {
+      await createManyCalendarEntryUser(req.body.assignedUser, calendarEntry.id)
     } else {
-      await prisma.task_user.deleteMany({
-        where: { fk_task_id: task.id }
+      await prisma.calendar_entry_user.deleteMany({
+        where: { fk_calendar_entry_id: calendarEntry.id }
       })
-      await createManyTaskUser(req.body.assignedUser, task.id)
+      await createManyCalendarEntryUser(req.body.assignedUser, calendarEntry.id)
     }
   }
-  helper.resSend(res, await getSingleTask(taskId))
+  helper.resSend(res, await getSingleCalendarEntry(calendarEntryId))
 }
 
 router.post('/create', auth, async (req, res) => {
-  // #swagger.tags = ['Task']
+  // #swagger.tags = ['Calendar Entry']
   /* #swagger.security = [{"Bearer": []}] */
-  const taskId = req.body.id
-  if (!taskId) {
-    createTask(req, res)
+  const calendarEntryId = req.body.id
+  if (!calendarEntryId) {
+    createCalendarEntry(req, res)
   } else {
-    updateTask(req, res, taskId)
+    updateCalendarEntry(req, res, calendarEntryId)
   }
 })
 
 router.delete('/delete/:id', auth, async (req, res) => {
-  // #swagger.tags = ['Task']
+  // #swagger.tags = ['Calendar Entry']
   /* #swagger.security = [{"Bearer": []}] */
   if (!req.params.id || isNaN(req.params.id)) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
   }
-  await prisma.task_user.deleteMany({
+  await prisma.calendar_entry_user.deleteMany({
     where: {
-      fk_task_id: parseInt(req.params.id)
+      fk_calendar_entry_id: parseInt(req.params.id)
     }
   })
-  await prisma.task.delete({
+  await prisma.calendar_entry.delete({
     where: {
       id: parseInt(req.params.id)
     }
   })
-  helper.resSend(res, 'deleted Task ' + req.params.id)
+  helper.resSend(res, 'deleted Calendar Entry ' + req.params.id)
 })
 
 router.post('/gettasksininterval', auth, async (req, res) => {
-  // #swagger.tags = ['Task']
+  // #swagger.tags = ['Calendar Entry']
   /* #swagger.security = [{"Bearer": []}] */
   if (!req.body.startDate || !req.body.endDate) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
     return
   }
-  const tasks = await prisma.task.findMany({
+  const calendarEntries = await prisma.calendar_entry.findMany({
     where: {
       fk_community_id: req.user.communityId,
       date: {
@@ -141,7 +141,7 @@ router.post('/gettasksininterval', auth, async (req, res) => {
       }
     },
     include: {
-      task_user: {
+      calendar_entry_user: {
         select: {
           user: {
             select: {
@@ -184,19 +184,19 @@ router.post('/gettasksininterval', auth, async (req, res) => {
     const date = routines[routine].startDate
     while (date <= new Date(req.body.endDate)) {
       if (date >= new Date(req.body.startDate.split('T')[0])) {
-        const task = await prisma.task.findFirst({
+        const calendarEntry = await prisma.calendar_entry.findFirst({
           where: {
             fk_routine_id: routines[routine].id, date
           }
         })
-        if (!task) {
-          tasks.push({ name: routines[routine].name, notes: task ? task.notes : '', date: date.toISOString(), done: task ? task.done : false, fk_community_id: req.user.communityId, fk_routine_id: routines[routine].id, task_user: routines[routine].routine_user })
+        if (!calendarEntry) {
+          calendarEntries.push({ name: routines[routine].name, notes: calendarEntry ? calendarEntry.notes : '', date: date.toISOString(), done: calendarEntry ? calendarEntry.done : false, fk_community_id: req.user.communityId, fk_routine_id: routines[routine].id, calendar_entry_user: routines[routine].routine_user })
         }
       }
       date.setDate(date.getDate() + routines[routine].interval)
     }
   }
-  helper.resSend(res, tasks)
+  helper.resSend(res, calendarEntries)
 })
 
 const getSingleRoutine = async (routineId) => {
@@ -235,7 +235,7 @@ const createRoutine = async (req, res) => {
   if (req.body.assignedUser) {
     const assignedUser = req.body.assignedUser
     await prisma.routine_user.createMany({
-      data: createTaskUserArray(assignedUser, routine.id, 'fk_routine_id')
+      data: createCalendarEntryUserArray(assignedUser, routine.id, 'fk_routine_id')
     })
   }
   helper.resSend(res, await getSingleRoutine(routine.id))
@@ -264,14 +264,14 @@ const updateRoutine = async (req, res, routineId) => {
       }
     })
     await prisma.routine_user.createMany({
-      data: createTaskUserArray(assignedUsers, routineId, 'fk_routine_id')
+      data: createCalendarEntryUserArray(assignedUsers, routineId, 'fk_routine_id')
     })
   }
   helper.resSend(res, await getSingleRoutine(routineId))
 }
 
 router.post('/routine/modify', auth, async (req, res) => {
-  // #swagger.tags = ['Task']
+  // #swagger.tags = ['Calendar Entry']
   /* #swagger.security = [{"Bearer": []}] */
   const routineId = req.body.id
   if (!routineId) {
@@ -282,7 +282,7 @@ router.post('/routine/modify', auth, async (req, res) => {
 })
 
 router.get('/routine/all', auth, async (req, res) => {
-  // #swagger.tags = ['Task']
+  // #swagger.tags = ['Calendar Entry']
   /* #swagger.security = [{"Bearer": []}] */
   const routines = await prisma.routine.findMany({
     where: {

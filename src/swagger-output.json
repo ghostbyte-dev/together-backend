@@ -102,6 +102,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -173,6 +178,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -207,6 +217,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -233,6 +248,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           }
@@ -269,6 +289,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -295,6 +320,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           },
@@ -351,6 +381,11 @@
             "type": "string"
           },
           {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -395,6 +430,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -429,6 +469,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -455,6 +500,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           }
@@ -491,6 +541,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -517,6 +572,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           },
@@ -561,6 +621,11 @@
             "type": "string"
           },
           {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -601,6 +666,11 @@
             "type": "string"
           },
           {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -637,6 +707,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           },
@@ -703,6 +778,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -729,6 +809,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           },
@@ -772,6 +857,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           },
@@ -829,6 +919,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -855,6 +950,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           },
@@ -897,6 +997,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -925,6 +1030,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -951,6 +1061,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           },
@@ -997,6 +1112,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           },
@@ -1048,6 +1168,11 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -1074,6 +1199,11 @@
         "parameters": [
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           }
@@ -1108,6 +1238,11 @@
           },
           {
             "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
             "in": "header",
             "type": "string"
           }
