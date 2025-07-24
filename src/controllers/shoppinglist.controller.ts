@@ -14,7 +14,7 @@ export class ShoppinglistController {
       return;
     }
     try {
-      const shoppinglistItems = await this.shoppinglistService.getItems(communityId, false);
+      const shoppinglistItems = await this.shoppinglistService.getOpen(communityId);
       resSend(res, shoppinglistItems);
     } catch (error) {
       next(error);
@@ -28,7 +28,7 @@ export class ShoppinglistController {
       return;
     }
     try {
-      const shoppinglistItems = await this.shoppinglistService.getItems(communityId, true);
+      const shoppinglistItems = await this.shoppinglistService.getDone(communityId);
       resSend(res, shoppinglistItems);
     } catch (error) {
       next(error);

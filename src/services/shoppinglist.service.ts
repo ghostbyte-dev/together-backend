@@ -7,11 +7,23 @@ import { ApiError } from '../errors/apiError';
 export class ShoppinglistService {
   constructor(@inject(PrismaService) private prisma: PrismaService) {}
 
-  async getItems(communityId: number, done: boolean): Promise<ShoppinglistItemDto[]> {
+  async getOpen(communityId: number): Promise<ShoppinglistItemDto[]> {
     const items = await this.prisma.shoppinglist_item.findMany({
       where: {
         fk_community_id: communityId,
-        done: done,
+        done: false,
+      },
+    });
+    const shoppingListItems = items.map((item) => new ShoppinglistItemDto(item));
+    return shoppingListItems;
+  }
+
+  async getDone(communityId: number): Promise<ShoppinglistItemDto[]> {
+    const items = await this.prisma.shoppinglist_item.findMany({
+      where: {
+        fk_community_id: communityId,
+        done: true,
+        done_date: { gte: new Date(new Date().toISOString().split('T')[0]) },
       },
     });
     const shoppingListItems = items.map((item) => new ShoppinglistItemDto(item));
