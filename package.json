@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx ts-node-dev src/app.ts",
+    "dev": "npx ts-node-dev app.ts",
     "build": "npx tsc",
     "start": "node src/app.js",
     "swagger-autogen": "node ./src/swagger.js"
