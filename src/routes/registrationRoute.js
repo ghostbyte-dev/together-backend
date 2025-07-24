@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-import { resSend, ResStatus } from '../helper';
+import { createJWT, resSend, ResStatus } from '../helper';
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const jwt = require('jsonwebtoken');
@@ -79,7 +79,7 @@ router.post('/login', async (req, res) => {
         resSend(res, null, ResStatus.ERROR, 'Wrong password!');
       } else {
         const communities = user.communities.map((community) => community.id);
-        const usertoken = helper.createJWT(user.id, user.email, user.username, communities);
+        const usertoken = createJWT(user.id, user.email, user.username, communities);
 
         const answer = { token: usertoken };
         resSend(res, answer);

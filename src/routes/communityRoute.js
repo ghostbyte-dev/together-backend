@@ -10,11 +10,17 @@ const prisma = new PrismaClient();
 
 const communityController = container.resolve(CommunityController);
 
-router.get('/members:communityId', auth, async (req, res) =>
-  communityController.getMembers(req, res),
+router.get('/getbyid/:id', auth, async (req, res, next) =>
+  communityController.getById(req, res, next),
 );
 
-router.post('/sendrequest', auth, async (req, res) => communityController.sendRequest(req, res));
+router.get('/members:communityId', auth, async (req, res, next) =>
+  communityController.getMembers(req, res, next),
+);
+
+router.post('/sendrequest', auth, async (req, res, next) =>
+  communityController.sendRequest(req, res, next),
+);
 
 const deleteOrAcceptRequest = async (req, res, accept) => {
   const requestId = req.body.id;
@@ -54,26 +60,6 @@ const deleteOrAcceptRequest = async (req, res, accept) => {
   });
   resSend(res, { message: 'worked' });
 };
-
-router.get('/getbyid/:id', auth, async (req, res) => {
-  // #swagger.tags = ['Community']
-  // #swagger.description = 'Get Community by id'
-  /* #swagger.security = [{"Bearer": []}] */
-  const communityId = parseInt(req.params.id);
-  const community = await prisma.community.findUnique({
-    where: { id: communityId },
-  });
-  if (!community) {
-    resSend(
-      res,
-      null,
-      ResStatus.ERROR,
-      'Comunity with the id ' + communityId.toString() + " doesn't exist",
-    );
-    return;
-  }
-  resSend(res, community);
-});
 
 router.get('/getbycode/:code', auth, async (req, res) => {
   // #swagger.tags = ['Community']

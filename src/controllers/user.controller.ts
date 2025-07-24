@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import { UserService } from '../services/user.service';
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { resSend, ResStatus } from '../helper';
 import { ApiError } from '../errors/apiError';
 import type { UserDto } from '../dtos/user.dto';
@@ -9,44 +9,32 @@ import type { UserDto } from '../dtos/user.dto';
 export class UserController {
   constructor(@inject(UserService) private userService: UserService) {}
 
-  async getUser(req: Request, res: Response) {
+  async getUser(req: Request, res: Response, next: NextFunction) {
     const userId = req.user.id;
     try {
       const user: UserDto = await this.userService.getUserById(userId);
       resSend(res, user);
-    } catch (err: unknown) {
-      if (err instanceof ApiError) {
-        resSend(res, null, ResStatus.ERROR, err.message, err.status);
-      } else {
-        resSend(res, null, ResStatus.ERROR, 'An unexpected Error occured', 500);
-      }
+    } catch (error) {
+      next(error);
     }
   }
 
-  async getUserById(req: Request, res: Response) {
+  async getUserById(req: Request, res: Response, next: NextFunction) {
     const userId: number = parseInt(req.params.userid);
     try {
       const user = await this.userService.getUserById(userId);
       resSend(res, user);
-    } catch (err: unknown) {
-      if (err instanceof ApiError) {
-        resSend(res, null, ResStatus.ERROR, err.message, err.status);
-      } else {
-        resSend(res, null, ResStatus.ERROR, 'An unexpected Error occured', 500);
-      }
+    } catch (error) {
+      next(error);
     }
   }
 
-  async getAllUsers(_req: Request, res: Response) {
+  async getAllUsers(_req: Request, res: Response, next: NextFunction) {
     try {
       const users: UserDto[] = await this.userService.getAllUsers();
       resSend(res, users);
-    } catch (err: unknown) {
-      if (err instanceof ApiError) {
-        resSend(res, null, ResStatus.ERROR, err.message, err.status);
-      } else {
-        resSend(res, null, ResStatus.ERROR, 'An unexpected Error occured', 500);
-      }
+    } catch (error) {
+      next(error);
     }
   }
 

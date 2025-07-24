@@ -3,10 +3,22 @@ import { PrismaService } from './prisma.service';
 import { ApiError } from '../errors/apiError';
 import type { user } from '@prisma/client';
 import { UserDto } from '../dtos/user.dto';
+import { CommunityDto } from '../dtos/community.dto';
 
 @injectable()
 export class CommunityService {
   constructor(@inject(PrismaService) private prisma: PrismaService) {}
+
+  async getById(communityId: number): Promise<CommunityDto> {
+    const community = await this.prisma.community.findUnique({
+      where: { id: communityId },
+    });
+    if (!community) {
+      throw new ApiError(`Comunity with the id ${communityId.toString()} doesn't exist`, 404);
+    }
+
+    return new CommunityDto(community);
+  }
 
   async getMembers(communityId: number): Promise<UserDto[]> {
     const community = await this.prisma.community.findUnique({

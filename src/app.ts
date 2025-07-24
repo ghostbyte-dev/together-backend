@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { errorHandlerMiddleware } from './middleware/errorHandler';
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -11,7 +12,7 @@ app.use(express.json());
 const registrationRoute = require('./routes/registrationRoute');
 app.use('/registration', registrationRoute);
 
-const userRoute = require('./routes/userRoute');
+const userRoute = require('./routes/user.route');
 app.use('/user', userRoute);
 
 const communityRoute = require('./routes/communityRoute');
@@ -27,6 +28,8 @@ const debtRoute = require('./routes/debtRoute');
 app.use('/debt', debtRoute);
 
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
+app.use(errorHandlerMiddleware);
 
 app.listen(3000, () => {
   console.log('App listening on Port 3000');
