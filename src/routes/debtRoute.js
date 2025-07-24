@@ -1,17 +1,17 @@
-const express = require('express')
-const router = express.Router()
-const auth = require('../middleware/userAuth')
-const { PrismaClient } = require('@prisma/client')
-const helper = require('../helper')
-const prisma = new PrismaClient()
+const express = require('express');
+const router = express.Router();
+const auth = require('../middleware/userAuth');
+const { PrismaClient } = require('@prisma/client');
+import { resSend, ResStatus } from '../helper';
+const prisma = new PrismaClient();
 
 router.post('/create', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
   /* #swagger.security = [{"Bearer": []}] */
 
   if (!req.body.name || !req.body.amount || !req.body.debitorId) {
-    helper.resSend(res, null, helper.resStatuses.error, 'Empty Fields!')
-    return
+    resSend(res, null, ResStatus.ERROR, 'Empty Fields!');
+    return;
   }
   const debt = await prisma.debt.create({
     data: {
@@ -19,11 +19,11 @@ router.post('/create', auth, async (req, res) => {
       fk_user_creditor_id: req.body.creditorId,
       fk_user_debitor_id: req.body.debitorId,
       name: req.body.name,
-      amount: req.body.amount
-    }
-  })
-  helper.resSend(res, debt)
-})
+      amount: req.body.amount,
+    },
+  });
+  resSend(res, debt);
+});
 
 router.get('/mine', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
@@ -34,12 +34,12 @@ router.get('/mine', auth, async (req, res) => {
       fk_community_id: req.user.communityId,
       OR: [
         {
-          fk_user_creditor_id: req.user.id
+          fk_user_creditor_id: req.user.id,
         },
         {
-          fk_user_debitor_id: req.user.id
-        }
-      ]
+          fk_user_debitor_id: req.user.id,
+        },
+      ],
     },
     select: {
       id: true,
@@ -51,26 +51,26 @@ router.get('/mine', auth, async (req, res) => {
           name: true,
           color: true,
           profile_image: true,
-          id: true
-        }
+          id: true,
+        },
       },
       user: {
         select: {
           name: true,
           color: true,
           profile_image: true,
-          id: true
-        }
-      }
+          id: true,
+        },
+      },
     },
     orderBy: [
       {
-        timestamp: 'desc'
-      }
-    ]
-  })
-  helper.resSend(res, debts)
-})
+        timestamp: 'desc',
+      },
+    ],
+  });
+  resSend(res, debts);
+});
 
 router.get('/balance', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
@@ -79,80 +79,86 @@ router.get('/balance', auth, async (req, res) => {
     by: ['fk_user_creditor_id'],
     where: {
       fk_user_debitor_id: req.user.id,
-      fk_community_id: req.user.communityId
+      fk_community_id: req.user.communityId,
     },
     _sum: {
-      amount: true
-    }
-  })
+      amount: true,
+    },
+  });
   const gettingMoney = await prisma.debt.groupBy({
     by: ['fk_user_debitor_id'],
     where: {
       fk_user_creditor_id: req.user.id,
-      fk_community_id: req.user.communityId
+      fk_community_id: req.user.communityId,
     },
     _sum: {
-      amount: true
-    }
-  })
-  const result = await createOneBalanceOutOfgettingAndPayingMoney(moneyToPay, gettingMoney, req.user)
-  helper.resSend(res, result)
-})
+      amount: true,
+    },
+  });
+  const result = await createOneBalanceOutOfgettingAndPayingMoney(
+    moneyToPay,
+    gettingMoney,
+    req.user,
+  );
+  resSend(res, result);
+});
 
 const createOneBalanceOutOfgettingAndPayingMoney = async (moneyToPay, gettingMoney, myUser) => {
-  const moneyToPayAlreadyAddedToResult = []
-  const result = []
-  const allUsers = await getAllUsers(myUser.fk_community_id)
+  const moneyToPayAlreadyAddedToResult = [];
+  const result = [];
+  const allUsers = await getAllUsers(myUser.fk_community_id);
   gettingMoney.forEach((element) => {
-    const moneyToPayDebt = moneyToPay.find(el => el.fk_user_creditor_id === element.fk_user_debitor_id)
-    let amount = parseFloat(element._sum.amount)
+    const moneyToPayDebt = moneyToPay.find(
+      (el) => el.fk_user_creditor_id === element.fk_user_debitor_id,
+    );
+    let amount = parseFloat(element._sum.amount);
     if (moneyToPayDebt !== undefined) {
-      amount -= moneyToPayDebt._sum.amount
-      moneyToPayAlreadyAddedToResult.push(element.fk_user_debitor_id)
+      amount -= moneyToPayDebt._sum.amount;
+      moneyToPayAlreadyAddedToResult.push(element.fk_user_debitor_id);
     }
-    const debtorUser = allUsers.find(user => user.id === element.fk_user_debitor_id)
+    const debtorUser = allUsers.find((user) => user.id === element.fk_user_debitor_id);
     if (amount !== 0) {
       result.push({
         amount,
-        debtor: debtorUser
-      })
+        debtor: debtorUser,
+      });
     }
-  })
+  });
   moneyToPay.forEach((element) => {
     if (!moneyToPayAlreadyAddedToResult.includes(element.fk_user_creditor_id)) {
-      const debtorUser = allUsers.find(user => user.id === element.fk_user_creditor_id)
+      const debtorUser = allUsers.find((user) => user.id === element.fk_user_creditor_id);
       result.push({
         amount: element._sum.amount * -1,
-        debtor: debtorUser
-      })
+        debtor: debtorUser,
+      });
     }
-  })
-  return result
-}
+  });
+  return result;
+};
 
 const getAllUsers = async (communityId) => {
   const user = await prisma.user.findMany({
     where: {
-      fk_community_id: communityId
+      fk_community_id: communityId,
     },
     select: {
       id: true,
       name: true,
-      profile_image: true
-    }
-  })
-  return user
-}
+      profile_image: true,
+    },
+  });
+  return user;
+};
 
 router.get('/single/:id', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
   /* #swagger.security = [{"Bearer": []}] */
   const debt = await prisma.debt.findUnique({
     where: {
-      id: parseInt(req.params.id)
-    }
-  })
-  helper.resSend(res, debt)
-})
+      id: parseInt(req.params.id),
+    },
+  });
+  resSend(res, debt);
+});
 
-module.exports = router
+module.exports = router;
