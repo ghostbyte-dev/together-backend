@@ -1,0 +1,22 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/shoppinglist/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 1,
+    "name": "test updated"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
