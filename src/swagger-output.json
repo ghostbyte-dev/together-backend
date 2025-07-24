@@ -7,7 +7,10 @@
   },
   "host": "localhost:3000",
   "basePath": "/",
-  "schemes": ["http", "https"],
+  "schemes": [
+    "http",
+    "https"
+  ],
   "securityDefinitions": {
     "Bearer": {
       "type": "apiKey",
@@ -15,12 +18,18 @@
       "in": "header"
     }
   },
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/registration/register": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "description": "Registrate a new user.",
         "parameters": [
           {
@@ -51,7 +60,9 @@
     },
     "/registration/login": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "description": "Login",
         "parameters": [
           {
@@ -79,7 +90,9 @@
     },
     "/registration/getnewtoken": {
       "get": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "description": "Get new JWT",
         "parameters": [
           {
@@ -97,7 +110,9 @@
     },
     "/registration/verify/{code}": {
       "get": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "description": "Verfy a new account",
         "parameters": [
           {
@@ -116,7 +131,9 @@
     },
     "/registration/resendVerificationEmail": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "description": "Verfy a new account",
         "parameters": [
           {
@@ -166,7 +183,6 @@
     },
     "/user/databyuserid/{userid}": {
       "get": {
-        "tags": ["User"],
         "description": "",
         "parameters": [
           {
@@ -193,17 +209,11 @@
           "403": {
             "description": "Forbidden"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/user/getAll": {
       "get": {
-        "tags": ["User"],
         "description": "",
         "parameters": [
           {
@@ -224,17 +234,14 @@
           "403": {
             "description": "Forbidden"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/user/getcommunitymembers/{communityId}": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "description": "",
         "parameters": [
           {
@@ -271,7 +278,6 @@
     },
     "/user/update": {
       "put": {
-        "tags": ["User"],
         "description": "",
         "parameters": [
           {
@@ -283,27 +289,6 @@
             "name": "communityid",
             "in": "header",
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "profile_image": {
-                  "example": "any"
-                },
-                "color": {
-                  "example": "any"
-                }
-              }
-            }
           }
         ],
         "responses": {
@@ -313,17 +298,14 @@
           "403": {
             "description": "Forbidden"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/user/sendrequest": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "description": "",
         "parameters": [
           {
@@ -364,9 +346,46 @@
         ]
       }
     },
+    "/community/members": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "communityid",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/{community{where{id:community.request[0].id}": {
+      "delete": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/community/getbyid/{id}": {
       "get": {
-        "tags": ["Community"],
+        "tags": [
+          "Community"
+        ],
         "description": "Get Community by id",
         "parameters": [
           {
@@ -403,7 +422,9 @@
     },
     "/community/getbycode/{code}": {
       "get": {
-        "tags": ["Community"],
+        "tags": [
+          "Community"
+        ],
         "description": "Find Community by the invite code",
         "parameters": [
           {
@@ -440,7 +461,9 @@
     },
     "/community/requests": {
       "get": {
-        "tags": ["Community"],
+        "tags": [
+          "Community"
+        ],
         "description": "Get all requests to a community, only admin can do this",
         "parameters": [
           {
@@ -471,7 +494,9 @@
     },
     "/community/requests/{communityid}": {
       "get": {
-        "tags": ["Community"],
+        "tags": [
+          "Community"
+        ],
         "description": "",
         "parameters": [
           {
@@ -508,7 +533,9 @@
     },
     "/community/acceptrequest": {
       "post": {
-        "tags": ["Community"],
+        "tags": [
+          "Community"
+        ],
         "description": "",
         "parameters": [
           {
@@ -551,7 +578,9 @@
     },
     "/community/denyrequest": {
       "post": {
-        "tags": ["Community"],
+        "tags": [
+          "Community"
+        ],
         "description": "",
         "parameters": [
           {
@@ -594,7 +623,9 @@
     },
     "/community/create": {
       "post": {
-        "tags": ["Community"],
+        "tags": [
+          "Community"
+        ],
         "description": "",
         "parameters": [
           {
@@ -637,7 +668,9 @@
     },
     "/calendar/create": {
       "post": {
-        "tags": ["Calendar Entry"],
+        "tags": [
+          "Calendar Entry"
+        ],
         "description": "",
         "parameters": [
           {
@@ -698,7 +731,9 @@
     },
     "/calendar/delete/{id}": {
       "delete": {
-        "tags": ["Calendar Entry"],
+        "tags": [
+          "Calendar Entry"
+        ],
         "description": "",
         "parameters": [
           {
@@ -735,7 +770,9 @@
     },
     "/calendar/interval": {
       "post": {
-        "tags": ["Calendar Entry"],
+        "tags": [
+          "Calendar Entry"
+        ],
         "description": "",
         "parameters": [
           {
@@ -781,7 +818,9 @@
     },
     "/calendar/routine/modify": {
       "post": {
-        "tags": ["Calendar Entry"],
+        "tags": [
+          "Calendar Entry"
+        ],
         "description": "",
         "parameters": [
           {
@@ -839,7 +878,9 @@
     },
     "/calendar/routine/all": {
       "get": {
-        "tags": ["Calendar Entry"],
+        "tags": [
+          "Calendar Entry"
+        ],
         "description": "",
         "parameters": [
           {
@@ -870,7 +911,9 @@
     },
     "/shoppinglist/items/add": {
       "post": {
-        "tags": ["Shopping List"],
+        "tags": [
+          "Shopping List"
+        ],
         "description": "",
         "parameters": [
           {
@@ -913,7 +956,9 @@
     },
     "/shoppinglist/items/getopen": {
       "get": {
-        "tags": ["Shopping List"],
+        "tags": [
+          "Shopping List"
+        ],
         "description": "",
         "parameters": [
           {
@@ -944,7 +989,9 @@
     },
     "/shoppinglist/items/getdone": {
       "get": {
-        "tags": ["Shopping List"],
+        "tags": [
+          "Shopping List"
+        ],
         "description": "",
         "parameters": [
           {
@@ -975,7 +1022,9 @@
     },
     "/shoppinglist/items/update": {
       "put": {
-        "tags": ["Shopping List"],
+        "tags": [
+          "Shopping List"
+        ],
         "description": "",
         "parameters": [
           {
@@ -1024,7 +1073,9 @@
     },
     "/debt/create": {
       "post": {
-        "tags": ["Debt"],
+        "tags": [
+          "Debt"
+        ],
         "description": "",
         "parameters": [
           {
@@ -1076,7 +1127,9 @@
     },
     "/debt/mine": {
       "get": {
-        "tags": ["Debt"],
+        "tags": [
+          "Debt"
+        ],
         "description": "Endpoint to get all debts of a user.",
         "parameters": [
           {
@@ -1107,7 +1160,9 @@
     },
     "/debt/balance": {
       "get": {
-        "tags": ["Debt"],
+        "tags": [
+          "Debt"
+        ],
         "description": "",
         "parameters": [
           {
@@ -1138,7 +1193,9 @@
     },
     "/debt/single/{id}": {
       "get": {
-        "tags": ["Debt"],
+        "tags": [
+          "Debt"
+        ],
         "description": "",
         "parameters": [
           {

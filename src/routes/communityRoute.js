@@ -1,9 +1,20 @@
+import { container } from 'tsyringe';
+
 const express = require('express');
+import { CommunityController } from '../controllers/community.controller';
 import { resSend, ResStatus } from '../helper';
 const router = express.Router();
 const auth = require('../middleware/userAuth');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+
+const communityController = container.resolve(CommunityController);
+
+router.get('/members:communityId', auth, async (req, res) =>
+  communityController.getMembers(req, res),
+);
+
+router.post('/sendrequest', auth, async (req, res) => communityController.sendRequest(req, res));
 
 const deleteOrAcceptRequest = async (req, res, accept) => {
   const requestId = req.body.id;

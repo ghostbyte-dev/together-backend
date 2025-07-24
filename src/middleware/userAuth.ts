@@ -13,7 +13,6 @@ const auth = (req: Request, res: Response, next: NextFunction) => {
   try {
     console.log(token);
     const decoded: JwtPayload = jwt.verify(token, config.JWT_SECRET);
-    console.log(decoded);
     req.user = { id: decoded.user.id, name: '', email: decoded.user.email, communityId: 0 };
     req.user.communityId = parseInt(req.headers.communityid as string);
   } catch (err) {

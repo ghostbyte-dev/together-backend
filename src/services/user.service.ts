@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { PrismaService } from './prismaService';
+import { PrismaService } from './prisma.service';
 import { ApiError } from '../errors/apiError';
 import type { user } from '@prisma/client';
 import { UserDto } from '../dtos/user.dto';

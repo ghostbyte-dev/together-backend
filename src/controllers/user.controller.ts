@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { UserService } from '../services/userService';
+import { UserService } from '../services/user.service';
 import type { Request, Response } from 'express';
 import { resSend, ResStatus } from '../helper';
 import { ApiError } from '../errors/apiError';
