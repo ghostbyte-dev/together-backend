@@ -21,7 +21,7 @@ app.use('/community', communityRoute);
 const calendarRoute = require('./routes/calendarRoute');
 app.use('/calendar', calendarRoute);
 
-const shoppinglistRoute = require('./routes/shoppinglistRoute');
+const shoppinglistRoute = require('./routes/shoppinglist.route');
 app.use('/shoppinglist', shoppinglistRoute);
 
 const debtRoute = require('./routes/debtRoute');
