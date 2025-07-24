@@ -99,17 +99,9 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
-          },
-          {
-            "name": "communityid",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
-          "401": {
-            "description": "Unauthorized"
-          },
           "403": {
             "description": "Forbidden"
           }
@@ -166,9 +158,6 @@
     },
     "/user/getUser": {
       "get": {
-        "tags": [
-          "User"
-        ],
         "description": "",
         "parameters": [
           {
@@ -189,12 +178,7 @@
           "403": {
             "description": "Forbidden"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/user/databyuserid/{userid}": {
@@ -692,10 +676,10 @@
         ]
       }
     },
-    "/task/create": {
+    "/calendar/create": {
       "post": {
         "tags": [
-          "Task"
+          "Calendar Entry"
         ],
         "description": "",
         "parameters": [
@@ -755,10 +739,10 @@
         ]
       }
     },
-    "/task/delete/{id}": {
+    "/calendar/delete/{id}": {
       "delete": {
         "tags": [
-          "Task"
+          "Calendar Entry"
         ],
         "description": "",
         "parameters": [
@@ -794,10 +778,10 @@
         ]
       }
     },
-    "/task/gettasksininterval": {
+    "/calendar/interval": {
       "post": {
         "tags": [
-          "Task"
+          "Calendar Entry"
         ],
         "description": "",
         "parameters": [
@@ -842,10 +826,10 @@
         ]
       }
     },
-    "/task/routine/modify": {
+    "/calendar/routine/modify": {
       "post": {
         "tags": [
-          "Task"
+          "Calendar Entry"
         ],
         "description": "",
         "parameters": [
@@ -902,10 +886,10 @@
         ]
       }
     },
-    "/task/routine/all": {
+    "/calendar/routine/all": {
       "get": {
         "tags": [
-          "Task"
+          "Calendar Entry"
         ],
         "description": "",
         "parameters": [
