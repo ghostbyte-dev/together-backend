@@ -41,10 +41,7 @@
                 "email": {
                   "example": "any"
                 },
-                "firstname": {
-                  "example": "any"
-                },
-                "lastname": {
+                "name": {
                   "example": "any"
                 },
                 "password": {
@@ -334,10 +331,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "firstname": {
-                  "example": "any"
-                },
-                "lastname": {
+                "name": {
                   "example": "any"
                 },
                 "email": {

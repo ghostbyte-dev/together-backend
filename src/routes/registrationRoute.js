@@ -11,8 +11,7 @@ router.post('/register', async (req, res) => {
   // #swagger.description = 'Registrate a new user.'
   if (
     !req.body.email ||
-    !req.body.firstname ||
-    !req.body.lastname ||
+    !req.body.name ||
     !req.body.password
   ) {
     helper.resSend(res, null, helper.resStatuses.error, 'Empty fields!')
@@ -36,8 +35,7 @@ router.post('/register', async (req, res) => {
       await prisma.user.create({
         data: {
           email: req.body.email,
-          firstname: req.body.firstname,
-          lastname: req.body.lastname,
+          name: req.body.name,
           password: enc,
           verificationcode: code
         }
@@ -130,6 +128,7 @@ router.get('/verify/:code', async (req, res) => {
       verified: true
     }
   })
+  console.log(verified)
   if (!verified) {
     return helper.resSend(res, null, helper.resStatuses.error, 'Verification code not found')
   } else if (verified === 1) {
@@ -146,6 +145,7 @@ router.get('/verify/:code', async (req, res) => {
         verificationcode: null
       }
     })
+    console.log('verified')
     return helper.resSend(res, {
       verified: true,
       message: 'Verified successfully'

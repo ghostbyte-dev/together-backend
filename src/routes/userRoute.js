@@ -79,8 +79,7 @@ router.put('/update', auth, async (req, res) => {
       id: req.user.id
     },
     data: {
-      firstname: req.body.firstname ?? undefined,
-      lastname: req.body.lastname ?? undefined,
+      name: req.body.name ?? undefined,
       email: req.body.email ?? undefined,
       profile_image: req.body.profile_image ?? undefined,
       color: req.body.color ?? undefined

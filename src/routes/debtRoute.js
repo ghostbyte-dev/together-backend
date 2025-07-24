@@ -48,8 +48,7 @@ router.get('/mine', auth, async (req, res) => {
       timestamp: true,
       user_debt_fk_user_creditor_idTouser: {
         select: {
-          firstname: true,
-          lastname: true,
+          name: true,
           color: true,
           profile_image: true,
           id: true
@@ -57,8 +56,7 @@ router.get('/mine', auth, async (req, res) => {
       },
       user: {
         select: {
-          firstname: true,
-          lastname: true,
+          name: true,
           color: true,
           profile_image: true,
           id: true
@@ -139,8 +137,7 @@ const getAllUsers = async (communityId) => {
     },
     select: {
       id: true,
-      firstname: true,
-      lastname: true,
+      name: true,
       profile_image: true
     }
   })

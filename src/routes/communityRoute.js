@@ -70,8 +70,7 @@ router.get('/getbycode/:code', auth, async (req, res) => {
       user_community_fk_admin_idTouser: {
         select: {
           id: true,
-          firstname: true,
-          lastname: true,
+          name: true,
           profile_image: true
         }
       },
@@ -102,8 +101,7 @@ router.get('/requests', auth, async (req, res) => {
           user: {
             select: {
               id: true,
-              firstname: true,
-              lastname: true,
+              name: true,
               profile_image: true
             }
           }

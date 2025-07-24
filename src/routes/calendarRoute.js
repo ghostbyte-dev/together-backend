@@ -15,7 +15,7 @@ const getSingleCalendarEntry = async (calendarEntryId) => {
         select: {
           user: {
             select: {
-              firstname: true,
+              name: true,
               color: true
             }
           }
@@ -146,7 +146,7 @@ router.post('/interval', auth, async (req, res) => {
           user: {
             select: {
               id: true,
-              firstname: true,
+              name: true,
               color: true,
               profile_image: true
             }
@@ -171,7 +171,7 @@ router.post('/interval', auth, async (req, res) => {
           user: {
             select: {
               id: true,
-              firstname: true,
+              name: true,
               color: true,
               profile_image: true
             }
@@ -209,7 +209,7 @@ const getSingleRoutine = async (routineId) => {
         select: {
           user: {
             select: {
-              firstname: true,
+              name: true,
               color: true
             }
           }
@@ -294,7 +294,7 @@ router.get('/routine/all', auth, async (req, res) => {
           user: {
             select: {
               id: true,
-              firstname: true,
+              name: true,
               color: true,
               profile_image: true
             }
