@@ -99,7 +99,7 @@ router.post('/login', async (req, res) => {
 router.get('/getnewtoken', auth, async (req, res) => {
   // #swagger.tags = ['Authentication']
   // #swagger.description = 'Get new JWT'
-
+  console.log('get new token')
   const user = await prisma.user.findUnique({
     where: { id: req.user.id },
     include: {
