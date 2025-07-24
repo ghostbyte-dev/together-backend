@@ -19,6 +19,7 @@ COPY . /app
 ENV DATABASE_URL ""
 
 RUN npx prisma generate
+RUN npm run build
 
 EXPOSE 3000
-CMD sh -c "npx prisma migrate deploy && node src/app.js"
+CMD sh -c "npx prisma migrate deploy && npm run start"

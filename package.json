@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.js",
+    "dev": "npx ts-node-dev src/app.ts",
+    "build": "npx tsc",
+    "start": "node src/app.js",
     "swagger-autogen": "node ./src/swagger.js"
   },
   "author": "",
@@ -21,15 +23,22 @@
     "mariadb": "^3.0.2",
     "nodemailer": "^7.0.5",
     "nodemon": "^2.0.20",
-    "swagger-ui-express": "^4.6.0"
+    "reflect-metadata": "^0.2.2",
+    "swagger-ui-express": "^4.6.0",
+    "tsyringe": "^4.10.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.1.0",
     "eslint": "^8.26.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.4.0",
     "eslint-plugin-promise": "^6.1.1",
     "prisma": "^6.12.0",
-    "swagger-autogen": "^2.22.0"
+    "swagger-autogen": "^2.22.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
   }
 }

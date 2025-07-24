@@ -1,23 +1,15 @@
+import { container } from 'tsyringe'
+import { UserController } from '../controllers/userController'
+
 const express = require('express')
 const router = express.Router()
 const auth = require('../middleware/userAuth')
 const { PrismaClient } = require('@prisma/client')
 const helper = require('../helper')
 const prisma = new PrismaClient()
+const userController = container.resolve(UserController)
 
-router.get('/getUser', auth, async (req, res) => {
-  // #swagger.tags = ['User']
-  /* #swagger.security = [{"Bearer": []}] */
-  const userId = req.user.id
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      communities: true
-    }
-  })
-  console.log(user)
-  helper.resSend(res, user)
-})
+router.get('/getUser', auth, (req, res) => userController.getUser(req, res))
 
 router.get('/databyuserid/:userid', auth, async (req, res) => {
   // #swagger.tags = ['User']
