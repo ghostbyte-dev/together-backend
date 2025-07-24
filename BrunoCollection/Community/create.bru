@@ -1,0 +1,21 @@
+meta {
+  name: create
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/community/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "WG Wien"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

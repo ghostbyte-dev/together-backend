@@ -1,6 +1,6 @@
+import type { NextFunction, Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { UserController } from '../controllers/user.controller';
-import type { NextFunction, Request, Response } from 'express';
 
 const express = require('express');
 const router = express.Router();

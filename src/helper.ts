@@ -16,9 +16,6 @@ export const createJWT = (id: number, email: string, username: string, communiti
 
 export const generateRandomString = () => Str.random(90);
 
-export const generateCommunityInviteCode = () =>
-  Math.floor(Math.random() * (999999 - 100000)) + 100000;
-
 export function sendVerifyEmail(email: string, subject: string, url: string) {
   // Create a test account or replace with real credentials.
   const transporter = nodemailer.createTransport({

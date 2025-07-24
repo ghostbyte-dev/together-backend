@@ -1,9 +1,10 @@
 import { injectable, inject } from 'tsyringe';
 import { PrismaService } from './prisma.service';
 import { ApiError } from '../errors/apiError';
-import type { user } from '@prisma/client';
+import type { request, user } from '@prisma/client';
 import { UserDto } from '../dtos/user.dto';
 import { CommunityDto } from '../dtos/community.dto';
+import { RequestDto } from '../dtos/request.dto';
 
 @injectable()
 export class CommunityService {
@@ -18,6 +19,133 @@ export class CommunityService {
     }
 
     return new CommunityDto(community);
+  }
+
+  async getByCode(communityCode: number): Promise<CommunityDto> {
+    const community = await this.prisma.community.findUnique({
+      where: { code: communityCode },
+      include: {
+        user_community_fk_admin_idTouser: {
+          select: {
+            id: true,
+            name: true,
+            profile_image: true,
+          },
+        },
+        _count: {
+          select: {
+            user: true,
+          },
+        },
+      },
+    });
+    if (!community) {
+      throw new ApiError(`Comunity with the id ${communityCode.toString()} doesn't exist`, 404);
+    }
+    return new CommunityDto(community);
+  }
+
+  async create(name: string, userId: number): Promise<CommunityDto> {
+    const inviteCode = this.generateCommunityInviteCode();
+    const community = await this.prisma.community.create({
+      data: {
+        name: name,
+        code: inviteCode,
+        fk_admin_id: userId,
+      },
+    });
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        communities: {
+          connect: { id: community.id },
+        },
+      },
+    });
+    return new CommunityDto(community);
+  }
+
+  private generateCommunityInviteCode(): number {
+    return Math.floor(Math.random() * (999999 - 100000)) + 100000;
+  }
+
+  async getRequests(userId: number, communityId: number): Promise<RequestDto[]> {
+    const community = await this.prisma.community.findFirst({
+      where: { fk_admin_id: userId, id: communityId },
+      include: {
+        request: {
+          select: {
+            id: true,
+            date: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                profile_image: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!community) {
+      throw new ApiError('No Admin of this Community', 400);
+    }
+
+    const requests = community.request.map((_request) => new RequestDto(_request));
+    return requests;
+  }
+
+  async acceptRequest(userId: number, communityId: number, requestId: number) {
+    const communityOfAdmin = await this.getCommunityOfAdminWithRequests(userId, communityId);
+    const request: request | undefined = communityOfAdmin.request.find(
+      (request) => request.id === requestId,
+    );
+    if (!request) {
+      throw new ApiError('Request not found', 404);
+    }
+    await this.prisma.user.update({
+      where: { id: request.fk_user_id },
+      data: {
+        communities: {
+          connect: { id: communityOfAdmin.id },
+        },
+      },
+    });
+    await this.prisma.request.delete({
+      where: {
+        id: request.id,
+      },
+    });
+  }
+
+  async declineRequest(userId: number, communityId: number, requestId: number) {
+    const communityOfAdmin = await this.getCommunityOfAdminWithRequests(userId, communityId);
+    const request: request | undefined = communityOfAdmin.request.find(
+      (request) => request.id === requestId,
+    );
+    if (!request) {
+      throw new ApiError('Request not found', 404);
+    }
+    await this.prisma.request.delete({
+      where: {
+        id: request.id,
+      },
+    });
+  }
+
+  private async getCommunityOfAdminWithRequests(userId: number, communityId: number) {
+    const community = await this.prisma.community.findFirst({
+      where: { fk_admin_id: userId, id: communityId },
+      select: {
+        id: true,
+        request: true,
+      },
+    });
+    if (!community) {
+      throw new ApiError('No Admin of a Community', 400);
+    }
+    return community;
   }
 
   async getMembers(communityId: number): Promise<UserDto[]> {

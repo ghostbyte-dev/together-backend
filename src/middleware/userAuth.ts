@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { JwtPayload } from '../types/jwtPayload';
+import { resSend } from '../helper';
 
 const jwt = require('jsonwebtoken');
 
@@ -11,10 +12,14 @@ const auth = (req: Request, res: Response, next: NextFunction) => {
     return res.status(403).send('A token is required for authentication');
   }
   try {
-    console.log(token);
     const decoded: JwtPayload = jwt.verify(token, config.JWT_SECRET);
     req.user = { id: decoded.user.id, name: '', email: decoded.user.email, communityId: 0 };
     req.user.communityId = parseInt(req.headers.communityid as string);
+
+    if (!req.user.id) {
+      resSend(res, 'no UserId');
+      return;
+    }
   } catch (err) {
     console.log(err);
     return res.status(401).send('Invalid Token');

@@ -1,0 +1,21 @@
+meta {
+  name: request
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/community/requests
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "code": 1231123
+  }
+}
+
+settings {
+  encodeUrl: true
+}

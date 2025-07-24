@@ -1,0 +1,21 @@
+meta {
+  name: accept Request
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/community/request/accept
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 2
+  }
+}
+
+settings {
+  encodeUrl: true
+}

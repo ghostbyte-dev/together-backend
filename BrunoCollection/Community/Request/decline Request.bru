@@ -1,0 +1,21 @@
+meta {
+  name: decline Request
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/community/request/decline
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 2
+  }
+}
+
+settings {
+  encodeUrl: true
+}
