@@ -1,0 +1,22 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/user
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "profile_image": "https://img.png",
+    "color": "#00ff00"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
