@@ -49,4 +49,11 @@ export class ShoppinglistService {
     }
     return new ShoppinglistItemDto(item);
   }
+
+  async deleteItem(itemId: number, communityId: number) {
+    await this.prisma.shoppinglist_item.delete({
+      where: { id: itemId, fk_community_id: communityId },
+    });
+    return;
+  }
 }

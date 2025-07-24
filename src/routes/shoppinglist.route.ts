@@ -23,4 +23,8 @@ router.put('/', auth, async (req: Request, res: Response, next: NextFunction) =>
   shoppinglistController.updateItem(req, res, next),
 );
 
+router.delete('/:id', auth, async (req: Request, res: Response, next: NextFunction) =>
+  shoppinglistController.deleteItem(req, res, next),
+);
+
 module.exports = router;

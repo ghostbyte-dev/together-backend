@@ -69,4 +69,23 @@ export class ShoppinglistController {
       next(error);
     }
   }
+
+  async deleteItem(req: Request, res: Response, next: NextFunction) {
+    const communityId = req.user.communityId;
+    if (!communityId) {
+      resSend(res, null, ResStatus.ERROR, 'no community id passed', 400);
+      return;
+    }
+    const itemId: number = parseInt(req.params.id);
+    if (!itemId) {
+      resSend(res, null, ResStatus.ERROR, 'Empty Fields!');
+      return;
+    }
+    try {
+      await this.shoppinglistService.deleteItem(itemId, communityId);
+      resSend(res, null);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
