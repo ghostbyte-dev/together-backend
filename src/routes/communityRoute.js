@@ -5,7 +5,7 @@ const auth = require('../middleware/userAuth')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-const deleteOrAcceptRequest = async function (req, res, accept) {
+const deleteOrAcceptRequest = async (req, res, accept) => {
   const requestId = req.body.id
   const community = await prisma.community.findFirst({
     where: { fk_admin_id: req.user.id, id: req.user.communityId },

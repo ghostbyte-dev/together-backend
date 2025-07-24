@@ -5,25 +5,17 @@ const pwStrength = /^(?=.*[A-Za-z])(?=.*\d)[\S]{6,}$/ // mindestens 6 Stellen &&
 const nodemailer = require('nodemailer')
 
 module.exports = {
-  testPasswordStrength: function (password) {
-    return pwStrength.test(password)
-  },
+  testPasswordStrength: (password) => pwStrength.test(password),
 
-  createJWT: function (id, email, username, communities) {
-    return jwt.sign({ version: 4, user: { id, email, username, communities } }, process.env.JWT_SECRET, {
+  createJWT: (id, email, username, communities) => jwt.sign({ version: 4, user: { id, email, username, communities } }, process.env.JWT_SECRET, {
       expiresIn: '1y'
-    })
-  },
+    }),
 
-  generateRandomString: function () {
-    return Str.random(90)
-  },
+  generateRandomString: () => Str.random(90),
 
-  generateCommunityInviteCode: function () {
-    return Math.floor(Math.random() * (999999 - 100000)) + 100000
-  },
+  generateCommunityInviteCode: () => Math.floor(Math.random() * (999999 - 100000)) + 100000,
 
-  sendVerifyEmail: function (email, subject, url) {
+  sendVerifyEmail: (email, subject, url) => {
     // Create a test account or replace with real credentials.
     const transporter = nodemailer.createTransport({
       host: process.env.MY_EMAIL_HOST,

@@ -1,33 +1,33 @@
-import "reflect-metadata";
-const express = require('express')
-const cors = require('cors')
-const app = express()
-const swaggerUi = require('swagger-ui-express')
-const swaggerFile = require('../swagger-output.json')
+import 'reflect-metadata';
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('../swagger-output.json');
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
-const registrationRoute = require('./routes/registrationRoute')
-app.use('/registration', registrationRoute)
+const registrationRoute = require('./routes/registrationRoute');
+app.use('/registration', registrationRoute);
 
-const userRoute = require('./routes/userRoute')
-app.use('/user', userRoute)
+const userRoute = require('./routes/userRoute');
+app.use('/user', userRoute);
 
-const communityRoute = require('./routes/communityRoute')
-app.use('/community', communityRoute)
+const communityRoute = require('./routes/communityRoute');
+app.use('/community', communityRoute);
 
-const calendarRoute = require('./routes/calendarRoute')
-app.use('/calendar', calendarRoute)
+const calendarRoute = require('./routes/calendarRoute');
+app.use('/calendar', calendarRoute);
 
-const shoppinglistRoute = require('./routes/shoppinglistRoute')
-app.use('/shoppinglist', shoppinglistRoute)
+const shoppinglistRoute = require('./routes/shoppinglistRoute');
+app.use('/shoppinglist', shoppinglistRoute);
 
-const debtRoute = require('./routes/debtRoute')
-app.use('/debt', debtRoute)
+const debtRoute = require('./routes/debtRoute');
+app.use('/debt', debtRoute);
 
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.listen(3000, () => {
-  console.log('App listening on Port 3000')
-})
+  console.log('App listening on Port 3000');
+});
