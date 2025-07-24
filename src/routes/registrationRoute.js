@@ -2,9 +2,9 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
 const helper = require('../helper')
-const auth = require('../middleware/userAuth')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+const jwt = require('jsonwebtoken')
 
 router.post('/register', async (req, res) => {
   // #swagger.tags = ['Authentication']
@@ -96,27 +96,44 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.get('/getnewtoken', auth, async (req, res) => {
+router.get('/getnewtoken', async (req, res) => {
   // #swagger.tags = ['Authentication']
   // #swagger.description = 'Get new JWT'
   console.log('get new token')
-  const user = await prisma.user.findUnique({
-    where: { id: req.user.id },
-    include: {
-      communities: true
+  const token = req.headers.authorization?.split(' ')[1]
+  if (!token) {
+    return res.status(403).send('A token is required for authentication')
+  }
+  try {
+    const config = process.env
+    const decoded = jwt.verify(token, config.JWT_SECRET)
+    console.log(decoded)
+    const userId = decoded.version === 4 ? decoded.user.id : decoded.id
+    console.log(userId)
+    if (!userId) {
+      throw Error('invalid token')
     }
-  })
-  const communities = user.communities.map((community) => community.id)
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        communities: true
+      }
+    })
+    const communities = user.communities.map((community) => community.id)
 
-  const usertoken = helper.createJWT(
-    user.id,
-    user.email,
-    user.username,
-    communities
-  )
+    const usertoken = helper.createJWT(
+      user.id,
+      user.email,
+      user.username,
+      communities
+    )
 
-  const answer = { token: usertoken }
-  helper.resSend(res, answer)
+    const answer = { token: usertoken }
+    helper.resSend(res, answer)
+  } catch (err) {
+    console.log(err)
+    helper.resSend(res, null, helper.resStatuses.error, err.message)
+  }
 })
 
 router.get('/verify/:code', async (req, res) => {
