@@ -6,8 +6,17 @@ meta {
 
 post {
   url: {{baseUrl}}/debt
-  body: none
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "name": "Test debt",
+    "amount": 20,
+    "debitorId": 1,
+    "creditorId": 2
+  }
 }
 
 settings {

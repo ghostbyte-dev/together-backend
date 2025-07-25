@@ -60,36 +60,7 @@ router.get('/mine', auth, async (req, res) => {
   resSend(res, null);
 });
 
-router.get('/balance', auth, async (req, res) => {
-  // #swagger.tags = ['Debt']
-  /* #swagger.security = [{"Bearer": []}] */
-  const moneyToPay = await prisma.debt.groupBy({
-    by: ['fk_user_creditor_id'],
-    where: {
-      fk_user_debitor_id: req.user.id,
-      fk_community_id: req.user.communityId,
-    },
-    _sum: {
-      amount: true,
-    },
-  });
-  const gettingMoney = await prisma.debt.groupBy({
-    by: ['fk_user_debitor_id'],
-    where: {
-      fk_user_creditor_id: req.user.id,
-      fk_community_id: req.user.communityId,
-    },
-    _sum: {
-      amount: true,
-    },
-  });
-  const result = await createOneBalanceOutOfgettingAndPayingMoney(
-    moneyToPay,
-    gettingMoney,
-    req.user,
-  );
-  resSend(res, result);
-});
+router.get('/balance', auth, async (req, res, next) => debtController.balance(req, res, next));
 
 const createOneBalanceOutOfgettingAndPayingMoney = async (moneyToPay, gettingMoney, myUser) => {
   const moneyToPayAlreadyAddedToResult = [];
