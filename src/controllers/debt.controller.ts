@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { resSend, ResStatus } from '../helper';
 import { DebtService } from '../services/debt.service';
 import { BalanceDto } from '../dtos/balance.dto';
+import { DebtDto } from '../dtos/debt.dto';
 
 @injectable()
 export class DebtController {
@@ -31,6 +32,18 @@ export class DebtController {
     try {
       const balance: BalanceDto[] = await this.debtService.balance(userId, communityId);
       resSend(res, balance);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async mine(req: Request, res: Response, next: NextFunction) {
+    const communityId = req.user.communityId;
+    const userId = req.user.id;
+
+    try {
+      const debts: DebtDto[] = await this.debtService.mine(userId, communityId);
+      resSend(res, debts);
     } catch (error) {
       next(error);
     }

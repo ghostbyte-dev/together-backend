@@ -35,6 +35,12 @@ export class DebtService {
     return new DebtDto(debt);
   }
 
+  async mine(userId: number, communityId: number): Promise<DebtDto[]> {
+    const debts = await this.getDebtsOfUser(userId, communityId);
+    const debtsDto = debts.map((debt) => new DebtDto(debt));
+    return debtsDto;
+  }
+
   async balance(userId: number, communityId: number): Promise<BalanceDto[]> {
     const debts = await this.getDebtsOfUser(userId, communityId);
     let groupedDebts = this.groupDebts(debts, userId);
@@ -55,6 +61,11 @@ export class DebtService {
         fk_user_debitor_id: true,
         amount: true,
       },
+      orderBy: [
+        {
+          timestamp: 'desc',
+        },
+      ],
     });
     return debts;
   }
