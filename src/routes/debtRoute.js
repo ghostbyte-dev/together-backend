@@ -15,7 +15,7 @@ router.get('/mine', auth, async (req, res) => {
   // #swagger.tags = ['Debt']
   // #swagger.description = 'Endpoint to get all debts of a user.'
   /* #swagger.security = [{"Bearer": []}] */
-  const debts = await prisma.debt.findMany({
+  /* const debts = await prisma.debt.findMany({
     where: {
       fk_community_id: req.user.communityId,
       OR: [
@@ -56,6 +56,8 @@ router.get('/mine', auth, async (req, res) => {
     ],
   });
   resSend(res, debts);
+  */
+  resSend(res, null);
 });
 
 router.get('/balance', auth, async (req, res) => {
