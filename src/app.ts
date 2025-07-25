@@ -24,7 +24,7 @@ app.use('/calendar', calendarRoute);
 const shoppinglistRoute = require('./routes/shoppinglist.route');
 app.use('/shoppinglist', shoppinglistRoute);
 
-const debtRoute = require('./routes/debtRoute');
+const debtRoute = require('./routes/debt.route');
 app.use('/debt', debtRoute);
 
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
