@@ -20,7 +20,7 @@ router.get('/requests', auth, async (req: Request, res: Response, next: NextFunc
   communityController.getRequests(req, res, next),
 );
 
-router.get('/members:communityId', auth, async (req: Request, res: Response, next: NextFunction) =>
+router.get('/:communityId/members', auth, async (req: Request, res: Response, next: NextFunction) =>
   communityController.getMembers(req, res, next),
 );
 

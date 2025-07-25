@@ -7,6 +7,7 @@ export class UserDto {
   profile_image: string;
   communities: CommunityDto[] | null;
   color: string;
+  isAdmin?: boolean;
 
   // biome-ignore lint/suspicious/noExplicitAny: could be diffrent user types from prisma
   constructor(user: any) {
@@ -19,5 +20,6 @@ export class UserDto {
         user.communities.map((c: any) => new CommunityDto(c))
       : null;
     this.color = user.color;
+    this.isAdmin = user.isAdmin;
   }
 }

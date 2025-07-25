@@ -160,7 +160,12 @@ export class CommunityService {
       throw new ApiError('Community not found', 404);
     }
 
-    const users = community.users.map((user: user) => new UserDto(user));
+    const users = community.users.map((user: user) => {
+      const isAdmin = user.id === community.fk_admin_id;
+      const userDto = new UserDto(user);
+      userDto.isAdmin = isAdmin;
+      return userDto;
+    });
 
     if (!users) {
       throw new ApiError('no Users found in Community', 404);
