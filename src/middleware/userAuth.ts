@@ -20,10 +20,6 @@ const auth = (req: Request, res: Response, next: NextFunction) => {
       resSend(res, 'no UserId');
       return;
     }
-    if (!decoded.user.communities.find((community) => community === req.user.communityId)) {
-      resSend(res, 'invalid communityId');
-      return;
-    }
   } catch (err) {
     console.log(err);
     return res.status(401).send('Invalid Token');
