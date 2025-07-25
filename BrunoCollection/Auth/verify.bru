@@ -5,17 +5,9 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/registration/register
-  body: json
+  url: {{baseUrl}}/auth/verify/bc215be5307cbe569532b86777574e7c49283ce8c794d6a9eaec986fe38338e5
+  body: none
   auth: inherit
-}
-
-body:json {
-  {
-    "email": "tapuhuty@forexzig.com",
-    "name": "test2",
-    "password": "Aut-1251"
-  }
 }
 
 body:form-urlencoded {

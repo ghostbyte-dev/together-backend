@@ -1,8 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { UserService } from '../services/user.service';
 import type { NextFunction, Request, Response } from 'express';
-import { resSend, ResStatus } from '../helper';
-import { ApiError } from '../errors/apiError';
+import { resSend } from '../helper';
 import type { UserDto } from '../dtos/user.dto';
 
 @injectable()

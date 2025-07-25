@@ -4,6 +4,7 @@ import { ApiError } from '../errors/apiError';
 import * as crypto from 'node:crypto';
 import { MailService } from './mail.service';
 import bcrypt from 'bcryptjs';
+import jwt, { Secret } from 'jsonwebtoken';
 
 @injectable()
 export class AuthService {
@@ -55,6 +56,43 @@ export class AuthService {
     return crypto.randomBytes(32).toString('hex');
   }
 
+  async login(email: string, password: string): Promise<string> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: email },
+      include: {
+        communities: true,
+      },
+    });
+    if (!user) {
+      throw new ApiError('No user found with this email', 400);
+    }
+
+    const isPasswordMatch = bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      throw new ApiError('Invalid Password', 400);
+    }
+
+    if (!user.verified) {
+      throw new ApiError('This user is not verified yet!', 400);
+    }
+
+    const communitiesIds = user.communities.map((community) => community.id);
+    const jwtToken = this.createJWT(user.id, user.email, user.name, communitiesIds);
+
+    return jwtToken;
+  }
+
+  private createJWT(id: number, email: string, username: string, communities: number[]): string {
+    return jwt.sign(
+      { version: 4, user: { id, email, username, communities } },
+      process.env.JWT_SECRET as Secret,
+      {
+        expiresIn: '1y',
+      },
+    );
+  }
+
   async verifyEmail(verificationCode: string): Promise<void> {
     const verified = await this.isUserVerified(verificationCode);
     if (verified) {
@@ -81,6 +119,39 @@ export class AuthService {
     });
     if (!user) {
       throw new ApiError('user with verification code not found', 400);
+    }
+    return user.verified;
+  }
+
+  async resendVerificationEmail(email: string): Promise<void> {
+    const verified = await this.isUserVerifiedByEmail(email);
+    if (verified) {
+      throw new ApiError('User was already Verified', 400);
+    }
+    const user = await this.prisma.user.update({
+      where: {
+        email: email,
+      },
+      data: {
+        verificationcode: this.getEmailVerificationCode(),
+      },
+    });
+    await this.mailService.sendVerificationMail(
+      email,
+      `${process.env.CLIENT_URL}/verify/${user.verificationcode}`,
+    );
+    return;
+  }
+
+  private async isUserVerifiedByEmail(email: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: {
+        verified: true,
+      },
+    });
+    if (!user) {
+      throw new ApiError('user with this email not found', 400);
     }
     return user.verified;
   }

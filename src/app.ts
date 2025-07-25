@@ -9,8 +9,8 @@ const swaggerFile = require('../swagger-output.json');
 app.use(cors());
 app.use(express.json());
 
-const registrationRoute = require('./routes/registrationRoute');
-app.use('/registration', registrationRoute);
+const authRoute = require('./routes/auth.route');
+app.use('/auth', authRoute);
 
 const userRoute = require('./routes/user.route');
 app.use('/user', userRoute);

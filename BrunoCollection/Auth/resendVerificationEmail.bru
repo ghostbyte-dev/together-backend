@@ -1,19 +1,18 @@
 meta {
-  name: login
+  name: resendVerificationEmail
   type: http
-  seq: 1
+  seq: 4
 }
 
 post {
-  url: {{baseUrl}}/auth/login
+  url: {{baseUrl}}/auth/resendVerificationEmail
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "email": "tapuhuty@forexzig.com",
-    "password": "Aut-1251"
+    "email": "tapuhuty@forexzig.com"
   }
 }
 

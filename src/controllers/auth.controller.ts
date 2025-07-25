@@ -20,6 +20,19 @@ export class AuthController {
     }
   }
 
+  async login(req: Request, res: Response, next: NextFunction) {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      resSend(res, null, ResStatus.ERROR, 'Invalid Data', 400);
+    }
+    try {
+      const jwtToken = await this.authService.login(email, password);
+      resSend(res, { token: jwtToken });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async verifyEmail(req: Request, res: Response, next: NextFunction) {
     const verificationCode: string = req.params.code;
     if (!verificationCode) {
@@ -32,6 +45,20 @@ export class AuthController {
         verified: true,
         message: 'Verified successfully',
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async resendVerificationEmail(req: Request, res: Response, next: NextFunction) {
+    const email = req.body.email;
+    if (!email) {
+      resSend(res, null, ResStatus.ERROR, 'invalid arguments');
+    }
+
+    try {
+      await this.authService.resendVerificationEmail(email);
+      resSend(res, null);
     } catch (error) {
       next(error);
     }
