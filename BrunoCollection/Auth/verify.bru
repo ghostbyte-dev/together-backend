@@ -1,0 +1,32 @@
+meta {
+  name: verify
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/registration/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "tapuhuty@forexzig.com",
+    "name": "test2",
+    "password": "Aut-1251"
+  }
+}
+
+body:form-urlencoded {
+  email: emanuel.hiebeler@gmail.com
+  password: Aut-1251
+}
+
+body:multipart-form {
+  email: emanuel.hiebeler
+}
+
+settings {
+  encodeUrl: true
+}

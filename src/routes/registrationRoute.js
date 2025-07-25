@@ -1,55 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+import { AuthController } from '../controllers/auth.controller';
 import { createJWT, resSend, ResStatus } from '../helper';
+import { container } from 'tsyringe';
+
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const jwt = require('jsonwebtoken');
 
-router.post('/register', async (req, res) => {
-  // #swagger.tags = ['Authentication']
-  // #swagger.description = 'Registrate a new user.'
-  if (!req.body.email || !req.body.name || !req.body.password) {
-    resSend(res, null, ResStatus.ERROR, 'Empty fields!');
-    return;
-  } else if (!helper.testPasswordStrength(req.body.password)) {
-    resSend(
-      res,
-      null,
-      ResStatus.ERROR,
-      'The password must be at least 6 characters long. There must be at least one letter and one number.',
-    );
-    return;
-  }
-  const user = await prisma.user.findFirst({
-    where: { email: req.body.email },
-  });
-  if (user) {
-    resSend(res, null, ResStatus.ERROR, 'This email is already used!');
-    return;
-  }
+const authController = container.resolve(AuthController);
 
-  const code = helper.generateRandomString();
+router.post('/register', async (req, res, next) => authController.register(req, res, next));
 
-  bcrypt.genSalt(10, (_err, salt) => {
-    bcrypt.hash(req.body.password, salt, async (_err, enc) => {
-      await prisma.user.create({
-        data: {
-          email: req.body.email,
-          name: req.body.name,
-          password: enc,
-          verificationcode: code,
-        },
-      });
-      helper.sendVerifyEmail(
-        req.body.email,
-        'Email verification',
-        process.env.CLIENT_URL + '/verify/' + code,
-      );
-      resSend(res, { registered: true });
-    });
-  });
-});
+router.post('/verify/:code', async (req, res, next) => authController.verifyEmail(req, res, next));
 
 router.post('/login', async (req, res) => {
   // #swagger.tags = ['Authentication']
@@ -120,40 +84,6 @@ router.get('/getnewtoken', async (req, res) => {
   } catch (err) {
     console.log(err);
     resSend(res, null, ResStatus.ERROR, err.message);
-  }
-});
-
-router.get('/verify/:code', async (req, res) => {
-  // #swagger.tags = ['Authentication']
-  // #swagger.description = 'Verfy a new account'
-  const verified = await prisma.user.findFirst({
-    where: { verificationcode: req.params.code },
-    select: {
-      verified: true,
-    },
-  });
-  console.log(verified);
-  if (!verified) {
-    return resSend(res, null, ResStatus.ERROR, 'Verification code not found');
-  } else if (verified === 1) {
-    return resSend(res, null, ResStatus.ERROR, 'User was already Verified');
-  } else if (verified === -1) {
-    return resSend(res, null, ResStatus.ERROR, 'Code doesnt exist');
-  } else {
-    await prisma.user.update({
-      where: {
-        verificationcode: req.params.code,
-      },
-      data: {
-        verified: true,
-        verificationcode: null,
-      },
-    });
-    console.log('verified');
-    return resSend(res, {
-      verified: true,
-      message: 'Verified successfully',
-    });
   }
 });
 
