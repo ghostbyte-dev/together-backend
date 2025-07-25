@@ -2,28 +2,14 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/userAuth');
 const { PrismaClient } = require('@prisma/client');
+import { DebtController } from '../controllers/debt.controller';
 import { resSend, ResStatus } from '../helper';
 const prisma = new PrismaClient();
+import { container } from 'tsyringe';
 
-router.post('/create', auth, async (req, res) => {
-  // #swagger.tags = ['Debt']
-  /* #swagger.security = [{"Bearer": []}] */
+const debtController = container.resolve(DebtController);
 
-  if (!req.body.name || !req.body.amount || !req.body.debitorId) {
-    resSend(res, null, ResStatus.ERROR, 'Empty Fields!');
-    return;
-  }
-  const debt = await prisma.debt.create({
-    data: {
-      fk_community_id: req.user.communityId,
-      fk_user_creditor_id: req.body.creditorId,
-      fk_user_debitor_id: req.body.debitorId,
-      name: req.body.name,
-      amount: req.body.amount,
-    },
-  });
-  resSend(res, debt);
-});
+router.post('/', auth, async (req, res, next) => debtController.create(req, res, next));
 
 router.get('/mine', auth, async (req, res) => {
   // #swagger.tags = ['Debt']

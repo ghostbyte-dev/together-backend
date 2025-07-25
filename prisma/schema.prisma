@@ -131,8 +131,8 @@ model debt {
   name                                String    @db.VarChar(100)
   timestamp                           DateTime  @default(dbgenerated("(curdate())")) @db.DateTime(0)
   community                           community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "debt_FK")
-  user_debt_fk_user_creditor_idTouser user      @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onUpdate: Restrict, map: "debt_FK_1")
-  user                                user      @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onUpdate: Restrict, map: "debt_FK_2")
+  creditor                            user      @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onUpdate: Restrict, map: "debt_FK_1")
+  debitor                             user      @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onUpdate: Restrict, map: "debt_FK_2")
 
   @@index([fk_community_id], map: "debt_FK")
   @@index([fk_user_creditor_id], map: "debt_FK_1")
