@@ -19,7 +19,7 @@ router.get('/done', auth, async (req: Request, res: Response, next: NextFunction
   shoppinglistController.getClosed(req, res, next),
 );
 
-router.put('/', auth, async (req: Request, res: Response, next: NextFunction) =>
+router.patch('/', auth, async (req: Request, res: Response, next: NextFunction) =>
   shoppinglistController.updateItem(req, res, next),
 );
 

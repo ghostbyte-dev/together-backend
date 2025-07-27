@@ -19,6 +19,6 @@ router.get('/:userid', auth, (req: Request, res: Response, next: NextFunction) =
   userController.getUserById(req, res, next),
 );
 
-router.put('/', auth, async (req: Request, res: Response) => userController.updateUser(req, res));
+router.patch('/', auth, async (req: Request, res: Response) => userController.updateUser(req, res));
 
 module.exports = router;
