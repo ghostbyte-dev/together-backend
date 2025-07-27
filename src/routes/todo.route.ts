@@ -15,6 +15,10 @@ router.patch('/', auth, (req: Request, res: Response, next: NextFunction) =>
   todoController.update(req, res, next),
 );
 
+router.delete('/:id', auth, (req: Request, res: Response, next: NextFunction) =>
+  todoController.delete(req, res, next),
+);
+
 router.get('/open', auth, (req: Request, res: Response, next: NextFunction) =>
   todoController.getOpen(req, res, next),
 );

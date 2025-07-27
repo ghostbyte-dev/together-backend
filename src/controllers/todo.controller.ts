@@ -41,6 +41,22 @@ export class TodoController {
     }
   }
 
+  async delete(req: Request, res: Response, next: NextFunction) {
+    const id = Number(req.params.id);
+    if (!id) {
+      resSend(res, null, ResStatus.ERROR, 'Invalid Data');
+    }
+
+    const communityId = req.user.communityId;
+
+    try {
+      await this.todoService.delete(id, communityId);
+      resSend(res, null);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getDone(req: Request, res: Response, next: NextFunction) {
     const communityId = req.user.communityId;
 

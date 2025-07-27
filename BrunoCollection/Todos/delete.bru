@@ -1,0 +1,22 @@
+meta {
+  name: delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/todos/2
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "1. todo",
+    "description": "hallolilola"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

@@ -51,6 +51,16 @@ export class TodoService {
     return new TodoDto(todo);
   }
 
+  async delete(id: number, communityId: number): Promise<void> {
+    await this.prisma.todo.delete({
+      where: {
+        id: id,
+        fk_community_id: communityId,
+      },
+    });
+    return;
+  }
+
   async getTodos(done: boolean, communityId: number): Promise<TodoDto[]> {
     const todos = await this.prisma.todo.findMany({
       where: {
