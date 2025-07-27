@@ -1,0 +1,28 @@
+meta {
+  name: delete
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/calendar/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 3
+}
+
+body:json {
+  {
+    "id": 4,
+    "name": "test Calendar entry updated",
+    "date": "2025-07-30",
+    "assignedUsers": [2, 5]
+  }
+}
+
+settings {
+  encodeUrl: true
+}

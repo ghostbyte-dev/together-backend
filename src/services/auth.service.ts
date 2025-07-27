@@ -66,9 +66,7 @@ export class AuthService {
     if (!user) {
       throw new ApiError('No user found with this email', 400);
     }
-
-    const isPasswordMatch = bcrypt.compare(password, user.password);
-
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       throw new ApiError('Invalid Password', 400);
     }

@@ -24,6 +24,7 @@ export class AuthController {
     const { email, password } = req.body;
     if (!email || !password) {
       resSend(res, null, ResStatus.ERROR, 'Invalid Data', 400);
+      return;
     }
     try {
       const jwtToken = await this.authService.login(email, password);

@@ -17,25 +17,11 @@ router.get('/interval', auth, async (req, res, next) =>
   calendarController.interval(req, res, next),
 );
 
-router.delete('/delete/:id', auth, async (req, res) => {
-  // #swagger.tags = ['Calendar Entry']
-  /* #swagger.security = [{"Bearer": []}] */
-  if (!req.params.id || isNaN(req.params.id)) {
-    resSend(res, null, ResStatus.ERROR, 'Empty Fields!');
-    return;
-  }
-  await prisma.calendar_entry_user.deleteMany({
-    where: {
-      fk_calendar_entry_id: parseInt(req.params.id),
-    },
-  });
-  await prisma.calendar_entry.delete({
-    where: {
-      id: parseInt(req.params.id),
-    },
-  });
-  resSend(res, 'deleted Calendar Entry ' + req.params.id);
-});
+router.delete('/:id', auth, async (req, res, next) => calendarController.delete(req, res, next));
+
+router.post('/routine', auth, async (req, res, next) =>
+  calendarController.createRoutine(req, res, next),
+);
 
 const getSingleRoutine = async (routineId) => {
   return await prisma.routine.findUnique({

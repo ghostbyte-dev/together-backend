@@ -4,6 +4,8 @@ import { CreateCalendarEntry } from '../types/createCalendarEntry';
 import { CalendarEntryDto } from '../dtos/calendarEntry.dto';
 import { UpdateCalendarEntry } from '../types/updateCalendarEntry';
 import { routine } from '@prisma/client';
+import { CreateRoutine } from '../types/createRoutine';
+import { RoutineDto } from '../dtos/routine.dto';
 
 @injectable()
 export class CalendarService {
@@ -202,5 +204,62 @@ export class CalendarService {
       },
     });
     return routines;
+  }
+
+  async deleteCalendarEntry(id: number): Promise<void> {
+    await this.prisma.calendar_entry_user.deleteMany({
+      where: {
+        fk_calendar_entry_id: id,
+      },
+    });
+    await this.prisma.calendar_entry.delete({
+      where: {
+        id: id,
+      },
+    });
+    return;
+  }
+
+  async createRoutine(data: CreateRoutine, communityId: number): Promise<RoutineDto> {
+    const routine = await this.prisma.routine.create({
+      data: {
+        name: data.name,
+        startDate: data.startDate,
+        interval: data.interval,
+        fk_community_id: communityId,
+      },
+    });
+    if (data.assignedUsers) {
+      await this.assignUsersToRoutine(data.assignedUsers, routine.id);
+      const routineWithUsers = await this.getRoutine(routine.id);
+      return routineWithUsers;
+    }
+    return new RoutineDto(routine);
+  }
+
+  async assignUsersToRoutine(assignedUsers: number[], routineId: number) {
+    const assignedUsersCalendarEntryIdList = assignedUsers.map((assignedUserId: number) => ({
+      fk_user_id: assignedUserId,
+      fk_routine_id: routineId,
+    }));
+    await this.prisma.routine_user.createMany({
+      data: assignedUsersCalendarEntryIdList,
+    });
+  }
+
+  async getRoutine(id: number) {
+    const routine = await this.prisma.routine.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        routine_user: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    return new RoutineDto(routine);
   }
 }
