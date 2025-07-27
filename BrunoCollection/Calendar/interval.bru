@@ -1,0 +1,27 @@
+meta {
+  name: interval
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/calendar/interval?startDate=2025-07-27&endDate=2025-07-30
+  body: none
+  auth: inherit
+}
+
+params:query {
+  startDate: 2025-07-27
+  endDate: 2025-07-30
+}
+
+body:json {
+  {
+    "startDate": "2025-07-27",
+    "endDate": "2025-07-30"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

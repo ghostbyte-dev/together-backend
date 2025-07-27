@@ -1,9 +1,14 @@
+import { container } from 'tsyringe';
+
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/userAuth');
 const { PrismaClient } = require('@prisma/client');
 import { resSend, ResStatus } from '../helper';
+import { CalendarController } from '../controllers/calendar.controller';
 const prisma = new PrismaClient();
+
+const calendarController = container.resolve(CalendarController);
 
 const getSingleCalendarEntry = async (calendarEntryId) => {
   return await prisma.calendar_entry.findUnique({
@@ -97,16 +102,12 @@ const updateCalendarEntry = async (req, res, calendarEntryId) => {
   resSend(res, await getSingleCalendarEntry(calendarEntryId));
 };
 
-router.post('/create', auth, async (req, res) => {
-  // #swagger.tags = ['Calendar Entry']
-  /* #swagger.security = [{"Bearer": []}] */
-  const calendarEntryId = req.body.id;
-  if (!calendarEntryId) {
-    createCalendarEntry(req, res);
-  } else {
-    updateCalendarEntry(req, res, calendarEntryId);
-  }
-});
+router.post('/', auth, async (req, res, next) => calendarController.create(req, res, next));
+router.patch('/', auth, async (req, res, next) => calendarController.update(req, res, next));
+
+router.get('/interval', auth, async (req, res, next) =>
+  calendarController.interval(req, res, next),
+);
 
 router.delete('/delete/:id', auth, async (req, res) => {
   // #swagger.tags = ['Calendar Entry']
@@ -126,89 +127,6 @@ router.delete('/delete/:id', auth, async (req, res) => {
     },
   });
   resSend(res, 'deleted Calendar Entry ' + req.params.id);
-});
-
-router.post('/interval', auth, async (req, res) => {
-  // #swagger.tags = ['Calendar Entry']
-  /* #swagger.security = [{"Bearer": []}] */
-  if (!req.body.startDate || !req.body.endDate) {
-    resSend(res, null, ResStatus.ERROR, 'Empty Fields!');
-    return;
-  }
-  const calendarEntries = await prisma.calendar_entry.findMany({
-    where: {
-      fk_community_id: req.user.communityId,
-      date: {
-        gte: new Date(req.body.startDate.split('T')[0]),
-        lte: new Date(req.body.endDate),
-      },
-    },
-    include: {
-      calendar_entry_user: {
-        select: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              color: true,
-              profile_image: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: [
-      {
-        date: 'asc',
-      },
-    ],
-  });
-  const routines = await prisma.routine.findMany({
-    where: {
-      fk_community_id: req.user.communityId,
-      active: true,
-    },
-    include: {
-      routine_user: {
-        select: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              color: true,
-              profile_image: true,
-            },
-          },
-        },
-      },
-    },
-  });
-  for (const routine in routines) {
-    const date = routines[routine].startDate;
-    while (date <= new Date(req.body.endDate)) {
-      if (date >= new Date(req.body.startDate.split('T')[0])) {
-        const calendarEntry = await prisma.calendar_entry.findFirst({
-          where: {
-            fk_routine_id: routines[routine].id,
-            date,
-          },
-        });
-        if (!calendarEntry) {
-          calendarEntries.push({
-            name: routines[routine].name,
-            notes: calendarEntry ? calendarEntry.notes : '',
-            date: date.toISOString(),
-            done: calendarEntry ? calendarEntry.done : false,
-            fk_community_id: req.user.communityId,
-            fk_routine_id: routines[routine].id,
-            calendar_entry_user: routines[routine].routine_user,
-          });
-        }
-      }
-      date.setDate(date.getDate() + routines[routine].interval);
-    }
-  }
-  resSend(res, calendarEntries);
 });
 
 const getSingleRoutine = async (routineId) => {
