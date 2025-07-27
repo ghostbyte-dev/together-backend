@@ -7,5 +7,11 @@ export class BalanceDto {
   constructor(amount: number, otherUser: any) {
     this.amount = amount;
     this.otherUser = new UserDto(otherUser);
+
+    this.roundAmount();
+  }
+
+  private roundAmount() {
+    this.amount = Number(this.amount.toFixed(2));
   }
 }
