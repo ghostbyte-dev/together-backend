@@ -1,0 +1,24 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/todos
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 1,
+    "name": "1. todo updated",
+    "description": "hallolilola update",
+    "done": true
+  }
+}
+
+settings {
+  encodeUrl: true
+}

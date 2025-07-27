@@ -20,30 +20,33 @@ model community {
   calendar_entry                   calendar_entry[]
   user                             user[]
   users                            user[]              @relation("communityUser")
+  todo                             todo[]
 
   @@index([fk_admin_id], map: "community_FK")
 }
 
 model user {
-  id                                    Int            @id @default(autoincrement())
-  fk_community_id                       Int?
-  email                                 String         @unique(map: "user_email_un") @db.VarChar(100)
-  verificationcode                      String?        @unique(map: "user_un") @db.VarChar(90)
-  verified                              Boolean        @default(false)
-  password                              String         @db.VarChar(100)
-  creationdate                          DateTime       @default(dbgenerated("(curdate())")) @db.Date
-  profile_image                         String?        @default("https://i.imgur.com/pWHgnHA.jpg") @db.VarChar(200)
+  id               Int      @id @default(autoincrement())
+  fk_community_id  Int?
+  email            String   @unique(map: "user_email_un") @db.VarChar(100)
+  verificationcode String?  @unique(map: "user_un") @db.VarChar(90)
+  verified         Boolean  @default(false)
+  password         String   @db.VarChar(100)
+  creationdate     DateTime @default(dbgenerated("(curdate())")) @db.Date
+  profile_image    String?  @default("https://i.imgur.com/pWHgnHA.jpg") @db.VarChar(200)
 
-  name                                  String         @db.VarChar(100)
-  color                                 String         @default("#2e3039") @db.VarChar(7)
-  community                             community?     @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
-  community_community_fk_admin_idTouser community[]    @relation("community_fk_admin_idTouser")
-  debt_debt_fk_user_creditor_idTouser   debt[]         @relation("debt_fk_user_creditor_idTouser")
-  debt                                  debt[]         @relation("debt_fk_user_debitor_idTouser")
+  name                                  String                @db.VarChar(100)
+  color                                 String                @default("#2e3039") @db.VarChar(7)
+  community                             community?            @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
+  community_community_fk_admin_idTouser community[]           @relation("community_fk_admin_idTouser")
+  debt_debt_fk_user_creditor_idTouser   debt[]                @relation("debt_fk_user_creditor_idTouser")
+  debt                                  debt[]                @relation("debt_fk_user_debitor_idTouser")
   request                               request[]
   routine_user                          routine_user[]
-  calendar_entry_user                             calendar_entry_user[]
-  communities                           community[]    @relation("communityUser")
+  calendar_entry_user                   calendar_entry_user[]
+  communities                           community[]           @relation("communityUser")
+  todo                                  todo[]
+
   @@index([fk_community_id], map: "user_FK")
 }
 
@@ -60,15 +63,15 @@ model request {
 }
 
 model calendar_entry {
-  id              Int         @id @default(autoincrement())
-  name            String      @db.VarChar(100)
-  notes           String?     @db.Text
-  date            DateTime    @db.Date
-  done            Boolean     @default(false)
-  fk_community_id Int
-  fk_routine_id   Int?
-  routine         routine?    @relation(fields: [fk_routine_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "task_FK")
-  community       community   @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "tasks_FK_2")
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(100)
+  notes               String?               @db.Text
+  date                DateTime              @db.Date
+  done                Boolean               @default(false)
+  fk_community_id     Int
+  fk_routine_id       Int?
+  routine             routine?              @relation(fields: [fk_routine_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "task_FK")
+  community           community             @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "tasks_FK_2")
   calendar_entry_user calendar_entry_user[]
 
   @@index([fk_community_id], map: "calendar_entries_FK_2")
@@ -76,24 +79,24 @@ model calendar_entry {
 }
 
 model calendar_entry_user {
-  id               Int             @id @default(autoincrement())
-  fk_user_id       Int
+  id                   Int            @id @default(autoincrement())
+  fk_user_id           Int
   fk_calendar_entry_id Int
-  calendar_entry   calendar_entry  @relation(fields: [fk_calendar_entry_id], references: [id], onUpdate: Restrict, map: "calendar_entry_user_FK")
-  user             user            @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "calendar_entry_user_FK_1")
+  calendar_entry       calendar_entry @relation(fields: [fk_calendar_entry_id], references: [id], onUpdate: Restrict, map: "calendar_entry_user_FK")
+  user                 user           @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "calendar_entry_user_FK_1")
 
   @@index([fk_calendar_entry_id], map: "calendar_entry_user_FK")
   @@index([fk_user_id], map: "calendar_entry_user_FK_1")
 }
 
 model routine {
-  id              Int            @id @default(autoincrement())
-  startDate       DateTime       @db.Date
+  id              Int              @id @default(autoincrement())
+  startDate       DateTime         @db.Date
   interval        Int
-  name            String         @db.VarChar(100)
+  name            String           @db.VarChar(100)
   fk_community_id Int
-  active          Boolean        @default(true)
-  community       community      @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "routine_FK")
+  active          Boolean          @default(true)
+  community       community        @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "routine_FK")
   routine_user    routine_user[]
   calendar_entry  calendar_entry[]
 
@@ -123,18 +126,33 @@ model shoppinglist_item {
 }
 
 model debt {
-  id                                  Int       @id @default(autoincrement())
-  fk_community_id                     Int
-  fk_user_creditor_id                 Int
-  fk_user_debitor_id                  Int
-  amount                              Decimal   @db.Decimal(10, 2)
-  name                                String    @db.VarChar(100)
-  timestamp                           DateTime  @default(dbgenerated("(curdate())")) @db.DateTime(0)
-  community                           community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "debt_FK")
-  creditor                            user      @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onUpdate: Restrict, map: "debt_FK_1")
-  debitor                             user      @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onUpdate: Restrict, map: "debt_FK_2")
+  id                  Int       @id @default(autoincrement())
+  fk_community_id     Int
+  fk_user_creditor_id Int
+  fk_user_debitor_id  Int
+  amount              Decimal   @db.Decimal(10, 2)
+  name                String    @db.VarChar(100)
+  timestamp           DateTime  @default(dbgenerated("(curdate())")) @db.DateTime(0)
+  community           community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "debt_FK")
+  creditor            user      @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onUpdate: Restrict, map: "debt_FK_1")
+  debitor             user      @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onUpdate: Restrict, map: "debt_FK_2")
 
   @@index([fk_community_id], map: "debt_FK")
   @@index([fk_user_creditor_id], map: "debt_FK_1")
   @@index([fk_user_debitor_id], map: "debt_FK_2")
+}
+
+model todo {
+  id                 Int       @id @default(autoincrement())
+  fk_community_id    Int
+  fk_user_creator_id Int
+  name               String    @db.VarChar(30)
+  description        String    @db.VarChar(200)
+  creationDate       DateTime  @db.DateTime(0)
+  done               Boolean   @default(false)
+  community          community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "todo_FK_community")
+  creator            user      @relation(fields: [fk_user_creator_id], references: [id], onUpdate: Restrict, map: "todo_FK_creator")
+
+  @@index([fk_community_id], map: "todo_FK_community")
+  @@index([fk_user_creator_id], map: "todo_FK_creator")
 }

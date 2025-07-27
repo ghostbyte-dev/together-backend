@@ -1,0 +1,22 @@
+meta {
+  name: closed
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/todos/open
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "1. todo",
+    "description": "hallolilola"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

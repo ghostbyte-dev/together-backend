@@ -25,6 +25,9 @@ app.use('/shoppinglist', shoppinglistRoute);
 const debtRoute = require('./routes/debt.route');
 app.use('/debt', debtRoute);
 
+const todoRoute = require('./routes/todo.route');
+app.use('/todos', todoRoute);
+
 app.use(errorHandlerMiddleware);
 
 app.listen(3000, () => {
