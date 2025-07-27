@@ -62,8 +62,9 @@ export class ShoppinglistController {
       resSend(res, null, ResStatus.ERROR, 'Empty Fields!');
       return;
     }
+    const communityId = req.user.communityId;
     try {
-      const item = await this.shoppinglistService.updateItem(itemId, name, done);
+      const item = await this.shoppinglistService.updateItem(itemId, name, done, communityId);
       resSend(res, item);
     } catch (error) {
       next(error);

@@ -47,9 +47,10 @@ export class ShoppinglistService {
     itemId: number,
     name: string | undefined,
     done: boolean | undefined,
+    communityId: number,
   ): Promise<ShoppinglistItemDto> {
     const item = await this.prisma.shoppinglist_item.update({
-      where: { id: itemId },
+      where: { id: itemId, fk_community_id: communityId },
       data: {
         name: name,
         done: done,

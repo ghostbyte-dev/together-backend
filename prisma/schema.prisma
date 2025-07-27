@@ -146,8 +146,8 @@ model todo {
   id                 Int       @id @default(autoincrement())
   fk_community_id    Int
   fk_user_creator_id Int
-  name               String    @db.VarChar(30)
-  description        String    @db.VarChar(200)
+  name               String    @db.VarChar(100)
+  description        String    @db.VarChar(500)
   creationDate       DateTime  @db.DateTime(0)
   done               Boolean   @default(false)
   community          community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "todo_FK_community")

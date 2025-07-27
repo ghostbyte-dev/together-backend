@@ -14,7 +14,6 @@ const auth = (req: Request, res: Response, next: NextFunction) => {
   try {
     const decoded: JwtPayload = jwt.verify(token, config.JWT_SECRET);
     req.user = { id: decoded.user.id, name: '', email: decoded.user.email, communityId: 0 };
-    req.user.communityId = parseInt(req.headers.communityid as string);
 
     if (!req.user.id) {
       resSend(res, 'no UserId');

@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { CommunityController } from '../controllers/community.controller';
+import { communityAccess } from '../middleware/communityAccess';
 
 const express = require('express');
 const router = express.Router();
@@ -16,24 +17,44 @@ router.post('/', auth, async (req: Request, res: Response, next: NextFunction) =
   communityController.create(req, res, next),
 );
 
-router.get('/requests', auth, async (req: Request, res: Response, next: NextFunction) =>
-  communityController.getRequests(req, res, next),
+router.get(
+  '/requests',
+  auth,
+  communityAccess,
+  async (req: Request, res: Response, next: NextFunction) =>
+    communityController.getRequests(req, res, next),
 );
 
-router.get('/:communityId/members', auth, async (req: Request, res: Response, next: NextFunction) =>
-  communityController.getMembers(req, res, next),
+router.get(
+  '/:communityId/members',
+  auth,
+  communityAccess,
+  async (req: Request, res: Response, next: NextFunction) =>
+    communityController.getMembers(req, res, next),
 );
 
-router.post('/request', auth, async (req: Request, res: Response, next: NextFunction) =>
-  communityController.sendRequest(req, res, next),
+router.post(
+  '/request',
+  auth,
+  communityAccess,
+  async (req: Request, res: Response, next: NextFunction) =>
+    communityController.sendRequest(req, res, next),
 );
 
-router.post('/request/accept', auth, async (req: Request, res: Response, next: NextFunction) =>
-  communityController.acceptRequest(req, res, next),
+router.post(
+  '/request/accept',
+  auth,
+  communityAccess,
+  async (req: Request, res: Response, next: NextFunction) =>
+    communityController.acceptRequest(req, res, next),
 );
 
-router.post('/request/decline', auth, async (req: Request, res: Response, next: NextFunction) =>
-  communityController.declineRequest(req, res, next),
+router.post(
+  '/request/decline',
+  auth,
+  communityAccess,
+  async (req: Request, res: Response, next: NextFunction) =>
+    communityController.declineRequest(req, res, next),
 );
 
 router.get('/:id', auth, async (req: Request, res: Response, next: NextFunction) =>
