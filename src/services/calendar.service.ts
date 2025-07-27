@@ -6,6 +6,7 @@ import { UpdateCalendarEntry } from '../types/updateCalendarEntry';
 import { routine } from '@prisma/client';
 import { CreateRoutine } from '../types/createRoutine';
 import { RoutineDto } from '../dtos/routine.dto';
+import { UpdateRoutine } from '../types/updateRoutine';
 
 @injectable()
 export class CalendarService {
@@ -73,38 +74,17 @@ export class CalendarService {
       },
     });
     if (data.assignedUsers && data.assignedUsers.length > 0) {
-      await this.assignUsersToCalendarEntryWithoutDuplicates(
-        data.assignedUsers,
-        calendarEntry.calendar_entry_user,
-        calendarEntry.id,
-      );
+      await this.removeUsersFromCalendarEntry(calendarEntry.id);
+      await this.assignUsersToCalendarEntry(data.assignedUsers, calendarEntry.id);
     }
     return this.getById(calendarEntry.id);
   }
 
-  async assignUsersToCalendarEntryWithoutDuplicates(
-    assignedUsers: number[],
-    alreadyAssignedUsers: any[],
-    calendarEntryId: number,
-  ) {
-    const assignedUsersCalendarEntryIdList: { fk_user_id: number; fk_calendar_entry_id: number }[] =
-      [];
-
-    assignedUsers.forEach((assignedUserId: number) => {
-      if (
-        alreadyAssignedUsers.find(
-          (alreadyAssignedUser: any) => alreadyAssignedUser.user.id === assignedUserId,
-        )
-      ) {
-        return;
-      }
-      assignedUsersCalendarEntryIdList.push({
-        fk_user_id: assignedUserId,
+  async removeUsersFromCalendarEntry(calendarEntryId: number) {
+    await this.prisma.calendar_entry_user.deleteMany({
+      where: {
         fk_calendar_entry_id: calendarEntryId,
-      });
-    });
-    await this.prisma.calendar_entry_user.createMany({
-      data: assignedUsersCalendarEntryIdList,
+      },
     });
   }
 
@@ -261,5 +241,52 @@ export class CalendarService {
       },
     });
     return new RoutineDto(routine);
+  }
+
+  async updateRoutine(data: UpdateRoutine, communityId: number): Promise<RoutineDto> {
+    await this.prisma.routine.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        name: data.name,
+        startDate: data.startDate,
+        interval: data.interval,
+        active: data.active,
+        fk_community_id: communityId,
+      },
+    });
+
+    if (data.assignedUsers) {
+      await this.deleteUsersFromRoutine(data.id);
+      await this.assignUsersToRoutine(data.assignedUsers, data.id);
+    }
+    const updatedRoutine = await this.getRoutine(data.id);
+    return updatedRoutine;
+  }
+
+  async deleteUsersFromRoutine(routineId: number) {
+    await this.prisma.routine_user.deleteMany({
+      where: {
+        fk_routine_id: routineId,
+      },
+    });
+  }
+
+  async getAllRoutines(communityId: number): Promise<RoutineDto[]> {
+    const routines = await this.prisma.routine.findMany({
+      where: {
+        fk_community_id: communityId,
+      },
+      include: {
+        routine_user: {
+          select: {
+            user: true,
+          },
+        },
+      },
+    });
+    const routinesDto = routines.map((routine) => new RoutineDto(routine));
+    return routinesDto;
   }
 }
