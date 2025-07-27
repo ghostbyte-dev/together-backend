@@ -8,7 +8,7 @@ const router = express.Router();
 const auth = require('../middleware/userAuth');
 const shoppinglistController = container.resolve(ShoppinglistController);
 
-router.post('/', auth, async (req: Request, res: Response, next: NextFunction) =>
+router.post('/', auth, communityAccess, async (req: Request, res: Response, next: NextFunction) =>
   shoppinglistController.addItem(req, res, next),
 );
 
