@@ -60,6 +60,8 @@ export class DebtService {
         fk_user_creditor_id: true,
         fk_user_debitor_id: true,
         amount: true,
+        name: true,
+        timestamp: true,
       },
       orderBy: [
         {
