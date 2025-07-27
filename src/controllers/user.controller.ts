@@ -10,8 +10,9 @@ export class UserController {
 
   async getUser(req: Request, res: Response, next: NextFunction) {
     const userId = req.user.id;
+    const communityId: number | undefined = req.user.communityId;
     try {
-      const user: UserDto = await this.userService.getUserById(userId);
+      const user: UserDto = await this.userService.getUserById(userId, communityId);
       resSend(res, user);
     } catch (error) {
       next(error);
@@ -20,8 +21,9 @@ export class UserController {
 
   async getUserById(req: Request, res: Response, next: NextFunction) {
     const userId: number = parseInt(req.params.userid);
+    const communityId: number | undefined = req.user.communityId;
     try {
-      const user = await this.userService.getUserById(userId);
+      const user = await this.userService.getUserById(userId, communityId);
       resSend(res, user);
     } catch (error) {
       next(error);

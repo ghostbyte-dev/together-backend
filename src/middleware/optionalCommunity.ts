@@ -3,14 +3,14 @@ import { checkIfUserIsInCommunity } from '../helper';
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-export const communityAccess = async (req: Request, res: Response, next: NextFunction) => {
+export const optionalCommunity = async (req: Request, res: Response, next: NextFunction) => {
   const userId = req.user.id;
   if (!userId) {
     return res.status(500).send('Unexpected Error');
   }
   const communityId = parseInt(req.headers.communityid as string);
   if (!communityId) {
-    return res.status(400).send('No Community id passed');
+    return next();
   }
 
   const isUserInCommunty = await checkIfUserIsInCommunity(userId, communityId, prisma);

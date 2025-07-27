@@ -1,5 +1,6 @@
 import type { Response } from 'express';
 import type { ApiResponse } from './types/apiResponse';
+import { PrismaClient } from '@prisma/client';
 
 require('dotenv').config();
 
@@ -23,3 +24,21 @@ export function resSend<T = undefined>(
 
   res.status(httpStatusCode).json(response);
 }
+
+export const checkIfUserIsInCommunity = async (
+  userId: number,
+  communityId: number,
+  prisma: PrismaClient,
+): Promise<boolean> => {
+  const community = await prisma.community.findFirst({
+    where: {
+      id: communityId,
+      users: {
+        some: {
+          id: userId,
+        },
+      },
+    },
+  });
+  return community !== null;
+};

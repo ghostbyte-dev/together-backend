@@ -8,8 +8,8 @@ import { UserDto } from '../dtos/user.dto';
 export class UserService {
   constructor(@inject(PrismaService) private prisma: PrismaService) {}
 
-  async getUserById(userId: number): Promise<UserDto> {
-    const user: user | null = await this.prisma.user.findUnique({
+  async getUserById(userId: number, communityId: number | undefined): Promise<UserDto> {
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
         communities: true,
@@ -18,7 +18,19 @@ export class UserService {
     if (!user) {
       throw new ApiError('user not found', 404);
     }
-    return new UserDto(user);
+    const userDto = new UserDto(user);
+
+    if (communityId && user.communities) {
+      const currentCommunity = user.communities.find((community) => community.id === communityId);
+      if (currentCommunity) {
+        const adminId = currentCommunity?.fk_admin_id;
+        if (user.id === adminId) {
+          userDto.isAdmin = true;
+        }
+      }
+    }
+
+    return userDto;
   }
 
   async getAllUsers(): Promise<UserDto[]> {
