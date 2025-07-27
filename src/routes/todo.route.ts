@@ -16,10 +16,10 @@ router.patch('/', auth, (req: Request, res: Response, next: NextFunction) =>
 );
 
 router.get('/open', auth, (req: Request, res: Response, next: NextFunction) =>
-  todoController.getNotDone(req, res, next),
+  todoController.getOpen(req, res, next),
 );
 
-router.get('/closed', auth, (req: Request, res: Response, next: NextFunction) =>
+router.get('/done', auth, (req: Request, res: Response, next: NextFunction) =>
   todoController.getDone(req, res, next),
 );
 

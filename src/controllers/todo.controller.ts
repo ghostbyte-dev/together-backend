@@ -52,7 +52,7 @@ export class TodoController {
     }
   }
 
-  async getNotDone(req: Request, res: Response, next: NextFunction) {
+  async getOpen(req: Request, res: Response, next: NextFunction) {
     const communityId = req.user.communityId;
 
     try {
