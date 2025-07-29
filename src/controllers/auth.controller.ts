@@ -78,4 +78,19 @@ export class AuthController {
       next(error);
     }
   }
+
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
+    const token = req.body.token;
+    const newPassword = req.body.password;
+    if (!token && !newPassword) {
+      resSend(res, null, ResStatus.ERROR, 'invalid arguments', 400);
+    }
+
+    try {
+      await this.authService.resetPassword(newPassword, token);
+      resSend(res, null);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

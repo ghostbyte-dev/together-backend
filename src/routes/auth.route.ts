@@ -26,4 +26,8 @@ router.post('/password-reset/request', async (req: Request, res: Response, next:
   authController.requestPasswordReset(req, res, next),
 );
 
+router.post('/password-reset', async (req: Request, res: Response, next: NextFunction) =>
+  authController.resetPassword(req, res, next),
+);
+
 module.exports = router;
