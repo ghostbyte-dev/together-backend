@@ -166,6 +166,13 @@ export class AuthService {
     if (!user) {
       throw new ApiError('No user with this email found', 404);
     }
+    if (user.password_reset_token) {
+      await this.prisma.password_reset_token.delete({
+        where: {
+          fk_user_id: user.id,
+        },
+      });
+    }
     const token = this.generatePasswordResetToken();
     const hashedToken = await bcrypt.hash(token, 12);
     const expiryDate: Date = this.generatePasswordResetTokenExpiryDate();
