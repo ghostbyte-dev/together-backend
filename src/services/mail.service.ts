@@ -30,7 +30,7 @@ export class MailService {
     let body = await this.getTemplateFile('passwordReset');
     const url = `${process.env.CLIENT_URL}/reset/${code}`;
     body = body.replace(/{{resetPasswordUrl}}/g, url);
-    await this.sendMail(email, 'Email verification', body);
+    await this.sendMail(email, 'Password Reset', body);
     return;
   }
 
