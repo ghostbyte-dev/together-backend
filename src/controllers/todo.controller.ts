@@ -61,7 +61,7 @@ export class TodoController {
     const communityId = req.user.communityId;
 
     try {
-      const todos: TodoDto[] = await this.todoService.getTodos(true, communityId);
+      const todos: TodoDto[] = await this.todoService.getDoneTodos(communityId);
       resSend(res, todos);
     } catch (error) {
       next(error);
@@ -72,7 +72,7 @@ export class TodoController {
     const communityId = req.user.communityId;
 
     try {
-      const todos: TodoDto[] = await this.todoService.getTodos(false, communityId);
+      const todos: TodoDto[] = await this.todoService.getOpenTodos(communityId);
       resSend(res, todos);
     } catch (error) {
       next(error);

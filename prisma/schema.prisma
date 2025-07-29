@@ -148,7 +148,8 @@ model todo {
   fk_user_creator_id Int
   name               String    @db.VarChar(100)
   description        String    @db.VarChar(500)
-  creationDate       DateTime  @db.DateTime(0)
+  creationDate       DateTime  @default(now()) @db.DateTime(0)
+  doneDate           DateTime?  @db.DateTime(0)
   done               Boolean   @default(false)
   community          community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "todo_FK_community")
   creator            user      @relation(fields: [fk_user_creator_id], references: [id], onUpdate: Restrict, map: "todo_FK_creator")

@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { PrismaService } from './prisma.service';
 import { TodoDto } from '../dtos/todo.dto';
+import { ApiError } from '../errors/apiError';
 
 @injectable()
 export class TodoService {
@@ -18,7 +19,6 @@ export class TodoService {
         description: description,
         fk_user_creator_id: userId,
         fk_community_id: communityId,
-        creationDate: new Date(Date.now()),
       },
       include: {
         creator: true,
@@ -34,6 +34,14 @@ export class TodoService {
     description: string | undefined,
     communityId: number,
   ) {
+    const todoBefore = await this.prisma.todo.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!todoBefore) {
+      throw new ApiError('an unexpected error occured', 500);
+    }
     const todo = await this.prisma.todo.update({
       where: {
         id: id,
@@ -43,6 +51,7 @@ export class TodoService {
         name: name,
         done: done,
         description: description,
+        doneDate: !todoBefore.done && done ? new Date(Date.now()) : undefined,
       },
       include: {
         creator: true,
@@ -61,14 +70,34 @@ export class TodoService {
     return;
   }
 
-  async getTodos(done: boolean, communityId: number): Promise<TodoDto[]> {
+  async getOpenTodos(communityId: number): Promise<TodoDto[]> {
     const todos = await this.prisma.todo.findMany({
       where: {
-        done: done,
+        done: false,
         fk_community_id: communityId,
       },
       include: {
         creator: true,
+      },
+      orderBy: {
+        creationDate: 'desc',
+      },
+    });
+    const todosDto = todos.map((todo) => new TodoDto(todo));
+    return todosDto;
+  }
+
+  async getDoneTodos(communityId: number): Promise<TodoDto[]> {
+    const todos = await this.prisma.todo.findMany({
+      where: {
+        done: true,
+        fk_community_id: communityId,
+      },
+      include: {
+        creator: true,
+      },
+      orderBy: {
+        doneDate: 'desc',
       },
     });
     const todosDto = todos.map((todo) => new TodoDto(todo));
