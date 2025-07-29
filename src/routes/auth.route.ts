@@ -22,4 +22,8 @@ router.post('/resendVerificationEmail', async (req: Request, res: Response, next
   authController.resendVerificationEmail(req, res, next),
 );
 
+router.post('/password-reset/request', async (req: Request, res: Response, next: NextFunction) =>
+  authController.requestPasswordReset(req, res, next),
+);
+
 module.exports = router;

@@ -46,8 +46,18 @@ model user {
   calendar_entry_user                   calendar_entry_user[]
   communities                           community[]           @relation("communityUser")
   todo                                  todo[]
+  password_reset_token                  password_reset_token?
 
   @@index([fk_community_id], map: "user_FK")
+}
+
+model password_reset_token {
+  token        String   @unique()
+  token_expiry DateTime @db.DateTime(0)
+  fk_user_id   Int      @unique
+  user         user     @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "password_reset_tokens_FK_1")
+
+  @@index([fk_user_id], map: "password_reset_tokens_FK_1")
 }
 
 model request {
@@ -149,7 +159,7 @@ model todo {
   name               String    @db.VarChar(100)
   description        String    @db.VarChar(500)
   creationDate       DateTime  @default(now()) @db.DateTime(0)
-  doneDate           DateTime?  @db.DateTime(0)
+  doneDate           DateTime? @db.DateTime(0)
   done               Boolean   @default(false)
   community          community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "todo_FK_community")
   creator            user      @relation(fields: [fk_user_creator_id], references: [id], onUpdate: Restrict, map: "todo_FK_creator")

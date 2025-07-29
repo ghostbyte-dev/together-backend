@@ -64,4 +64,18 @@ export class AuthController {
       next(error);
     }
   }
+
+  async requestPasswordReset(req: Request, res: Response, next: NextFunction) {
+    const email = req.body.email;
+    if (!email) {
+      resSend(res, null, ResStatus.ERROR, 'invalid arguments', 400);
+    }
+
+    try {
+      await this.authService.requestPasswordReset(email);
+      resSend(res, null);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -153,4 +153,43 @@ export class AuthService {
     }
     return user.verified;
   }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+      include: {
+        password_reset_token: true,
+      },
+    });
+    if (!user) {
+      throw new ApiError('No user with this email found', 404);
+    }
+    const token = this.generatePasswordResetToken();
+    const hashedToken = await bcrypt.hash(token, 12);
+    const expiryDate: Date = this.generatePasswordResetTokenExpiryDate();
+
+    await Promise.all([
+      this.prisma.password_reset_token.create({
+        data: {
+          fk_user_id: user.id,
+          token: hashedToken,
+          token_expiry: expiryDate,
+        },
+      }),
+      this.mailService.sendPasswordResetMail(email, token),
+    ]);
+    return;
+  }
+
+  generatePasswordResetToken(): string {
+    return crypto.randomBytes(64).toString('hex');
+  }
+
+  generatePasswordResetTokenExpiryDate(): Date {
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 1);
+    return expiryDate;
+  }
 }

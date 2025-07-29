@@ -26,6 +26,14 @@ export class MailService {
     return;
   }
 
+  async sendPasswordResetMail(email: string, code: string) {
+    let body = await this.getTemplateFile('passwordReset');
+    const url = `${process.env.CLIENT_URL}/reset/${code}`;
+    body = body.replace(/{{resetPasswordUrl}}/g, url);
+    await this.sendMail(email, 'Email verification', body);
+    return;
+  }
+
   private async getTemplateFile(name: string) {
     const templatePath = path.join(__dirname, '../templates', `${name}.template.html`);
     const content: string = await fs.readFile(templatePath, { encoding: 'utf-8' });
