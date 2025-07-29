@@ -42,6 +42,17 @@ export class TodoService {
     if (!todoBefore) {
       throw new ApiError('an unexpected error occured', 500);
     }
+
+    let doneDate: Date | null | undefined;
+    if (todoBefore.done && done) {
+      doneDate = undefined;
+    } else if (done) {
+      doneDate = new Date(Date.now());
+    } else {
+      doneDate = null;
+    }
+    console.log(doneDate);
+
     const todo = await this.prisma.todo.update({
       where: {
         id: id,
@@ -51,7 +62,7 @@ export class TodoService {
         name: name,
         done: done,
         description: description,
-        doneDate: !todoBefore.done && done ? new Date(Date.now()) : undefined,
+        doneDate: doneDate,
       },
       include: {
         creator: true,
