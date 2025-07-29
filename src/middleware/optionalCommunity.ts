@@ -9,13 +9,13 @@ export const optionalCommunity = async (req: Request, res: Response, next: NextF
     return res.status(500).send('Unexpected Error');
   }
   const communityId = parseInt(req.headers.communityid as string);
-  if (!communityId) {
+  if (!communityId || communityId === -1) {
     return next();
   }
 
   const isUserInCommunty = await checkIfUserIsInCommunity(userId, communityId, prisma);
   if (!isUserInCommunty) {
-    return res.status(401).send('unathorized');
+    return res.status(401).send('unathorized wrong community (optional community middleware)');
   }
 
   req.user.communityId = communityId;

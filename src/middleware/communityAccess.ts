@@ -9,7 +9,7 @@ export const communityAccess = async (req: Request, res: Response, next: NextFun
     return res.status(500).send('Unexpected Error');
   }
   const communityId = parseInt(req.headers.communityid as string);
-  if (!communityId) {
+  if (!communityId || communityId === -1) {
     return res.status(400).send('No Community id passed');
   }
 
