@@ -8,8 +8,8 @@ export const errorHandlerMiddleware = (
   res: Response,
   _next: NextFunction,
 ) => {
-  console.log('error');
   if (err instanceof ApiError) {
+    console.log(err.message);
     resSend(res, null, ResStatus.ERROR, err.message, err.status);
   } else {
     console.error(err);
