@@ -65,6 +65,7 @@ export class UserController {
   }
 
   async uploadAvatar(req: Request, res: Response, next: NextFunction) {
+    console.table(req);
     const file: Express.Multer.File | undefined = req.file;
     if (!file) {
       return resSend(res, null, ResStatus.ERROR, 'invalid data', 400);

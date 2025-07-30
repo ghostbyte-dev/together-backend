@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { errorHandlerMiddleware } from './middleware/errorHandler';
+import { NextFunction, Request, Response } from 'express';
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -7,10 +8,18 @@ const app = express();
 app.use(cors());
 app.use('/uploads', express.static('uploads'));
 
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.is('application/json')) {
+    console.log('application json');
+    express.json()(req, res, next);
+  } else {
+    console.log('not application json');
+    next();
+  }
+});
+
 const userRoute = require('./routes/user.route');
 app.use('/user', userRoute);
-
-app.use(express.json());
 
 const authRoute = require('./routes/auth.route');
 app.use('/auth', authRoute);

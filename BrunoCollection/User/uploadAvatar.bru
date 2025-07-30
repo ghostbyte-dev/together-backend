@@ -10,6 +10,10 @@ put {
   auth: inherit
 }
 
+headers {
+  content-type	: multipart/form-data
+}
+
 body:multipart-form {
   file: @file(/home/emanuel/Pictures/Screenshots/Screenshot From 2025-07-20 14-50-22.png)
 }

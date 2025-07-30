@@ -20,8 +20,6 @@ router.put(
     userController.uploadAvatar(req, res, next),
 );
 
-router.use(express.json());
-
 router.get('/', auth, optionalCommunity, (req: Request, res: Response, next: NextFunction) =>
   userController.getUser(req, res, next),
 );
