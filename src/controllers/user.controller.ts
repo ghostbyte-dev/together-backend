@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import type { NextFunction, Request, Response } from 'express';
-import { resSend } from '../helper';
+import { resSend, ResStatus } from '../helper';
 import type { UserDto } from '../dtos/user.dto';
 import { UserService } from '../services/user.service';
 
@@ -48,5 +48,19 @@ export class UserController {
       req.body.color,
     );
     resSend(res, user);
+  }
+
+  async changePassword(req: Request, res: Response, next: NextFunction) {
+    const { newPassword, oldPassword } = req.body;
+    if (!newPassword || !oldPassword) {
+      resSend(res, null, ResStatus.ERROR, 'invalid arguments', 400);
+    }
+    const userId = req.user.id;
+    try {
+      await this.userService.changePassword(oldPassword, newPassword, userId);
+      resSend(res, 'succesfully changed Password');
+    } catch (error) {
+      next(error);
+    }
   }
 }

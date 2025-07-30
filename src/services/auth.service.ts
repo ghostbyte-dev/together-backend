@@ -39,7 +39,7 @@ export class AuthService {
     return;
   }
 
-  private isValidPassword(password: string): boolean {
+  isValidPassword(password: string): boolean {
     const pwStrength = /^(?=.*[A-Za-z])(?=.*\d)[\S]{6,}$/; // mindestens 6 Stellen && eine Zahl && ein Buchstabe
     return pwStrength.test(password);
   }

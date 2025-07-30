@@ -16,6 +16,10 @@ router.get('/all', auth, async (req: Request, res: Response, next: NextFunction)
   userController.getAllUsers(req, res, next),
 );
 
+router.put('/password-change', auth, async (req: Request, res: Response, next: NextFunction) =>
+  userController.changePassword(req, res, next),
+);
+
 router.get('/:userid', auth, optionalCommunity, (req: Request, res: Response, next: NextFunction) =>
   userController.getUserById(req, res, next),
 );
