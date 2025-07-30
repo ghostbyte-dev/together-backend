@@ -2,11 +2,15 @@ import type { NextFunction, Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { UserController } from '../controllers/user.controller';
 import { optionalCommunity } from '../middleware/optionalCommunity';
+import multer from 'multer';
 
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/userAuth');
 const userController = container.resolve(UserController);
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.get('/', auth, optionalCommunity, (req: Request, res: Response, next: NextFunction) =>
   userController.getUser(req, res, next),
@@ -25,5 +29,13 @@ router.get('/:userid', auth, optionalCommunity, (req: Request, res: Response, ne
 );
 
 router.patch('/', auth, async (req: Request, res: Response) => userController.updateUser(req, res));
+
+router.post(
+  '/avatar',
+  auth,
+  upload.single('file'),
+  async (req: Request, res: Response, next: NextFunction) =>
+    userController.uploadAvatar(req, res, next),
+);
 
 module.exports = router;

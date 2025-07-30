@@ -63,4 +63,18 @@ export class UserController {
       next(error);
     }
   }
+
+  async uploadAvatar(req: Request, res: Response, next: NextFunction) {
+    const file: Express.Multer.File | undefined = req.file;
+    if (!file) {
+      return resSend(res, null, ResStatus.ERROR, 'invalid data', 400);
+    }
+    const userId = req.user.id;
+    try {
+      const user = await this.userService.uploadAvatar(file, userId);
+      resSend(res, user);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

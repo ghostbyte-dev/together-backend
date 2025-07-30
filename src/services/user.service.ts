@@ -5,12 +5,14 @@ import type { user } from '@prisma/client';
 import { UserDto } from '../dtos/user.dto';
 import bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service';
+import { FileService } from './file.service';
 
 @injectable()
 export class UserService {
   constructor(
-    @inject(PrismaService) private prisma: PrismaService,
+    @inject(PrismaService) private readonly prisma: PrismaService,
     @inject(AuthService) private readonly authService: AuthService,
+    @inject(FileService) private readonly fileService: FileService,
   ) {}
 
   async getUserById(userId: number, communityId: number | undefined): Promise<UserDto> {
@@ -99,5 +101,18 @@ export class UserService {
       },
     });
     return;
+  }
+
+  async uploadAvatar(file: Express.Multer.File, userId: number) {
+    const relativePath = await this.fileService.saveAvatar(file, 'avatars');
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        profile_image: relativePath,
+      },
+    });
+    return new UserDto(updatedUser);
   }
 }
