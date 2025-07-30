@@ -30,7 +30,7 @@ router.get('/:userid', auth, optionalCommunity, (req: Request, res: Response, ne
 
 router.patch('/', auth, async (req: Request, res: Response) => userController.updateUser(req, res));
 
-router.post(
+router.put(
   '/avatar',
   auth,
   upload.single('file'),

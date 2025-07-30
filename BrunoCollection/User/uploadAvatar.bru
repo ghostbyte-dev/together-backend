@@ -4,10 +4,14 @@ meta {
   seq: 6
 }
 
-post {
+put {
   url: {{baseUrl}}/user/avatar
-  body: none
+  body: multipartForm
   auth: inherit
+}
+
+body:multipart-form {
+  file: @file(/home/emanuel/Pictures/Screenshots/Screenshot From 2025-07-20 14-50-22.png)
 }
 
 settings {

@@ -2,6 +2,7 @@ import { injectable } from 'tsyringe';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
+import { ApiError } from '../errors/apiError';
 
 @injectable()
 export class FileService {
@@ -19,11 +20,21 @@ export class FileService {
     return relativePath;
   }
 
-  async compressImage(buffer: Buffer, quality: number): Promise<Buffer> {
+  private async compressImage(buffer: Buffer, quality: number): Promise<Buffer> {
     return await sharp(buffer).webp({ quality: quality }).toBuffer();
   }
 
-  async resizeImage(buffer: Buffer, height: number, width: number): Promise<Buffer> {
+  private async resizeImage(buffer: Buffer, height: number, width: number): Promise<Buffer> {
     return await sharp(buffer).resize(width, height).toBuffer();
+  }
+
+  async removeFile(relativePath: string) {
+    const completePath = path.join(process.cwd(), relativePath);
+    try {
+      await fs.promises.unlink(completePath);
+      console.log(`File removed: ${completePath}`);
+    } catch (error) {
+      console.error(`Error removing file: ${completePath}`, error);
+    }
   }
 }

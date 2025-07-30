@@ -104,6 +104,25 @@ export class UserService {
   }
 
   async uploadAvatar(file: Express.Multer.File, userId: number) {
+    const userBefore = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (!userBefore) {
+      throw new ApiError('Unexpected error', 500);
+    }
+    if (userBefore.profile_image) {
+      await this.fileService.removeFile(userBefore.profile_image);
+      await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          profile_image: null,
+        },
+      });
+    }
     const relativePath = await this.fileService.saveAvatar(file, 'avatars');
     const updatedUser = await this.prisma.user.update({
       where: {
