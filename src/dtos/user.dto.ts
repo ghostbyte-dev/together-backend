@@ -14,8 +14,8 @@ export class UserDto {
     this.id = user.id;
     this.email = user.email;
     this.name = user.name;
-    const baseUrl = process.env.HOST;
-    this.profile_image = user.profile_image ? `https://${baseUrl}${user.profile_image}` : '';
+    const baseUrl = `${process.env.PROTOCOL}${process.env.HOST}`;
+    this.profile_image = user.profile_image ? `${baseUrl}${user.profile_image}` : '';
     this.communities = user.communities
       ? // biome-ignore lint/suspicious/noExplicitAny: could be diffrent user types from prisma
         user.communities.map((c: any) => new CommunityDto(c))
