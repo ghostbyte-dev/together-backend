@@ -12,6 +12,16 @@ const userController = container.resolve(UserController);
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+router.put(
+  '/avatar',
+  auth,
+  upload.single('file'),
+  async (req: Request, res: Response, next: NextFunction) =>
+    userController.uploadAvatar(req, res, next),
+);
+
+router.use(express.json());
+
 router.get('/', auth, optionalCommunity, (req: Request, res: Response, next: NextFunction) =>
   userController.getUser(req, res, next),
 );
@@ -29,13 +39,5 @@ router.get('/:userid', auth, optionalCommunity, (req: Request, res: Response, ne
 );
 
 router.patch('/', auth, async (req: Request, res: Response) => userController.updateUser(req, res));
-
-router.put(
-  '/avatar',
-  auth,
-  upload.single('file'),
-  async (req: Request, res: Response, next: NextFunction) =>
-    userController.uploadAvatar(req, res, next),
-);
 
 module.exports = router;
