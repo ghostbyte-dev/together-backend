@@ -13,6 +13,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     console.log('application json');
     express.json()(req, res, next);
   } else {
+    console.log(req.url);
     console.log('not application json');
     next();
   }
