@@ -53,7 +53,7 @@ export class UserController {
   async changePassword(req: Request, res: Response, next: NextFunction) {
     const { newPassword, oldPassword } = req.body;
     if (!newPassword || !oldPassword) {
-      resSend(res, null, ResStatus.ERROR, 'invalid arguments', 400);
+      return resSend(res, null, ResStatus.ERROR, 'invalid arguments', 400);
     }
     const userId = req.user.id;
     try {
