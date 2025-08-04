@@ -21,6 +21,23 @@ export class CommunityService {
     return new CommunityDto(community);
   }
 
+  async getMine(userId: number): Promise<CommunityDto[]> {
+    const communities = await this.prisma.community.findMany({
+      where: {
+        users: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+    });
+    if (!communities) {
+      throw new ApiError(`an unexpected error occured`, 500);
+    }
+    const communitiesDtos = communities.map((community) => new CommunityDto(community));
+    return communitiesDtos;
+  }
+
   async getByCode(communityCode: number): Promise<CommunityDto> {
     const community = await this.prisma.community.findUnique({
       where: { code: communityCode },

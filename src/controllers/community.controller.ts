@@ -20,9 +20,9 @@ export class CommunityController {
   }
 
   async getMine(req: Request, res: Response, next: NextFunction) {
-    const communityId = req.user.communityId;
+    const userId = req.user.id;
     try {
-      const community: CommunityDto = await this.communityService.getById(communityId);
+      const community: CommunityDto[] = await this.communityService.getMine(userId);
       resSend(res, community);
     } catch (error) {
       next(error);
