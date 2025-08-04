@@ -3,11 +3,10 @@ import type { NextFunction, Request, Response } from 'express';
 import { resSend, ResStatus } from '../helper';
 import { CalendarService } from '../services/calendar.service';
 import type { CreateCalendarEntry } from '../types/createCalendarEntry';
-import { UpdateCalendarEntry } from '../types/updateCalendarEntry';
-import { ApiError } from '../errors/apiError';
-import { TypedRequestQuery } from '../types/QueryRequest';
-import { CreateRoutine } from '../types/createRoutine';
-import { UpdateRoutine } from '../types/updateRoutine';
+import type { UpdateCalendarEntry } from '../types/updateCalendarEntry';
+import type { TypedRequestQuery } from '../types/QueryRequest';
+import type { CreateRoutine } from '../types/createRoutine';
+import type { UpdateRoutine } from '../types/updateRoutine';
 
 @injectable()
 export class CalendarController {
@@ -16,14 +15,14 @@ export class CalendarController {
   async create(req: Request, res: Response, next: NextFunction) {
     const data: CreateCalendarEntry = req.body;
     if (!data.name || !data.date) {
-      resSend(res, 'Invalid Data');
+      resSend(res, null, ResStatus.ERROR, 'Invalid Data', 400);
       return;
     }
 
     if (typeof data.date === 'string') {
       const parsedDate = new Date(data.date);
       if (Number.isNaN(parsedDate.getTime())) {
-        return resSend(res, 'Invalid Date Format');
+        return resSend(res, null, ResStatus.ERROR, 'Invalid Date Format', 400);
       }
       data.date = parsedDate;
     }
@@ -49,7 +48,7 @@ export class CalendarController {
     if (typeof data.date === 'string') {
       const parsedDate = new Date(data.date);
       if (Number.isNaN(parsedDate.getTime())) {
-        return resSend(res, 'Invalid Date Format');
+        return resSend(res, null, ResStatus.ERROR, 'Invalid Date Format', 400);
       }
       data.date = parsedDate;
     }
@@ -90,7 +89,7 @@ export class CalendarController {
   async delete(req: Request, res: Response, next: NextFunction) {
     const id = Number(req.params.id);
     if (!req.params.id || Number.isNaN(id)) {
-      resSend(res, null, ResStatus.ERROR, 'Empty Fields!');
+      resSend(res, null, ResStatus.ERROR, 'Empty Fields!', 400);
       return;
     }
     try {
@@ -104,13 +103,13 @@ export class CalendarController {
   async createRoutine(req: Request, res: Response, next: NextFunction) {
     const data: CreateRoutine = req.body;
     if (!data.name || !data.startDate || !data.interval) {
-      resSend(res, 'Invalid Data');
+      resSend(res, null, ResStatus.ERROR, 'Invalid Data', 400);
       return;
     }
     if (typeof data.startDate === 'string') {
       const parsedDate = new Date(data.startDate);
       if (Number.isNaN(parsedDate.getTime())) {
-        return resSend(res, 'Invalid Date Format');
+        return resSend(res, null, ResStatus.ERROR, 'Invalid Date Format', 400);
       }
       data.startDate = parsedDate;
     }
@@ -134,7 +133,7 @@ export class CalendarController {
     if (typeof data.startDate === 'string') {
       const parsedDate = new Date(data.startDate);
       if (Number.isNaN(parsedDate.getTime())) {
-        return resSend(res, 'Invalid Date Format');
+        return resSend(res, null, ResStatus.ERROR, 'Invalid Date Format', 400);
       }
       data.startDate = parsedDate;
     }
