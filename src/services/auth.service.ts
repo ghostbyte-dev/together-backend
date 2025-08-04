@@ -64,11 +64,11 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ApiError('No user found with this email', 400);
+      throw new ApiError('Invalid credential', 401);
     }
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      throw new ApiError('Invalid Password', 400);
+      throw new ApiError('Invalid credential', 401);
     }
 
     if (!user.verified) {
