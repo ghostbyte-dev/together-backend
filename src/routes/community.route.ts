@@ -13,6 +13,14 @@ router.get('/code/:code', auth, async (req: Request, res: Response, next: NextFu
   communityController.getByCode(req, res, next),
 );
 
+router.get(
+  '/mine',
+  auth,
+  communityAccess,
+  async (req: Request, res: Response, next: NextFunction) =>
+    communityController.getMine(req, res, next),
+);
+
 router.post('/', auth, async (req: Request, res: Response, next: NextFunction) =>
   communityController.create(req, res, next),
 );

@@ -19,6 +19,16 @@ export class CommunityController {
     }
   }
 
+  async getMine(req: Request, res: Response, next: NextFunction) {
+    const communityId = req.user.communityId;
+    try {
+      const community: CommunityDto = await this.communityService.getById(communityId);
+      resSend(res, community);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getByCode(req: Request, res: Response, next: NextFunction) {
     const code = parseInt(req.params.code);
     if (!code) {
