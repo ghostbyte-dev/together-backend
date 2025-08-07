@@ -1,12 +1,11 @@
 import { injectable, inject } from 'tsyringe';
 import { PrismaService } from './prisma.service';
-import { CreateCalendarEntry } from '../types/createCalendarEntry';
+import type { CreateCalendarEntry } from '../types/createCalendarEntry';
 import { CalendarEntryDto } from '../dtos/calendarEntry.dto';
-import { UpdateCalendarEntry } from '../types/updateCalendarEntry';
-import { routine } from '@prisma/client';
-import { CreateRoutine } from '../types/createRoutine';
+import type { UpdateCalendarEntry } from '../types/updateCalendarEntry';
+import type { CreateRoutine } from '../types/createRoutine';
 import { RoutineDto } from '../dtos/routine.dto';
-import { UpdateRoutine } from '../types/updateRoutine';
+import type { UpdateRoutine } from '../types/updateRoutine';
 
 @injectable()
 export class CalendarService {
@@ -58,7 +57,7 @@ export class CalendarService {
 
   async update(data: UpdateCalendarEntry, communityId: number): Promise<CalendarEntryDto> {
     const calendarEntry = await this.prisma.calendar_entry.update({
-      where: { id: data.id },
+      where: { id: data.id, fk_community_id: communityId },
       data: {
         name: data.name ?? undefined,
         notes: data.notes ?? undefined,
@@ -162,6 +161,7 @@ export class CalendarService {
     return calendarEntriesDto;
   }
 
+  // biome-ignore lint/suspicious/noExplicitAny: <Is prisma routines, but includes many things, so prisma type doesnt work>
   async getRoutines(communityId: number): Promise<any[]> {
     const routines = await this.prisma.routine.findMany({
       where: {

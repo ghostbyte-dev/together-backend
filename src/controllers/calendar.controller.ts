@@ -24,7 +24,7 @@ export class CalendarController {
       if (Number.isNaN(parsedDate.getTime())) {
         return resSend(res, null, ResStatus.ERROR, 'Invalid Date Format', 400);
       }
-      data.date = parsedDate;
+      data.date = this.toUTCStartOfDay(data.date);
     }
 
     const communityId = req.user.communityId;
@@ -50,7 +50,9 @@ export class CalendarController {
       if (Number.isNaN(parsedDate.getTime())) {
         return resSend(res, null, ResStatus.ERROR, 'Invalid Date Format', 400);
       }
-      data.date = parsedDate;
+      if (data.date) {
+        data.date = this.toUTCStartOfDay(data.date);
+      }
     }
 
     const communityId = req.user.communityId;
@@ -68,9 +70,8 @@ export class CalendarController {
     res: Response,
     next: NextFunction,
   ) {
-    const startDate = new Date(req.query.startDate);
-    const endDate = new Date(req.query.endDate);
-
+    const startDate = this.toUTCStartOfDay(req.query.startDate);
+    const endDate = this.toUTCEndOfDay(req.query.endDate);
     if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       resSend(res, null, ResStatus.ERROR, 'Invalid Data', 400);
       return;
@@ -84,6 +85,20 @@ export class CalendarController {
     } catch (error) {
       next(error);
     }
+  }
+
+  private toUTCStartOfDay(dateString: string): Date {
+    const dateStringWithoutTime = dateString.split('T')[0];
+    const date = new Date(dateStringWithoutTime);
+    return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  }
+
+  private toUTCEndOfDay(dateString: string): Date {
+    const dateStringWithoutTime = dateString.split('T')[0];
+    const date = new Date(dateStringWithoutTime);
+    return new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59, 999),
+    );
   }
 
   async delete(req: Request, res: Response, next: NextFunction) {
@@ -111,7 +126,7 @@ export class CalendarController {
       if (Number.isNaN(parsedDate.getTime())) {
         return resSend(res, null, ResStatus.ERROR, 'Invalid Date Format', 400);
       }
-      data.startDate = parsedDate;
+      data.startDate = this.toUTCStartOfDay(data.startDate);
     }
 
     const communityId = req.user.communityId;
@@ -130,12 +145,15 @@ export class CalendarController {
       resSend(res, 'Invalid Data');
       return;
     }
+
     if (typeof data.startDate === 'string') {
       const parsedDate = new Date(data.startDate);
       if (Number.isNaN(parsedDate.getTime())) {
         return resSend(res, null, ResStatus.ERROR, 'Invalid Date Format', 400);
       }
-      data.startDate = parsedDate;
+      if (data.startDate) {
+        data.startDate = this.toUTCStartOfDay(data.startDate);
+      }
     }
 
     const communityId = req.user.communityId;
