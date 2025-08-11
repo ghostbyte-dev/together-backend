@@ -134,4 +134,21 @@ export class CommunityController {
       next(error);
     }
   }
+
+  async updateName(req: Request, res: Response, next: NextFunction) {
+    const name = req.body.name;
+    const communityId = parseInt(req.params.id as string);
+    if (!name || !communityId) {
+      resSend(res, null, ResStatus.ERROR, 'Invalid Arguments');
+      return;
+    }
+    const userId = req.user.id;
+
+    try {
+      const updatedCommunity = await this.communityService.updateName(name, communityId, userId);
+      resSend(res, updatedCommunity);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

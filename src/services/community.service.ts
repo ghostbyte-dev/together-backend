@@ -82,6 +82,29 @@ export class CommunityService {
     return new CommunityDto(community);
   }
 
+  async updateName(name: string, communityId: number, userId: number) {
+    const communityToUpdate = await this.prisma.community.findUnique({
+      where: {
+        id: communityId,
+      },
+    });
+    if (!communityToUpdate) {
+      throw new ApiError('Community not found', 404);
+    }
+    if (communityToUpdate.fk_admin_id !== userId) {
+      throw new ApiError('Not admin of this community', 401);
+    }
+    const newCommunity = await this.prisma.community.update({
+      where: {
+        id: communityId,
+      },
+      data: {
+        name: name,
+      },
+    });
+    return new CommunityDto(newCommunity);
+  }
+
   private generateCommunityInviteCode(): number {
     return Math.floor(Math.random() * (999999 - 100000)) + 100000;
   }

@@ -21,6 +21,10 @@ router.post('/', auth, async (req: Request, res: Response, next: NextFunction) =
   communityController.create(req, res, next),
 );
 
+router.patch('/:id', auth, async (req: Request, res: Response, next: NextFunction) =>
+  communityController.updateName(req, res, next),
+);
+
 router.get(
   '/requests',
   auth,
