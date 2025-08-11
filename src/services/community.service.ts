@@ -105,6 +105,41 @@ export class CommunityService {
     return new CommunityDto(newCommunity);
   }
 
+  async leave(communityId: number, userId: number) {
+    const community = await this.prisma.community.findUnique({
+      where: {
+        id: communityId,
+      },
+      include: {
+        users: true,
+      },
+    });
+
+    if (!community) {
+      throw new ApiError('Community not found', 404);
+    }
+    if (!community.users.find((user) => user.id === userId)) {
+      throw new ApiError('User is not in Community', 401);
+    }
+    if (community.fk_admin_id === userId) {
+      throw new ApiError(
+        'Admin can not leave a Community, change the admin user to another user before',
+        400,
+      );
+    }
+
+    await this.prisma.community.update({
+      where: { id: communityId },
+      data: {
+        users: {
+          disconnect: { id: userId },
+        },
+      },
+    });
+
+    return;
+  }
+
   private generateCommunityInviteCode(): number {
     return Math.floor(Math.random() * (999999 - 100000)) + 100000;
   }

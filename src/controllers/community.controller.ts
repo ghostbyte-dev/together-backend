@@ -139,7 +139,7 @@ export class CommunityController {
     const name = req.body.name;
     const communityId = parseInt(req.params.id as string);
     if (!name || !communityId) {
-      resSend(res, null, ResStatus.ERROR, 'Invalid Arguments');
+      resSend(res, null, ResStatus.ERROR, 'Invalid Arguments', 400);
       return;
     }
     const userId = req.user.id;
@@ -147,6 +147,20 @@ export class CommunityController {
     try {
       const updatedCommunity = await this.communityService.updateName(name, communityId, userId);
       resSend(res, updatedCommunity);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async leave(req: Request, res: Response, next: NextFunction) {
+    const communityId = parseInt(req.params.id);
+    if (!communityId) {
+      return resSend(res, null, ResStatus.ERROR, 'Invalid Arguments', 400);
+    }
+    const userId = req.user.id;
+    try {
+      await this.communityService.leave(communityId, userId);
+      resSend(res, { message: 'left community' });
     } catch (error) {
       next(error);
     }
