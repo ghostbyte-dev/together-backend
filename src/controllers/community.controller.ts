@@ -186,4 +186,18 @@ export class CommunityController {
       next(error);
     }
   }
+
+  async remove(req: Request, res: Response, next: NextFunction) {
+    const communityId = parseInt(req.params.id);
+    if (!communityId) {
+      return resSend(res, null, ResStatus.ERROR, 'Invalid Arguments', 400);
+    }
+    const userId = req.user.id;
+    try {
+      await this.communityService.delete(communityId, userId);
+      resSend(res, { message: 'community deleted' });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

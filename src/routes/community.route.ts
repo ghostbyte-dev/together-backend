@@ -33,6 +33,10 @@ router.patch('/:id', auth, async (req: Request, res: Response, next: NextFunctio
   communityController.updateName(req, res, next),
 );
 
+router.delete('/:id', auth, async (req: Request, res: Response, next: NextFunction) =>
+  communityController.remove(req, res, next),
+);
+
 router.get(
   '/requests',
   auth,

@@ -37,7 +37,7 @@ model user {
 
   name                                  String                @db.VarChar(100)
   color                                 String                @default("#2e3039") @db.VarChar(7)
-  community                             community?            @relation(fields: [fk_community_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "user_FK")
+  community                             community?            @relation(fields: [fk_community_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "user_FK")
   community_community_fk_admin_idTouser community[]           @relation("community_fk_admin_idTouser")
   debt_debt_fk_user_creditor_idTouser   debt[]                @relation("debt_fk_user_creditor_idTouser")
   debt                                  debt[]                @relation("debt_fk_user_debitor_idTouser")
@@ -66,7 +66,7 @@ model request {
   fk_community_id Int
   id              Int       @id @default(autoincrement())
   user            user      @relation(fields: [fk_user_id], references: [id], onDelete: Cascade, map: "requests_FK")
-  community       community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "requests_FK_1")
+  community       community @relation(fields: [fk_community_id], references: [id], onDelete: Cascade, map: "requests_FK_1")
 
   @@index([fk_user_id], map: "requests_FK")
   @@index([fk_community_id], map: "requests_FK_1")
@@ -80,8 +80,8 @@ model calendar_entry {
   done                Boolean               @default(false)
   fk_community_id     Int
   fk_routine_id       Int?
-  routine             routine?              @relation(fields: [fk_routine_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "task_FK")
-  community           community             @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "tasks_FK_2")
+  routine             routine?              @relation(fields: [fk_routine_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "task_FK")
+  community           community             @relation(fields: [fk_community_id], references: [id], onDelete: Cascade, map: "tasks_FK_2")
   calendar_entry_user calendar_entry_user[]
 
   @@index([fk_community_id], map: "calendar_entries_FK_2")
@@ -92,7 +92,7 @@ model calendar_entry_user {
   id                   Int            @id @default(autoincrement())
   fk_user_id           Int
   fk_calendar_entry_id Int
-  calendar_entry       calendar_entry @relation(fields: [fk_calendar_entry_id], references: [id], onUpdate: Restrict, map: "calendar_entry_user_FK")
+  calendar_entry       calendar_entry @relation(fields: [fk_calendar_entry_id], references: [id], onDelete: Cascade, map: "calendar_entry_user_FK")
   user                 user           @relation(fields: [fk_user_id], references: [id], onDelete: Cascade, map: "calendar_entry_user_FK_1")
 
   @@index([fk_calendar_entry_id], map: "calendar_entry_user_FK")
@@ -106,7 +106,7 @@ model routine {
   name            String           @db.VarChar(100)
   fk_community_id Int
   active          Boolean          @default(true)
-  community       community        @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "routine_FK")
+  community       community        @relation(fields: [fk_community_id], references: [id], onDelete: Cascade, map: "routine_FK")
   routine_user    routine_user[]
   calendar_entry  calendar_entry[]
 
@@ -117,7 +117,7 @@ model routine_user {
   id            Int     @id @default(autoincrement())
   fk_user_id    Int
   fk_routine_id Int
-  routine       routine @relation(fields: [fk_routine_id], references: [id], onUpdate: Restrict, map: "routine_user_FK")
+  routine       routine @relation(fields: [fk_routine_id], references: [id], onDelete: Cascade, map: "routine_user_FK")
   user          user    @relation(fields: [fk_user_id], references: [id], onDelete: Cascade, map: "routine_user_FK_1")
 
   @@index([fk_routine_id], map: "routine_user_FK")
@@ -130,7 +130,7 @@ model shoppinglist_item {
   name            String    @db.VarChar(100)
   done            Boolean   @default(false)
   done_date       DateTime? @db.Date
-  community       community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "shoppinglist_item_FK")
+  community       community @relation(fields: [fk_community_id], references: [id], onDelete: Cascade, map: "shoppinglist_item_FK")
 
   @@index([fk_community_id], map: "shoppinglist_item_FK")
 }
@@ -143,7 +143,7 @@ model debt {
   amount              Decimal   @db.Decimal(10, 2)
   name                String    @db.VarChar(100)
   timestamp           DateTime  @default(dbgenerated("(curdate())")) @db.DateTime(0)
-  community           community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "debt_FK")
+  community           community @relation(fields: [fk_community_id], references: [id], onDelete: Cascade, map: "debt_FK")
   creditor            user?      @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onDelete: SetNull, map: "debt_FK_1")
   debitor             user?      @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onDelete: SetNull, map: "debt_FK_2")
 
@@ -161,7 +161,7 @@ model todo {
   creationDate       DateTime  @default(now()) @db.DateTime(0)
   doneDate           DateTime? @db.DateTime(0)
   done               Boolean   @default(false)
-  community          community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "todo_FK_community")
+  community          community @relation(fields: [fk_community_id], references: [id], onDelete: Cascade, map: "todo_FK_community")
   creator            user      @relation(fields: [fk_user_creator_id], references: [id], onDelete: Cascade, map: "todo_FK_creator")
 
   @@index([fk_community_id], map: "todo_FK_community")

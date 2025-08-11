@@ -174,6 +174,27 @@ export class CommunityService {
     return;
   }
 
+  async delete(communityId: number, userId: number) {
+    const community = await this.prisma.community.findUnique({
+      where: {
+        id: communityId,
+      },
+    });
+
+    if (!community) {
+      throw new ApiError('Community not found', 404);
+    }
+    if (community.fk_admin_id !== userId) {
+      throw new ApiError('Not allowed to delete Community', 401);
+    }
+
+    await this.prisma.community.delete({
+      where: { id: communityId },
+    });
+
+    return;
+  }
+
   private generateCommunityInviteCode(): number {
     return Math.floor(Math.random() * (999999 - 100000)) + 100000;
   }

@@ -1,10 +1,6 @@
 import { injectable, inject } from 'tsyringe';
 import { PrismaService } from './prisma.service';
-import { ApiError } from '../errors/apiError';
-import type { debt, request, user } from '@prisma/client';
-import { UserDto } from '../dtos/user.dto';
-import { CommunityDto } from '../dtos/community.dto';
-import { RequestDto } from '../dtos/request.dto';
+import type { UserDto } from '../dtos/user.dto';
 import { DebtDto } from '../dtos/debt.dto';
 import { BalanceDto } from '../dtos/balance.dto';
 
