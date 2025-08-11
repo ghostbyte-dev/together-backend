@@ -4,6 +4,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { resSend, ResStatus } from '../helper';
 import type { UserDto } from '../dtos/user.dto';
 import type { CommunityDto } from '../dtos/community.dto';
+import { ApiError } from '../errors/apiError';
 
 @injectable()
 export class CommunityController {
@@ -146,6 +147,26 @@ export class CommunityController {
 
     try {
       const updatedCommunity = await this.communityService.updateName(name, communityId, userId);
+      resSend(res, updatedCommunity);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateAdmin(req: Request, res: Response, next: NextFunction) {
+    const communityId = parseInt(req.params.id);
+    const newAdminId = req.body.newAdminId;
+    try {
+      if (!communityId || !newAdminId) {
+        throw new ApiError('Invalid Arguments', 400);
+      }
+      const userId = req.user.id;
+
+      const updatedCommunity = await this.communityService.updateAdmin(
+        newAdminId,
+        communityId,
+        userId,
+      );
       resSend(res, updatedCommunity);
     } catch (error) {
       next(error);

@@ -25,6 +25,10 @@ router.post('/:id/leave', auth, async (req: Request, res: Response, next: NextFu
   communityController.leave(req, res, next),
 );
 
+router.patch('/:id/admin', auth, async (req: Request, res: Response, next: NextFunction) =>
+  communityController.updateAdmin(req, res, next),
+);
+
 router.patch('/:id', auth, async (req: Request, res: Response, next: NextFunction) =>
   communityController.updateName(req, res, next),
 );
@@ -45,12 +49,8 @@ router.get(
     communityController.getMembers(req, res, next),
 );
 
-router.post(
-  '/request',
-  auth,
-  communityAccess,
-  async (req: Request, res: Response, next: NextFunction) =>
-    communityController.sendRequest(req, res, next),
+router.post('/request', auth, async (req: Request, res: Response, next: NextFunction) =>
+  communityController.sendRequest(req, res, next),
 );
 
 router.post(

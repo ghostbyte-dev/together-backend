@@ -105,6 +105,40 @@ export class CommunityService {
     return new CommunityDto(newCommunity);
   }
 
+  async updateAdmin(
+    newAdminId: number,
+    communityId: number,
+    currentUserId: number,
+  ): Promise<CommunityDto> {
+    const community = await this.prisma.community.findUnique({
+      where: {
+        id: communityId,
+      },
+      include: {
+        users: true,
+      },
+    });
+    if (!community) {
+      throw new ApiError('Community not found', 404);
+    }
+    if (community.fk_admin_id !== currentUserId) {
+      throw new ApiError('not an Admin of this Community', 401);
+    }
+    if (!community.users.find((user) => user.id === newAdminId)) {
+      throw new ApiError('new Admin is not a member of the Community', 400);
+    }
+
+    const updatedCommunity = await this.prisma.community.update({
+      where: {
+        id: communityId,
+      },
+      data: {
+        fk_admin_id: newAdminId,
+      },
+    });
+    return new CommunityDto(updatedCommunity);
+  }
+
   async leave(communityId: number, userId: number) {
     const community = await this.prisma.community.findUnique({
       where: {

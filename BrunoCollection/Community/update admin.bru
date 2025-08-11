@@ -1,0 +1,25 @@
+meta {
+  name: update admin
+  type: http
+  seq: 8
+}
+
+patch {
+  url: {{baseUrl}}/community/:id/admin
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 1
+}
+
+body:json {
+  {
+    "newAdminId": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+}
