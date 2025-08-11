@@ -4,16 +4,24 @@ export class DebtDto {
   id: number;
   name: string;
   amount: number;
-  creditor: UserDto;
-  debitor: UserDto;
+  creditor: UserDto | null;
+  debitor: UserDto | null;
   timestamp: Date;
 
   constructor(debt: any) {
     this.id = debt.id;
     this.name = debt.name;
     this.amount = debt.amount;
-    this.creditor = new UserDto(debt.creditor);
-    this.debitor = new UserDto(debt.debitor);
+    if (debt.creditor) {
+      this.creditor = new UserDto(debt.creditor);
+    } else {
+      this.creditor = null;
+    }
+    if (debt.debitor) {
+      this.debitor = new UserDto(debt.debitor);
+    } else {
+      this.debitor = null;
+    }
     this.timestamp = debt.timestamp;
   }
 }

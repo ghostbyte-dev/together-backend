@@ -1,0 +1,15 @@
+meta {
+  name: delete User
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/user
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

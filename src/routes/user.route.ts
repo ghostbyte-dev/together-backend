@@ -24,6 +24,11 @@ router.get('/', auth, optionalCommunity, (req: Request, res: Response, next: Nex
   userController.getUser(req, res, next),
 );
 
+//TODO: Test delete more
+router.delete('/', auth, (req: Request, res: Response, next: NextFunction) =>
+  userController.deleteAccount(req, res, next),
+);
+
 router.get('/all', auth, async (req: Request, res: Response, next: NextFunction) =>
   userController.getAllUsers(req, res, next),
 );

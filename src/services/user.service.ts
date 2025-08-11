@@ -6,6 +6,8 @@ import { UserDto } from '../dtos/user.dto';
 import bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service';
 import { FileService } from './file.service';
+import { CommunityService } from './community.service';
+import { CommunityDto } from '../dtos/community.dto';
 
 @injectable()
 export class UserService {
@@ -13,6 +15,7 @@ export class UserService {
     @inject(PrismaService) private readonly prisma: PrismaService,
     @inject(AuthService) private readonly authService: AuthService,
     @inject(FileService) private readonly fileService: FileService,
+    @inject(CommunityService) private readonly communityService: CommunityService,
   ) {}
 
   async getUserById(userId: number, communityId: number | undefined): Promise<UserDto> {
@@ -133,5 +136,25 @@ export class UserService {
       },
     });
     return new UserDto(updatedUser);
+  }
+
+  async deleteAccount(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user) {
+      throw new ApiError('user not found', 404);
+    }
+    const communitiesOfUser: CommunityDto[] = await this.communityService.getMine(userId);
+    await communitiesOfUser.map(async (community: CommunityDto) => {
+      await this.communityService.leave(community.id, userId);
+    });
+    await this.prisma.user.delete({
+      where: {
+        id: userId,
+      },
+    });
   }
 }

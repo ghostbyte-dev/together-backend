@@ -55,7 +55,7 @@ model password_reset_token {
   token        String   @unique()
   token_expiry DateTime @db.DateTime(0)
   fk_user_id   Int      @unique
-  user         user     @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "password_reset_tokens_FK_1")
+  user         user     @relation(fields: [fk_user_id], references: [id], onDelete: Cascade, map: "password_reset_tokens_FK_1")
 
   @@index([fk_user_id], map: "password_reset_tokens_FK_1")
 }
@@ -65,7 +65,7 @@ model request {
   fk_user_id      Int
   fk_community_id Int
   id              Int       @id @default(autoincrement())
-  user            user      @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "requests_FK")
+  user            user      @relation(fields: [fk_user_id], references: [id], onDelete: Cascade, map: "requests_FK")
   community       community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "requests_FK_1")
 
   @@index([fk_user_id], map: "requests_FK")
@@ -93,7 +93,7 @@ model calendar_entry_user {
   fk_user_id           Int
   fk_calendar_entry_id Int
   calendar_entry       calendar_entry @relation(fields: [fk_calendar_entry_id], references: [id], onUpdate: Restrict, map: "calendar_entry_user_FK")
-  user                 user           @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "calendar_entry_user_FK_1")
+  user                 user           @relation(fields: [fk_user_id], references: [id], onDelete: Cascade, map: "calendar_entry_user_FK_1")
 
   @@index([fk_calendar_entry_id], map: "calendar_entry_user_FK")
   @@index([fk_user_id], map: "calendar_entry_user_FK_1")
@@ -118,7 +118,7 @@ model routine_user {
   fk_user_id    Int
   fk_routine_id Int
   routine       routine @relation(fields: [fk_routine_id], references: [id], onUpdate: Restrict, map: "routine_user_FK")
-  user          user    @relation(fields: [fk_user_id], references: [id], onUpdate: Restrict, map: "routine_user_FK_1")
+  user          user    @relation(fields: [fk_user_id], references: [id], onDelete: Cascade, map: "routine_user_FK_1")
 
   @@index([fk_routine_id], map: "routine_user_FK")
   @@index([fk_user_id], map: "routine_user_FK_1")
@@ -138,14 +138,14 @@ model shoppinglist_item {
 model debt {
   id                  Int       @id @default(autoincrement())
   fk_community_id     Int
-  fk_user_creditor_id Int
-  fk_user_debitor_id  Int
+  fk_user_creditor_id Int?
+  fk_user_debitor_id  Int?
   amount              Decimal   @db.Decimal(10, 2)
   name                String    @db.VarChar(100)
   timestamp           DateTime  @default(dbgenerated("(curdate())")) @db.DateTime(0)
   community           community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "debt_FK")
-  creditor            user      @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onUpdate: Restrict, map: "debt_FK_1")
-  debitor             user      @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onUpdate: Restrict, map: "debt_FK_2")
+  creditor            user?      @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onDelete: SetNull, map: "debt_FK_1")
+  debitor             user?      @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onDelete: SetNull, map: "debt_FK_2")
 
   @@index([fk_community_id], map: "debt_FK")
   @@index([fk_user_creditor_id], map: "debt_FK_1")
@@ -162,7 +162,7 @@ model todo {
   doneDate           DateTime? @db.DateTime(0)
   done               Boolean   @default(false)
   community          community @relation(fields: [fk_community_id], references: [id], onUpdate: Restrict, map: "todo_FK_community")
-  creator            user      @relation(fields: [fk_user_creator_id], references: [id], onUpdate: Restrict, map: "todo_FK_creator")
+  creator            user      @relation(fields: [fk_user_creator_id], references: [id], onDelete: Cascade, map: "todo_FK_creator")
 
   @@index([fk_community_id], map: "todo_FK_community")
   @@index([fk_user_creator_id], map: "todo_FK_creator")

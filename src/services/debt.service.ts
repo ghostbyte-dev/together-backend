@@ -74,7 +74,7 @@ export class DebtService {
 
   private groupDebts(debts: any[], userId: number): BalanceDto[] {
     const balances = new Map<UserDto, number>();
-    const otherUsers: any[] = [];
+    let otherUsers: any[] = [];
 
     debts.forEach((debt) => {
       const isCreditor = debt.fk_user_creditor_id === userId;
@@ -89,12 +89,14 @@ export class DebtService {
       // biome-ignore lint/style/noNonNullAssertion: is added just above if null
       balances.set(counterpartyId, balances.get(counterpartyId)! + Number(amount));
     });
+    otherUsers = otherUsers.filter((user) => user); // removes null & undefined
+    const result: BalanceDto[] = Array.from(balances.entries())
+      .filter(([otherUserId]) => otherUserId)
+      .map(([otherUserId, amount]) => {
+        const otherUser = otherUsers.find((user) => user.id === otherUserId);
 
-    const result: BalanceDto[] = Array.from(balances.entries()).map(([otherUserId, amount]) => {
-      const otherUser: any = otherUsers.find((user) => user.id === otherUserId);
-
-      return new BalanceDto(amount, otherUser);
-    });
+        return new BalanceDto(amount, otherUser); // pass null if not found
+      });
 
     return result;
   }

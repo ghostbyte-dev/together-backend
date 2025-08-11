@@ -78,4 +78,14 @@ export class UserController {
       next(error);
     }
   }
+
+  async deleteAccount(req: Request, res: Response, next: NextFunction) {
+    const userId = req.user.id;
+    try {
+      await this.userService.deleteAccount(userId);
+      resSend(res, 'succesfully deleted User');
+    } catch (error) {
+      next(error);
+    }
+  }
 }
