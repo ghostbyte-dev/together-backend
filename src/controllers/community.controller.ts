@@ -50,7 +50,7 @@ export class CommunityController {
     }
 
     try {
-      const community = this.communityService.create(name, req.user.id);
+      const community = await this.communityService.create(name, req.user.id);
       resSend(res, community);
     } catch (error) {
       next(error);
