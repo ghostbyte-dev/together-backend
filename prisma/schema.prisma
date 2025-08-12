@@ -33,7 +33,7 @@ model user {
   verified         Boolean  @default(false)
   password         String   @db.VarChar(100)
   creationdate     DateTime @default(dbgenerated("(curdate())")) @db.Date
-  profile_image    String?  @default("https://i.imgur.com/pWHgnHA.jpg") @db.VarChar(200)
+  profile_image    String?  @db.VarChar(200)
 
   name                                  String                @db.VarChar(100)
   color                                 String                @default("#2e3039") @db.VarChar(7)
