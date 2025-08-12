@@ -11,15 +11,15 @@ PROJECT_DIR="/root/together-backend"
 MARIADB_BACKUP_FILE="backup_$TIMESTAMP.sql.gz"
 PUBLIC_BACKUP_FILE="public_backup_$TIMESTAMP.tar.gz"
 
-/usr/bin/docker exec mariadb sh -c "mysqldump \
+/usr/bin/docker exec together-backend-mariadb-1 sh -c "mysqldump \
   -u$MYSQL_USER \
   -p$MYSQL_PASSWORD \
   --databases $MYSQL_DATABASE \
   | gzip > /$MARIADB_BACKUP_FILE"
 
-/usr/bin/docker cp mariadb:/$MARIADB_BACKUP_FILE /root/together-backup/
+/usr/bin/docker cp together-backend-mariadb-1:/$MARIADB_BACKUP_FILE /root/together-backup/
 
-/usr/bin/docker exec mariadb rm /$MARIADB_BACKUP_FILE
+/usr/bin/docker exec together-backend-mariadb-1 rm /$MARIADB_BACKUP_FILE
 
 tar -czf /root/together-backup/$PUBLIC_BACKUP_FILE -C "$PROJECT_DIR/public" .
 
