@@ -30,10 +30,14 @@ export class CommunityService {
           },
         },
       },
+      include: {
+        user_community_fk_admin_idTouser: true,
+      },
     });
     if (!communities) {
       throw new ApiError(`an unexpected error occured`, 500);
     }
+    console.log(communities[0]);
     const communitiesDtos = communities.map((community) => new CommunityDto(community));
     return communitiesDtos;
   }

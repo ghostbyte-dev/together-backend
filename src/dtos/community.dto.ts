@@ -10,6 +10,10 @@ export class CommunityDto {
     this.id = community.id;
     this.name = community.name;
     this.code = community.code;
-    this.admin = community.admin ? new UserDto(community.admin) : undefined;
+    if (community.admin) {
+      this.admin = new UserDto(community.admin);
+    } else if (community.user_community_fk_admin_idTouser) {
+      this.admin = new UserDto(community.user_community_fk_admin_idTouser);
+    }
   }
 }
