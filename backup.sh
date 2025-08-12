@@ -1,5 +1,5 @@
 set -a
-source /root/together-backend/env
+source /root/together-backend/.env
 set +a
 
 
