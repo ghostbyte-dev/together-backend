@@ -21,7 +21,7 @@ PUBLIC_BACKUP_FILE="public_backup_$TIMESTAMP.tar.gz"
 
 /usr/bin/docker exec together-backend-mariadb-1 rm /$MARIADB_BACKUP_FILE
 
-tar -czf /root/together-backup/$PUBLIC_BACKUP_FILE -C "$PROJECT_DIR/public" .
+tar -czf /root/together-backup/$PUBLIC_BACKUP_FILE -C "$PROJECT_DIR/uploads" .
 
 echo "Backup completed:"
 echo "  - MongoDB: /root/together-backup/$MONGO_BACKUP_FILE"
