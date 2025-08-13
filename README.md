@@ -1,0 +1,37 @@
+# Together (Backend)
+
+![Screenshot Together homepage](https://github.com/ghostbyte-dev/together-frontend/blob/c820767d0fd176df19174aa57a0e48360d3b61c0/assets/together_screenshot.png)
+
+Together is a web app to organize households and communities.
+
+Website: [together.ghostbyte.dev](https://together.ghostbyte.dev)
+
+Frontend: [github.com/ghostbyte-dev/together-frontend](https://github.com/ghostbyte-dev/together-frontend)
+
+<br>
+
+## Features
+- Shared shopping list
+- Shared calendar
+- Shared Todos
+- Debt manager
+- Support for multiple communities
+
+<br>
+
+## License
+
+Together is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
+
+See the [LICENSE](./LICENSE) file for details.
+
+<br>
+
+## 👻 A Ghostbyte Production
+
+![Ghostbyte banner](https://github.com/ghostbyte-dev/ghostbyte-website/blob/53ed21675d8306f4c6885ae0653b2805ee5b2e06/assets/ghostbyte_banner.png)
+
+Have questions, feedback, or just want to say hi? Reach out to us and we’ll get back to you!
+
+Website: [ghostbyte.dev](https://ghostbyte.dev)  
+Email: [hey@ghostbyte.dev](mailto:hey@ghostbyte.dev)
