@@ -58,7 +58,7 @@ export class UserService {
     email: string | undefined,
     profile_image: string | undefined,
     color: string | undefined,
-  ) {
+  ): Promise<UserDto> {
     const user = await this.prisma.user.update({
       where: {
         id: userId,
@@ -70,7 +70,7 @@ export class UserService {
         color: color,
       },
     });
-    return user;
+    return new UserDto(user);
   }
 
   async changePassword(oldPassword: string, newPassword: string, userId: number) {

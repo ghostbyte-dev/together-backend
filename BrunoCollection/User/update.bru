@@ -4,7 +4,7 @@ meta {
   seq: 4
 }
 
-put {
+patch {
   url: {{baseUrl}}/user
   body: json
   auth: inherit
@@ -12,7 +12,6 @@ put {
 
 body:json {
   {
-    "profile_image": "https://img.png",
     "color": "#00ff00"
   }
 }
