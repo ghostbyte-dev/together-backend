@@ -13,10 +13,12 @@ export class TodoService {
     userId: number,
     communityId: number,
   ): Promise<TodoDto> {
+    console.log(communityId);
+    console.log(description);
     const todo = await this.prisma.todo.create({
       data: {
         name: name,
-        description: description,
+        description: description ?? undefined,
         fk_user_creator_id: userId,
         fk_community_id: communityId,
       },
