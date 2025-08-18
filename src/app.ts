@@ -40,6 +40,9 @@ app.use('/debt', debtRoute);
 const todoRoute = require('./routes/todo.route');
 app.use('/todos', todoRoute);
 
+const feedbackRoute = require('./routes/feedback.route');
+app.use('/feedback', feedbackRoute);
+
 app.use(errorHandlerMiddleware);
 
 app.listen(3000, () => {

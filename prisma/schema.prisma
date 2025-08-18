@@ -47,6 +47,7 @@ model user {
   communities                           community[]           @relation("communityUser")
   todo                                  todo[]
   password_reset_token                  password_reset_token?
+  feedback                              feedback[]
 
   @@index([fk_community_id], map: "user_FK")
 }
@@ -144,8 +145,8 @@ model debt {
   name                String    @db.VarChar(100)
   timestamp           DateTime  @default(dbgenerated("(curdate())")) @db.DateTime(0)
   community           community @relation(fields: [fk_community_id], references: [id], onDelete: Cascade, map: "debt_FK")
-  creditor            user?      @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onDelete: SetNull, map: "debt_FK_1")
-  debitor             user?      @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onDelete: SetNull, map: "debt_FK_2")
+  creditor            user?     @relation("debt_fk_user_creditor_idTouser", fields: [fk_user_creditor_id], references: [id], onDelete: SetNull, map: "debt_FK_1")
+  debitor             user?     @relation("debt_fk_user_debitor_idTouser", fields: [fk_user_debitor_id], references: [id], onDelete: SetNull, map: "debt_FK_2")
 
   @@index([fk_community_id], map: "debt_FK")
   @@index([fk_user_creditor_id], map: "debt_FK_1")
@@ -166,4 +167,13 @@ model todo {
 
   @@index([fk_community_id], map: "todo_FK_community")
   @@index([fk_user_creator_id], map: "todo_FK_creator")
+}
+
+model feedback {
+  id         Int    @id @default(autoincrement())
+  content    String @db.VarChar(1000)
+  fk_user_id Int?
+  user       user?  @relation(fields: [fk_user_id], references: [id], onDelete: SetNull, map: "feedback_FK_user")
+
+  @@index([fk_user_id], map: "feedback_FK_user")
 }
