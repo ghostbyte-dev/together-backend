@@ -32,10 +32,14 @@ export class AuthService {
       },
     });
 
-    await this.mailService.sendVerificationMail(
-      email,
-      `${process.env.CLIENT_URL}/verify/${user.verificationcode}`,
-    );
+    try {
+      await this.mailService.sendVerificationMail(
+        email,
+        `${process.env.CLIENT_URL}/verify/${user.verificationcode}`,
+      );
+    } catch (_e) {
+      throw new ApiError('Could not send verification Email', 500);
+    }
     return;
   }
 
@@ -209,6 +213,7 @@ export class AuthService {
 
   async resetPassword(newPassword: string, resetToken: string) {
     const hashedToken = this.hashPasswordToken(resetToken);
+    console.log(hashedToken);
     const passwordResetToken = await this.prisma.password_reset_token.findFirst({
       where: {
         token: hashedToken,
