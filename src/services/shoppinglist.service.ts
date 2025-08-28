@@ -15,6 +15,7 @@ export class ShoppinglistService {
       },
     });
     const shoppingListItems = items.map((item) => new ShoppinglistItemDto(item));
+    shoppingListItems.sort((a, b) => b.id - a.id);
     return shoppingListItems;
   }
 
